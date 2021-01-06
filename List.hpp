@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/05 18:00:33 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/06 18:05:43 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 
 namespace ft
 {
-
 template<typename T>
 	class List
 	{
@@ -30,13 +29,21 @@ template<typename T>
 		typedef struct		s_list
 		{
 			T				value;
-			struct s_list	*before;
+			struct s_list	*prev;
 			struct s_list	*next;
 		}					t_list;
 
 	/*Attributs*/
 		t_list				*_list;
 		unsigned int		_size;
+
+		void				ft_swap(T& val1, T& val2) {
+			T tmp;
+			tmp = val1;
+			val1 = val2;
+			val2 = tmp;
+		}
+
 
 	public:
 		List(void);
@@ -48,7 +55,7 @@ template<typename T>
 		List(const List<T> & copy);
 		~List(void);
 
-	List<T> & operator=(List<T> const & rhs);
+		List<T> & operator=(List<T> const & rhs);
 
 	// iterator begin();
 	// const_iterator begin() const;
@@ -85,7 +92,7 @@ template<typename T>
 		// iterator erase (iterator position);
 		// iterator erase (iterator first, iterator last);
 
-		// void swap (List& x);
+		void swap (List& x);
 		void resize (size_t n, T val);
 		void clear();
 		
@@ -93,6 +100,21 @@ template<typename T>
 		// void splice (iterator position, list& x, iterator i);
 		// void splice (iterator position, list& x, iterator first, iterator last);
 
+		void remove (const T& val);
+
+		template <class Predicate>
+		void remove_if (Predicate pred);
+
+		void unique();
+		template <class BinaryPredicate>
+		void unique (BinaryPredicate binary_pred);
+		
+		void sort();
+		
+		template <class Compare>
+		void sort (Compare comp);
+		
+		void reverse();
 
 		void displayList() const;
 		void displayReverse() const;
