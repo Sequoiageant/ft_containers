@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 14:17:44 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/06 18:07:17 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/07 18:55:33 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,24 +16,26 @@
 bool single_digit (const int& value) { return (value<10); }
 
 struct is_odd {
-  bool operator() (const int& value) { return (value%2)==1; }
+	bool operator() (const int& value) { return (value%2)==1; }
 };
 
 bool is_higher (const int& value1, const int& value2) { return (value2 > value1); }
 
 struct is_lower {
-  bool operator() (const int& value1, const int& value2) { return (value2 < value1); }
+	bool operator() (const int& value1, const int& value2) { return (value2 < value1); }
 };
+
+bool same_as (int first, int second){ return ( int(first)==int(second) ); }
 
 int main(void)
 {
-	ft::List<int> lst(5, 3);
+/*	ft::List<int> lst(5, 3);
 	lst.push_back(5);
 	std::cout << "lst: "; lst.displayList();
 	std::cout << "front: " << lst.front() << std::endl;
 	std::cout << "back: " << lst.back() << std::endl;
 	std::cout << "size: " << lst.size() << std::endl;
-	std::cout << std::boolalpha << "empty: " << lst.empty() << std::endl;
+	std::cout << std::boolalpha << "lst empty: " << lst.empty() << std::endl;
 
 	ft::List<int> lst2;
 	std::cout << std::boolalpha << "lst2 empty: " << lst2.empty() << std::endl;
@@ -90,10 +92,10 @@ int main(void)
 	std::cout << "lst6: "; lst6.displayList();
 	std::cout << "lst6 size: " << lst6.size() << std::endl;
 
-	// lst6.remove(4);
-	// lst6.remove(1);
+	lst6.remove(4);
+	lst6.remove(1);
 	// lst6.remove_if(single_digit);
-	lst6.remove_if(is_odd());
+	// lst6.remove_if(is_odd());
 	std::cout << "lst6: "; lst6.displayList();
 	std::cout << "lst6 size: " << lst6.size() << std::endl;
 
@@ -114,27 +116,130 @@ int main(void)
 	lst8.push_back(12);
 	lst8.push_back(3);
 	lst8.push_back(100);
+	lst8.push_back(100);
+	lst8.push_back(42);
 	lst8.push_back(3);
 	lst8.push_back(28);
 	lst8.push_back(1);
-	// lst8.sort();
+	lst8.sort();
 	// lst8.sort(is_higher);
-	lst8.sort(is_lower());
+	// lst8.sort(is_lower());
 	std::cout << "lst8: "; lst8.displayList();
 	std::cout << "lst8 size: " << lst8.size() << std::endl;
 
-	// lst8.unique();
-	// std::cout << "lst8: "; lst8.displayList();
-	// std::cout << "lst8 size: " << lst8.size() << std::endl;
+	lst8.unique(same_as);
+	std::cout << "lst8: "; lst8.displayList();
+	std::cout << "lst8 size: " << lst8.size() << std::endl;
 
-	// std::list<int> lst4(5, 1);
-	// lst4.pop_back();
-	// lst4.pop_back();
-	// lst4.pop_back();
-	// lst4.pop_back();
-	// // lst4.pop_back();
-	// lst4.pop_front();
-	// // lst4.pop_front();
+	ft::List<int> lst9(6, 3);
+	lst9.unique();
+	std::cout << "lst9: "; lst9.displayList();
+	std::cout << "lst9 size: " << lst9.size() << std::endl;
+
+*/	/*
+	ft::List<int> first, second;
+	first.push_back(42);
+	first.push_back(3);
+	first.push_back(12);
+	first.push_back(3);
+	first.push_back(43);
+
+	second.push_back(42);
+	second.push_back(3);
+	second.push_back(12);
+	second.push_back(3);
+	second.push_back(43);
+	second.push_back(5);
+	second.push_back(6);
+	first.sort();
+ 	second.sort();
+	first.merge(second);
+	std::cout << "my   contains: "; first.displayList();
+
+	std::list<int> test1, test2;
+	test1.push_back(42);
+	test1.push_back(3);
+	test1.push_back(12);
+	test1.push_back(3);
+	test1.push_back(43);
+
+	test2.push_back(42);
+	test2.push_back(3);
+	test2.push_back(12);
+	test2.push_back(3);
+	test2.push_back(43);
+	test2.push_back(5);
+	test2.push_back(6);
+ 	// test1.sort();
+ 	// test2.sort();
+	test1.merge(test2);
+	std::cout << "real contains:";
+	for (std::list<int>::iterator it=test1.begin(); it!=test1.end(); ++it)
+		std::cout << ' ' << *it;
+	std::cout << '\n';
+*/
+/*
+	ft::List<char> lst10;
+
+	lst10.push_back('d');
+	lst10.push_back('c');
+	lst10.push_back('b');
+	lst10.push_back('a');
+	lst10.sort();
+	std::cout << "lst10: "; lst10.displayList();
+	std::cout << "lst10 size: " << lst10.size() << std::endl;
+
+	ft::List<std::string> lst11;
+
+	lst11.push_back("efg");
+	lst11.push_back("cde");
+	lst11.push_back("bcd");
+	lst11.push_back("abc");
+	lst11.sort();
+	std::cout << "lst11: "; lst11.displayList();
+	std::cout << "lst11 size: " << lst11.size() << std::endl;
+*/
+
+	ft::List<int> lst12;
+	lst12.push_back(1);
+	lst12.push_back(3);
+	lst12.push_back(5);
+	lst12.push_back(7);
+	lst12.push_back(9);
+	std::cout << "lst12: "; lst12.displayList();
+	std::cout << "lst12 size: " << lst12.size() << std::endl;
+
+	ft::List<int>::iterator it = lst12.begin();
+	ft::List<int>::iterator ite = lst12.end();
+
+	// std::cout << "it: " << *it << std::endl;
+	// std::cout << "ite: " << *ite << std::endl;
+	while (it != ite)
+	{
+		std::cout << *it << ' ';
+		++it;
+	}
+	std::cout << std::endl;
+
+	
+	std::list<int> lst;
+	lst.push_back(1);
+	lst.push_back(3);
+	lst.push_back(5);
+	lst.push_back(7);
+	lst.push_back(9);
+	std::cout << "lst size: " << lst.size() << std::endl;
+
+	std::list<int>::iterator itL;
+	itL = lst.begin();
+	std::list<int>::iterator iteL = lst.end();
+	std::cout << "iteL: " << *iteL << std::endl;
+	while (itL != iteL)
+	{
+		std::cout << *itL << ' ';
+		++itL;
+	}
+	std::cout << std::endl;
 
 	return (0);
 }

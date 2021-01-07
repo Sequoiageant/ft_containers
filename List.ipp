@@ -210,54 +210,12 @@ void ft::List<T>::swap (List& x)
 	*this = x;
 	x = tmp; 
 }
-// template<typename T>
-// void ft::List<T>::swap (List& x)
-// {
-// 	t_list *x_cpy = x._list;
-// 	t_list *cpy = this->_list;
-// 	t_list *tmp;
-
-// 	if (x._size <= this->_size)
-// 	{
-// 		for (unsigned int i = 0; i < x._size; ++i)
-// 		{
-// 			this->ft_swap(cpy->value, x_cpy->value);
-// 			cpy = cpy->next;
-// 			x_cpy = x_cpy->next;
-// 		}
-// 		tmp = cpy;
-// 		while (tmp)
-// 		{
-// 			x.push_back(tmp->value);
-// 			tmp = tmp->next;
-// 		}
-// 		while (cpy)
-// 		{
-// 			this->pop_back();
-// 			cpy = cpy->next;
-// 		}
-// 		this->pop_back();
-// 	}
-// 	// if (x._size > this->_size)
-// 	// {
-// 	// 	while (x_cpy->next)
-// 	// 	{
-// 	// 		this->push_back(x_cpy->value);
-// 	// 	}
-// 	// }
-// }
 
 template<typename T>
 void ft::List<T>::resize (size_t n, T val)
 {
-	t_list *cpy = this->_list;
-
 	if (n < this->_size)
 	{
-		for (size_t i = 0; i < n; ++i)
-		{
-			cpy = cpy->next;
-		}
 		while (this->_size > n)
 		{
 			this->pop_back();
@@ -265,10 +223,6 @@ void ft::List<T>::resize (size_t n, T val)
 	}
 	else
 	{
-		while (cpy->next)
-		{
-			cpy = cpy->next;
-		}
 		while (this->_size < n)
 		{
 			this->push_back(val);
@@ -281,27 +235,29 @@ void ft::List<T>::clear()
 {
 	t_list *tmp;
 
-	while (this->_list)
+	while (this->_size > 0)
 	{
 		tmp = this->_list->next;
 		delete this->_list;
 		this->_list = tmp;
+		this->_size--;
 	}
-	this->_size = 0;
+	this->_list = NULL;
 }
 
 template<typename T>
 void ft::List<T>::remove (const T& val)
 {
 	t_list *tmp = this->_list;
+	t_list *tmp2 = tmp->next;
 	unsigned int i = this->_size;
 
-	while (i > 0)
+	while (i > 1)
 	{
-		if (tmp->value != val)
-			this->push_back(tmp->value);
-		this->pop_front();
-		tmp = tmp->next;
+		if (tmp->value == val)
+			this->delete_node(tmp);
+		tmp = tmp2;
+		tmp2 = tmp2->next;
 		i--;
 	}
 }
@@ -316,8 +272,7 @@ void ft::List<T>::remove_if (Predicate pred)
 	while (i > 0)
 	{
 		if (pred(tmp->value))
-			this->push_back(tmp->value);
-		this->pop_front();
+			this->delete_node(tmp);
 		tmp = tmp->next;
 		i--;
 	}
@@ -326,57 +281,84 @@ void ft::List<T>::remove_if (Predicate pred)
 template<typename T>
 void ft::List<T>::unique ()
 {
-	t_list *tmp;
-	t_list *tmp2;
+	t_list *tmp = this->_list;
+	t_list *tmp2 = tmp->next;
 	unsigned int i = this->_size;
 
-	while (i > 0)
+	while (i > 1)
 	{
-		if (tmp->value != tmp2->value)
-			this->push_back(tmp->value);
-		this->pop_front();
-		tmp = tmp->next;
+		if (tmp->value == tmp2->value)
+			this->delete_node(tmp);
+		tmp = tmp2;
 		tmp2 = tmp2->next;
+		i--;
 	}
-	i--;
 }
 
 template<typename T>
 template <class BinaryPredicate>
 void ft::List<T>::unique (BinaryPredicate binary_pred)
 {
-	t_list *tmp;
-	t_list *tmp2;
+	t_list *tmp = this->_list;
+	t_list *tmp2 = tmp->next;
 	unsigned int i = this->_size;
 
-	while (i > 0)
+	while (i > 1)
 	{
-		if (!binary_pred(tmp->value, tmp2->value))
-			this->push_back(tmp->value);
-		this->pop_front();
-		tmp = tmp->next;
+		if (binary_pred(tmp->value, tmp2->value))
+			this->delete_node(tmp);
+		tmp = tmp2;
 		tmp2 = tmp2->next;
+		i--;
 	}
-	i--;
 }
+
+/*
+template<typename T>
+void ft::List<T>::merge (List& x)
+{
+	t_list *tmp = this->_list;
+	t_list *tmp2 = x._list;
+
+	if (&x == this)
+		return;
+
+	this->sort();
+	while (tmp)
+	{
+		if (tmp->value < tmp2->value)
+			this->insert_node(tmp, tmp2);
+			tmp = tmp->next;
+			tmp2 = tmp2->next;
+	}
+	while(tmp2)
+	{
+		this->push_back(tmp2->value);
+	}
+	x.clear();
+}
+template<typename T>
+template <class Compare>
+void ft::List<T>::merge (List& x, Compare comp)
+{
+
+}*/
+
 
 template<typename T>
 void ft::List<T>::sort()
 {
 	t_list *tmp;
-	t_list *tmp2;
 	unsigned int i = this->_size;
 
 	while (i > 0)
 	{
 		tmp = this->_list;
-		tmp2 = tmp->next;
 		while (tmp->next)
 		{
-			if (tmp->value > tmp2->value)
-				this->ft_swap(tmp->value, tmp2->value);
+			if (tmp->value > tmp->next->value)
+				this->swap_values(tmp->value, tmp->next->value);
 			tmp = tmp->next;
-			tmp2 = tmp2->next;
 		}
 		i--;
 	}
@@ -386,19 +368,16 @@ template <class Compare>
 void ft::List<T>::sort (Compare comp)
 {
 	t_list *tmp;
-	t_list *tmp2;
 	unsigned int i = this->_size;
 
 	while (i > 0)
 	{
 		tmp = this->_list;
-		tmp2 = tmp->next;
 		while (tmp->next)
 		{
-			if (comp(tmp->value, tmp2->value))
-				this->ft_swap(tmp->value, tmp2->value);
+			if (comp(tmp->value, tmp->next->value))
+				this->swap_values(tmp->value, tmp->next->value);
 			tmp = tmp->next;
-			tmp2 = tmp2->next;
 		}
 		i--;
 	}
@@ -417,7 +396,7 @@ void ft::List<T>::reverse()
 	}
 	while (i > this->_size / 2)
 	{
-		this->ft_swap(tmp->value, tmp2->value);
+		this->swap_values(tmp->value, tmp2->value);
 		tmp = tmp->next;
 		tmp2 = tmp2->prev;
 		i--;

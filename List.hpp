@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/06 18:05:43 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/07 18:54:29 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,30 +20,66 @@
 
 namespace ft
 {
+
+template<typename T>
+	struct		t_list
+	{
+		T		value;
+		t_list	*prev;
+		t_list	*next;
+	};
+
 template<typename T>
 	class List
 	{
+		typedef	t_list<T>	t_list;
 
 	private:
-
-		typedef struct		s_list
-		{
-			T				value;
-			struct s_list	*prev;
-			struct s_list	*next;
-		}					t_list;
 
 	/*Attributs*/
 		t_list				*_list;
 		unsigned int		_size;
 
-		void				ft_swap(T& val1, T& val2) {
+		void	swap_values(T& val1, T& val2) {
 			T tmp;
 			tmp = val1;
 			val1 = val2;
 			val2 = tmp;
 		}
 
+		void	delete_node(t_list *node)
+		{
+			if (node->next == NULL)
+				node->prev->next = NULL;
+			else if (node->prev == NULL)
+			{
+				node->next->prev = NULL;
+				this->_list = this->_list->next;
+			}
+			else
+			{
+				node->prev->next = node->next;
+				node->next->prev = node->prev;
+			}
+			delete node;
+			this->_size--;
+		}
+
+		t_list *front_ptr()
+		{
+			return this->_list;
+		}
+
+		t_list *back_ptr()
+		{
+			t_list *cpy = this->_list;
+
+			while (cpy)
+			{
+				cpy = cpy->next;
+			}
+			return cpy;
+		}
 
 	public:
 		List(void);
@@ -56,6 +92,7 @@ template<typename T>
 		~List(void);
 
 		List<T> & operator=(List<T> const & rhs);
+
 
 	// iterator begin();
 	// const_iterator begin() const;
@@ -109,6 +146,11 @@ template<typename T>
 		template <class BinaryPredicate>
 		void unique (BinaryPredicate binary_pred);
 		
+
+		void merge (List& x);
+		template <class Compare>
+		void merge (List& x, Compare comp);
+
 		void sort();
 		
 		template <class Compare>
@@ -118,6 +160,34 @@ template<typename T>
 
 		void displayList() const;
 		void displayReverse() const;
+
+
+		class iterator : public std::iterator<std::input_iterator_tag, T> {
+
+		private:
+			t_list *p;
+
+		public:
+			iterator(void) {}
+			iterator(t_list *x) : p(x) {}
+			iterator(const iterator& copy) : p(copy.p) {}
+			iterator& operator++() {p = p->next;return *this;}
+			iterator operator++(int) {iterator tmp(*this); operator++(); return tmp;}
+			iterator& operator--() {p = p->prev;return *this;}
+			iterator operator--(int) {iterator tmp(*this); operator--(); return tmp;}
+			bool operator==(const iterator& rhs) const {return p==rhs.p;}
+			bool operator!=(const iterator& rhs) const {return p!=rhs.p;}
+			T& operator*() {return p->value;}
+			~iterator(void) {}
+			iterator& operator=(iterator const & rhs) {
+				*this = rhs;
+				return (*this);
+			}
+
+		};
+
+		iterator begin(void) { return iterator(this->front_ptr()); }
+		iterator end(void) { return iterator((this->back_ptr())); }
 
 	};
 
