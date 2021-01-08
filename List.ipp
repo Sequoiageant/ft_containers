@@ -125,16 +125,28 @@ const T& ft::List<T>::back() const
 	return cpy->value;
 }
 
-// template<typename T>
-// template<typename InputIterator>
-// void assign (InputIterator first, InputIterator last)
-// {
-// 	while(first != last)
-// 	{
-// 		this->push_back(*first);
-// 		++first;
-// 	}
-// }
+template<typename T>
+template<typename InputIterator>
+void ft::List<T>::assign (InputIterator first, InputIterator last)
+{
+	this->clear();
+	while(first != last)
+	{
+		this->push_back(*first);
+		++first;
+	}
+}
+
+template<typename T>
+void ft::List<T>::assign (unsigned int n, const T& val)
+{
+	this->clear();
+	for (unsigned int i = 0; i < n; ++i)
+	{
+		this->push_back(val);
+	}
+}
+
 
 template<typename T>
 void ft::List<T>::push_front (const T& val)
@@ -200,6 +212,22 @@ void ft::List<T>::pop_back()
 	cpy->next = NULL;
 	this->_size--;
 }
+
+
+// template<typename T>
+// typename ft::List<T>::iterator ft::List<T>::insert (iterator position, const T& val)
+// {
+// 	t_list *tmp = this->_list;
+
+// 	if (*position < this->_size)
+// 	{
+// 		for (unsigned int i = 0; i < *position; ++i)
+// 		{
+// 			tmp = tmp->next;
+// 		}
+// 		this->insert_node(val);
+// 	}
+// }
 
 template<typename T>
 void ft::List<T>::swap (List& x)

@@ -6,12 +6,13 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 14:17:44 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/07 18:55:33 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/08 12:04:11 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "List.hpp"
 #include <list>
+#include <vector>
 
 bool single_digit (const int& value) { return (value<10); }
 
@@ -207,19 +208,8 @@ int main(void)
 	lst12.push_back(7);
 	lst12.push_back(9);
 	std::cout << "lst12: "; lst12.displayList();
-	std::cout << "lst12 size: " << lst12.size() << std::endl;
 
-	ft::List<int>::iterator it = lst12.begin();
-	ft::List<int>::iterator ite = lst12.end();
 
-	// std::cout << "it: " << *it << std::endl;
-	// std::cout << "ite: " << *ite << std::endl;
-	while (it != ite)
-	{
-		std::cout << *it << ' ';
-		++it;
-	}
-	std::cout << std::endl;
 
 	
 	std::list<int> lst;
@@ -230,16 +220,52 @@ int main(void)
 	lst.push_back(9);
 	std::cout << "lst size: " << lst.size() << std::endl;
 
-	std::list<int>::iterator itL;
-	itL = lst.begin();
+	std::vector<int> v;
+	v.push_back(11);
+	// v.push_back(13);
+	// v.push_back(15);
+	v.push_back(17);
+	// v.push_back(19);
+	// v.push_back(21);
+	// std::vector<int>::iterator vit = v.begin();
+	// std::vector<int>::iterator vite = v.end();
+
+
+	
+
+	std::list<int>::iterator itL = lst.begin();
 	std::list<int>::iterator iteL = lst.end();
-	std::cout << "iteL: " << *iteL << std::endl;
+	itL++;
+	itL++;
+	itL++;
+	itL++;
+	itL++;
+	itL++;
+	itL++;
+	lst.insert(itL++, 12);
+	itL = lst.begin();
 	while (itL != iteL)
 	{
 		std::cout << *itL << ' ';
 		++itL;
 	}
 	std::cout << std::endl;
+	std::cout << "lst size: " << lst.size() << std::endl;
+
+	const int a = 8;
+	unsigned int b = 12;
+	lst12.assign(a,b);
+	ft::List<int>::iterator it = lst12.begin();
+	ft::List<int>::iterator ite = lst12.end();
+	while (it != ite)
+	{
+		std::cout << *it << ' ';
+		++it;
+	}
+	std::cout << std::endl;
+	std::cout << "lst12 size: " << lst12.size() << std::endl;
+
+
 
 	return (0);
 }

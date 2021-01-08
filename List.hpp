@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/07 18:54:29 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/08 12:00:51 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ template<typename T>
 	class List
 	{
 		typedef	t_list<T>	t_list;
+		typedef	size_t		size_type;
 
 	private:
 
@@ -82,6 +83,7 @@ template<typename T>
 		}
 
 	public:
+		class iterator;
 		List(void);
 		List(unsigned int size, const T &val);
 
@@ -94,9 +96,9 @@ template<typename T>
 		List<T> & operator=(List<T> const & rhs);
 
 
-	// iterator begin();
+		iterator begin(void) { return iterator(this->front_ptr()); }
 	// const_iterator begin() const;
-	// iterator end();
+		iterator end(void) { return iterator(this->back_ptr()); }
 	// const_iterator end() const;
 	// reverse_iterator rbegin();
 	// const_reverse_iterator rbegin() const;
@@ -113,24 +115,24 @@ template<typename T>
 		T& back();
 		const T& back() const;
 
-		// template<typename InputIterator>
-		// void assign (InputIterator first, InputIterator last);
-		// void assign (unsigned int n, const T& val);
+		template<typename InputIterator>
+		void assign (InputIterator first, InputIterator last);
+		void assign (unsigned int n, const T& val);
 
 		void push_front (const T& val);
 		void pop_front();
 		void push_back (const T& val);
 		void pop_back();
 		
-		// iterator insert (iterator position, const T& val);
-		// void insert (iterator position, size_type n, const T& val);
-		// template <class InputIterator>
-		// void insert (iterator position, InputIterator first, InputIterator last);
+		iterator insert (iterator position, const T& val);
+		void insert (iterator position, size_type n, const T& val);
+		template <class InputIterator>
+		void insert (iterator position, InputIterator first, InputIterator last);
 		// iterator erase (iterator position);
 		// iterator erase (iterator first, iterator last);
 
 		void swap (List& x);
-		void resize (size_t n, T val);
+		void resize (size_type n, T val);
 		void clear();
 		
 		// void splice (iterator position, list& x);
@@ -162,34 +164,35 @@ template<typename T>
 		void displayReverse() const;
 
 
-		class iterator : public std::iterator<std::input_iterator_tag, T> {
 
-		private:
-			t_list *p;
-
-		public:
-			iterator(void) {}
-			iterator(t_list *x) : p(x) {}
-			iterator(const iterator& copy) : p(copy.p) {}
-			iterator& operator++() {p = p->next;return *this;}
-			iterator operator++(int) {iterator tmp(*this); operator++(); return tmp;}
-			iterator& operator--() {p = p->prev;return *this;}
-			iterator operator--(int) {iterator tmp(*this); operator--(); return tmp;}
-			bool operator==(const iterator& rhs) const {return p==rhs.p;}
-			bool operator!=(const iterator& rhs) const {return p!=rhs.p;}
-			T& operator*() {return p->value;}
-			~iterator(void) {}
-			iterator& operator=(iterator const & rhs) {
-				*this = rhs;
-				return (*this);
-			}
-
-		};
-
-		iterator begin(void) { return iterator(this->front_ptr()); }
-		iterator end(void) { return iterator((this->back_ptr())); }
 
 	};
+
+template<typename T>
+	class List<T>::iterator {
+
+	private:
+		t_list *p;
+
+	public:
+		iterator(void) {}
+		iterator(t_list *x) : p(x) {}
+		iterator(const iterator& copy) : p(copy.p) {}
+		iterator& operator++() {p = p->next;return *this;}
+		iterator operator++(int) {iterator tmp(*this); operator++(); return tmp;}
+		iterator& operator--() {p = p->prev;return *this;}
+		iterator operator--(int) {iterator tmp(*this); operator--(); return tmp;}
+		bool operator==(const iterator& rhs) const {return p==rhs.p;}
+		bool operator!=(const iterator& rhs) const {return p!=rhs.p;}
+		T& operator*() {return p->value;}
+		~iterator(void) {}
+		// iterator& operator=(iterator const & rhs) {
+		// 	*this = rhs;
+		// 	return (*this);
+		// }
+
+	};
+
 
 template<typename T>
 	std::ostream & operator<<(std::ostream & o, List<T> const & rhs);
