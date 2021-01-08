@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/08 12:00:51 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/08 15:49:20 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,25 @@ template<typename T>
 			this->_size--;
 		}
 
+		void	insert_node(t_list **node, const T& val)
+		{
+			t_list *newElem = new t_list;
+
+			newElem->value = val;
+			newElem->next = (*node);
+			if ((*node)->prev == NULL)
+			{
+				newElem->prev = NULL;
+				this->_list = newElem;
+			}
+			else
+			{
+				newElem->prev = (*node)->prev;
+				(*node)->prev->next = newElem;
+			}
+			this->_size++;
+		}
+
 		t_list *front_ptr()
 		{
 			return this->_list;
@@ -87,8 +106,8 @@ template<typename T>
 		List(void);
 		List(unsigned int size, const T &val);
 
-		// template<typename InputIterator>
-		// List(InputIterator first, InputIterator last);
+		template<typename InputIterator>
+		List(InputIterator first, InputIterator last);
 
 		List(const List<T> & copy);
 		~List(void);
@@ -125,7 +144,7 @@ template<typename T>
 		void pop_back();
 		
 		iterator insert (iterator position, const T& val);
-		void insert (iterator position, size_type n, const T& val);
+		void insert (iterator position, int n, const T& val);
 		template <class InputIterator>
 		void insert (iterator position, InputIterator first, InputIterator last);
 		// iterator erase (iterator position);

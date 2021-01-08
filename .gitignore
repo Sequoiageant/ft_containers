@@ -34,7 +34,7 @@ objs/
 
 # Users
 .DS_Store
-a.out
+a.out*
 *.pdf
 test.cpp
 *.replace

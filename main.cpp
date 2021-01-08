@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 14:17:44 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/08 12:04:11 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/08 15:47:09 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,6 +209,7 @@ int main(void)
 	lst12.push_back(9);
 	std::cout << "lst12: "; lst12.displayList();
 
+	ft::List<int> lst13(lst12);
 
 
 	
@@ -236,13 +237,7 @@ int main(void)
 	std::list<int>::iterator itL = lst.begin();
 	std::list<int>::iterator iteL = lst.end();
 	itL++;
-	itL++;
-	itL++;
-	itL++;
-	itL++;
-	itL++;
-	itL++;
-	lst.insert(itL++, 12);
+	lst.insert(itL, 3, 12);
 	itL = lst.begin();
 	while (itL != iteL)
 	{
@@ -265,7 +260,21 @@ int main(void)
 	std::cout << std::endl;
 	std::cout << "lst12 size: " << lst12.size() << std::endl;
 
-
+	ft::List<int>::iterator it13 = lst13.begin();
+	ft::List<int>::iterator ite13 = lst13.end();
+	it13++;
+	// it13++; //ATTENTION SI ON INC TROP L'it => SEGFAULT
+	lst13.insert(it13, 3, 12);
+	// ft::List<int>::iterator itInserted = lst13.insert(it13, 12);
+	it13 = lst13.begin();
+	while (it13 != ite13)
+	{
+		std::cout << *it13 << ' ';
+		++it13;
+	}
+	std::cout << std::endl;
+	std::cout << "lst13 size: " << lst13.size() << std::endl;
+	// std::cout << "itInserted: " << *itInserted << std::endl;
 
 	return (0);
 }

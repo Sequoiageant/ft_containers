@@ -28,16 +28,16 @@ ft::List<T>::List(unsigned int size, const T &val) : _list(NULL), _size(0)
 	}
 }
 
-// template<typename T>
-// template<typename InputIterator>
-// ft::List<T>::List(InputIterator first, InputIterator last) : _list(NULL), _size(0)
-// {
-// 	while(first != last)
-// 	{
-// 		this->push_back(*first);
-// 		++first;
-// 	}
-// }
+template<typename T>
+template<typename InputIterator>
+ft::List<T>::List(InputIterator first, InputIterator last) : _list(NULL), _size(0)
+{
+	while(first != last)
+	{
+		this->push_back(*first);
+		++first;
+	}
+}
 
 template<typename T>
 ft::List<T>::List(List<T> const & copy) : _list(NULL), _size(0)
@@ -214,20 +214,51 @@ void ft::List<T>::pop_back()
 }
 
 
-// template<typename T>
-// typename ft::List<T>::iterator ft::List<T>::insert (iterator position, const T& val)
-// {
-// 	t_list *tmp = this->_list;
+template<typename T>
+typename ft::List<T>::iterator ft::List<T>::insert (iterator position, const T& val)
+{
+	t_list *tmp = this->_list;
+	iterator it = this->begin();
 
-// 	if (*position < this->_size)
-// 	{
-// 		for (unsigned int i = 0; i < *position; ++i)
-// 		{
-// 			tmp = tmp->next;
-// 		}
-// 		this->insert_node(val);
-// 	}
-// }
+	while (it != position && tmp)
+	{
+		tmp = tmp->next;
+		++it;
+	}
+	this->insert_node(&tmp, val);
+
+	it = this->begin();
+	tmp = this->_list;
+	while (it != position && tmp)
+	{
+		tmp = tmp->next;
+		++it;
+	}
+	return iterator(tmp);
+}
+
+template<typename T>
+void ft::List<T>::insert (iterator position, int n, const T& val)
+{
+	std::cerr << "INSERT" << std::endl;
+	for (int i = 0; i < n; ++i)
+	{
+		this->insert(position++, val);
+	}
+}
+
+template<typename T>
+template <class InputIterator>
+void ft::List<T>::insert (iterator position, InputIterator first, InputIterator last)
+{
+	std::cerr << "INSERT" << std::endl;
+	
+	while (first != last)
+	{
+		this->insert(position++, *first);
+		++first;
+	}
+}
 
 template<typename T>
 void ft::List<T>::swap (List& x)
