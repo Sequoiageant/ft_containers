@@ -200,6 +200,16 @@ void ft::List<T>::push_back(const T& val)
 	this->_size++;
 }
 
+void push_back(const value_type &val)
+{
+	node *insert = new node(val);
+	insert->previous = this->tail->previous;
+	insert->next = this->tail;
+	this->tail->previous->next = insert;
+	this->tail->previous = insert;
+	this->total++;
+}
+
 template<typename T>
 void ft::List<T>::pop_back()
 {
@@ -217,24 +227,19 @@ void ft::List<T>::pop_back()
 template<typename T>
 typename ft::List<T>::iterator ft::List<T>::insert (iterator position, const T& val)
 {
+	if (position == NULL)
+		return NULL;
+
 	t_list *tmp = this->_list;
-	iterator it = this->begin();
+	iterator it(this->begin());
 
 	while (it != position && tmp)
 	{
 		tmp = tmp->next;
 		++it;
 	}
-	this->insert_node(&tmp, val);
-
-	it = this->begin();
-	tmp = this->_list;
-	while (it != position && tmp)
-	{
-		tmp = tmp->next;
-		++it;
-	}
-	return iterator(tmp);
+	this->insert_node(tmp, val);
+	return --it;
 }
 
 template<typename T>

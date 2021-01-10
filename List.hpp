@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/08 15:49:20 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/10 17:41:39 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,101 @@ namespace ft
 {
 
 template<typename T>
-	struct		t_list
+	struct				t_list
 	{
-		T		value;
-		t_list	*prev;
-		t_list	*next;
+		T				value;
+		struct t_list	*prev;
+		struct t_list	*next;
 	};
 
 template<typename T>
 	class List
 	{
+
+	public:
 		typedef	t_list<T>	t_list;
 		typedef	size_t		size_type;
+
+		class iterator;
+
+		List(void);
+		List(unsigned int size, const T &val);
+
+		template<typename InputIterator>
+		List(InputIterator first, InputIterator last);
+
+		List(const List<T> & copy);
+		~List(void);
+
+		List<T> & operator=(List<T> const & rhs);
+
+
+		iterator begin(void) { return iterator(this->_list); }
+	// const_iterator begin() const;
+		iterator end(void) { return iterator(this->back_ptr()); }
+	// const_iterator end() const;
+	// reverse_iterator rbegin();
+	// const_reverse_iterator rbegin() const;
+	// reverse_iterator rend();
+	// const_reverse_iterator rend() const;
+
+		// t_list* getList(void) const;
+
+		bool empty() const;
+		unsigned int size() const;
+		unsigned int max_size() const;
+		T& front();
+		const T& front() const;
+		T& back();
+		const T& back() const;
+
+		template<typename InputIterator>
+		void assign (InputIterator first, InputIterator last);
+		void assign (unsigned int n, const T& val);
+
+		void push_front (const T& val);
+		void pop_front();
+		void push_back (const T& val);
+		void pop_back();
+
+		iterator insert (iterator position, const T& val);
+		void insert (iterator position, int n, const T& val);
+		template <class InputIterator>
+		void insert (iterator position, InputIterator first, InputIterator last);
+		// iterator erase (iterator position);
+		// iterator erase (iterator first, iterator last);
+
+		void swap (List& x);
+		void resize (size_type n, T val);
+		void clear();
+
+		// void splice (iterator position, list& x);
+		// void splice (iterator position, list& x, iterator i);
+		// void splice (iterator position, list& x, iterator first, iterator last);
+
+		void remove (const T& val);
+
+		template <class Predicate>
+		void remove_if (Predicate pred);
+
+		void unique();
+		template <class BinaryPredicate>
+		void unique (BinaryPredicate binary_pred);
+
+
+		void merge (List& x);
+		template <class Compare>
+		void merge (List& x, Compare comp);
+
+		void sort();
+
+		template <class Compare>
+		void sort (Compare comp);
+
+		void reverse();
+
+		void displayList() const;
+		void displayReverse() const;
 
 	private:
 
@@ -66,24 +149,36 @@ template<typename T>
 			this->_size--;
 		}
 
-		void	insert_node(t_list **node, const T& val)
+		void	insert_node(t_list *node, const T& val)
 		{
 			t_list *newElem = new t_list;
 
 			newElem->value = val;
-			newElem->next = (*node);
-			if ((*node)->prev == NULL)
+			if (node->prev == NULL)
 			{
-				newElem->prev = NULL;
 				this->_list = newElem;
 			}
 			else
 			{
-				newElem->prev = (*node)->prev;
-				(*node)->prev->next = newElem;
+				node->prev->next = newElem;
 			}
+			newElem->next = node;
+			newElem->prev = node->prev;
 			this->_size++;
 		}
+
+/*		t_list	*find_node(iterator position)
+		{
+			t_list *node = this->_list;
+			iterator it(this->begin());
+
+			while (it != position)
+			{
+				node = node->next;
+				++it;
+			}
+			return (node);
+		}*/
 
 		t_list *front_ptr()
 		{
@@ -101,94 +196,11 @@ template<typename T>
 			return cpy;
 		}
 
-	public:
-		class iterator;
-		List(void);
-		List(unsigned int size, const T &val);
-
-		template<typename InputIterator>
-		List(InputIterator first, InputIterator last);
-
-		List(const List<T> & copy);
-		~List(void);
-
-		List<T> & operator=(List<T> const & rhs);
-
-
-		iterator begin(void) { return iterator(this->front_ptr()); }
-	// const_iterator begin() const;
-		iterator end(void) { return iterator(this->back_ptr()); }
-	// const_iterator end() const;
-	// reverse_iterator rbegin();
-	// const_reverse_iterator rbegin() const;
-	// reverse_iterator rend();
-	// const_reverse_iterator rend() const;
-
-		// t_list* getList(void) const;
-
-		bool empty() const;
-		unsigned int size() const;
-		unsigned int max_size() const;
-		T& front();
-		const T& front() const;
-		T& back();
-		const T& back() const;
-
-		template<typename InputIterator>
-		void assign (InputIterator first, InputIterator last);
-		void assign (unsigned int n, const T& val);
-
-		void push_front (const T& val);
-		void pop_front();
-		void push_back (const T& val);
-		void pop_back();
-		
-		iterator insert (iterator position, const T& val);
-		void insert (iterator position, int n, const T& val);
-		template <class InputIterator>
-		void insert (iterator position, InputIterator first, InputIterator last);
-		// iterator erase (iterator position);
-		// iterator erase (iterator first, iterator last);
-
-		void swap (List& x);
-		void resize (size_type n, T val);
-		void clear();
-		
-		// void splice (iterator position, list& x);
-		// void splice (iterator position, list& x, iterator i);
-		// void splice (iterator position, list& x, iterator first, iterator last);
-
-		void remove (const T& val);
-
-		template <class Predicate>
-		void remove_if (Predicate pred);
-
-		void unique();
-		template <class BinaryPredicate>
-		void unique (BinaryPredicate binary_pred);
-		
-
-		void merge (List& x);
-		template <class Compare>
-		void merge (List& x, Compare comp);
-
-		void sort();
-		
-		template <class Compare>
-		void sort (Compare comp);
-		
-		void reverse();
-
-		void displayList() const;
-		void displayReverse() const;
-
-
-
 
 	};
 
 template<typename T>
-	class List<T>::iterator {
+	class List<T>::iterator : public std::iterator<std::bidirectional_iterator_tag, T> {
 
 	private:
 		t_list *p;

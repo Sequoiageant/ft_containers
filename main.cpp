@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 14:17:44 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/08 15:47:09 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/08 18:30:45 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,9 +263,11 @@ int main(void)
 	ft::List<int>::iterator it13 = lst13.begin();
 	ft::List<int>::iterator ite13 = lst13.end();
 	it13++;
+	it13++;
 	// it13++; //ATTENTION SI ON INC TROP L'it => SEGFAULT
-	lst13.insert(it13, 3, 12);
-	// ft::List<int>::iterator itInserted = lst13.insert(it13, 12);
+	// lst13.insert(it13, 3, 12);
+	ft::List<int>::iterator itInserted = lst13.insert(it13, 12);
+	std::cout << "itInserted: " << *itInserted << std::endl;
 	it13 = lst13.begin();
 	while (it13 != ite13)
 	{
@@ -274,7 +276,6 @@ int main(void)
 	}
 	std::cout << std::endl;
 	std::cout << "lst13 size: " << lst13.size() << std::endl;
-	// std::cout << "itInserted: " << *itInserted << std::endl;
 
 	return (0);
 }
