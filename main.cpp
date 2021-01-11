@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 14:17:44 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/08 18:30:45 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/11 12:10:28 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,11 +209,11 @@ int main(void)
 	lst12.push_back(9);
 	std::cout << "lst12: "; lst12.displayList();
 
-	ft::List<int> lst13(lst12);
+	// ft::List<int> lst13(lst12);
 
 
 	
-	std::list<int> lst;
+/*	std::list<int> lst;
 	lst.push_back(1);
 	lst.push_back(3);
 	lst.push_back(5);
@@ -245,9 +245,9 @@ int main(void)
 		++itL;
 	}
 	std::cout << std::endl;
-	std::cout << "lst size: " << lst.size() << std::endl;
+	std::cout << "lst size: " << lst.size() << std::endl;*/
 
-	const int a = 8;
+/*	const int a = 8;
 	unsigned int b = 12;
 	lst12.assign(a,b);
 	ft::List<int>::iterator it = lst12.begin();
@@ -258,24 +258,103 @@ int main(void)
 		++it;
 	}
 	std::cout << std::endl;
-	std::cout << "lst12 size: " << lst12.size() << std::endl;
+	std::cout << "lst12 size: " << lst12.size() << std::endl;*/
 
-	ft::List<int>::iterator it13 = lst13.begin();
-	ft::List<int>::iterator ite13 = lst13.end();
-	it13++;
-	it13++;
-	// it13++; //ATTENTION SI ON INC TROP L'it => SEGFAULT
-	// lst13.insert(it13, 3, 12);
-	ft::List<int>::iterator itInserted = lst13.insert(it13, 12);
-	std::cout << "itInserted: " << *itInserted << std::endl;
-	it13 = lst13.begin();
-	while (it13 != ite13)
+
+	// it12++; //ATTENTION SI ON INC TROP L'it => SEGFAULT
+	// lst12.insert(it12, 3, 12);
+/*	ft::List<int>::iterator it12 = lst12.begin();
+	ft::List<int>::iterator ite12 = lst12.end();
+	while (it12 != ite12)
 	{
-		std::cout << *it13 << ' ';
-		++it13;
+		std::cout << *it12 << ' ';
+		++it12;
 	}
 	std::cout << std::endl;
-	std::cout << "lst13 size: " << lst13.size() << std::endl;
+	std::cout << "lst12 size: " << lst12.size() << std::endl;
+	
+	ft::List<int>::iterator it13 = lst12.begin();
+	it13++;
+	ft::List<int>::iterator itInserted = lst12.insert(it13, 12);
+
+	it12 = lst12.begin();
+	ite12 = lst12.end();
+	while (it12 != ite12)
+	{
+		std::cout << *it12 << ' ';
+		++it12;
+	}
+	std::cout << std::endl;
+	std::cout << "lst12 size: " << lst12.size() << std::endl;
+	std::cout << "itInserted: " << *itInserted << std::endl;
+
+	ft::List<int> lst14(lst12);
+	ft::List<int>::iterator it14 = lst14.begin();
+	ft::List<int>::iterator ite14 = lst14.end();
+
+	ite14 = lst14.end();
+	while (it14 != ite14)
+	{
+		std::cout << *it14 << ' ';
+		++it14;
+	}*/
+	
+
+	
+	ft::List<int> lst15(lst12);
+	ft::List<int>::iterator it15 = lst15.begin();
+	it15++;
+
+	ft::List<int> lst16(it15, ++it15);
+	ft::List<int>::iterator it16 = lst16.begin();
+	ft::List<int>::iterator ite16 = lst16.end();
+	while (it16 != ite16)
+	{
+		std::cout << *it16 << ' ';
+		++it16;
+	}
+	std::cout << std::endl;
+
+	ft::List<int>::iterator it12 = lst12.begin();
+	ft::List<int>::iterator ite12 = lst12.end();
+
+
+	lst12.erase(++it12);
+	it12 = lst12.begin();
+	while (it12 != ite12)
+	{
+		std::cout << *it12 << ' ';
+		++it12;
+	}
+	std::cout << std::endl;
+
+	it12 = lst12.begin();
+	++it12;
+	lst12.insert(it12, 3, 12);
+
+	it12 = lst12.begin();
+	while (it12 != ite12)
+	{
+		std::cout << *it12 << ' ';
+		++it12;
+	}
+
+	it12 = lst12.begin();
+	++it12;
+
+	std::vector<int> v;
+	v.push_back(42);
+	v.push_back(42);
+	v.push_back(42);
+	v.push_back(42);
+	lst12.insert(it12, v.begin(), v.end());
+
+	// it12 = lst12.begin();
+	// while (it12 != ite12)
+	// {
+	// 	std::cout << *it12 << ' ';
+	// 	++it12;
+	// }
 
 	return (0);
 }

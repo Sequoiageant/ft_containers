@@ -200,7 +200,7 @@ void ft::List<T>::push_back(const T& val)
 	this->_size++;
 }
 
-void push_back(const value_type &val)
+/*void push_back(const value_type &val)
 {
 	node *insert = new node(val);
 	insert->previous = this->tail->previous;
@@ -208,7 +208,7 @@ void push_back(const value_type &val)
 	this->tail->previous->next = insert;
 	this->tail->previous = insert;
 	this->total++;
-}
+}*/
 
 template<typename T>
 void ft::List<T>::pop_back()
@@ -233,7 +233,7 @@ typename ft::List<T>::iterator ft::List<T>::insert (iterator position, const T& 
 	t_list *tmp = this->_list;
 	iterator it(this->begin());
 
-	while (it != position && tmp)
+	while (it != position)
 	{
 		tmp = tmp->next;
 		++it;
@@ -248,7 +248,7 @@ void ft::List<T>::insert (iterator position, int n, const T& val)
 	std::cerr << "INSERT" << std::endl;
 	for (int i = 0; i < n; ++i)
 	{
-		this->insert(position++, val);
+		this->insert(position, val);
 	}
 }
 
@@ -265,6 +265,27 @@ void ft::List<T>::insert (iterator position, InputIterator first, InputIterator 
 	}
 }
 
+template<typename T>
+typename ft::List<T>::iterator ft::List<T>::erase (ft::List<T>::iterator position)
+{
+	t_list	*tmp = this->_list;
+	iterator it = this->begin();
+
+	while (it != position)
+	{
+		tmp = tmp->next;
+		++it;
+	}
+	this->delete_node(tmp);
+	return --it;
+}
+
+/*template<typename T>
+ft::List<T>::iterator erase (iterator first, iterator last)
+{
+
+}
+*/
 template<typename T>
 void ft::List<T>::swap (List& x)
 {
@@ -494,17 +515,18 @@ void ft::List<T>::displayReverse() const
 	}
 }
 
-// std::ostream & operator<<(std::ostream & o, List<T> const & rhs)
-// {
-// 	t_list *cpy;
+/*template<typename T>
+std::ostream & operator<<(std::ostream & o, typename ft::List<T> const & rhs)
+{
+	typename ft::List<T>::iterator it = rhs.begin();
+	typename ft::List<T>::iterator ite = rhs.end();
 
-// 	cpy = rhs.getList();
-// 	while (cpy->next != NULL)
-// 	{
-// 		o << cpy->value << " ";
-// 		cpy = cpy->next;
-// 	}
-// 	o << std::endl;
-// 	return o;
-// }
+	while (it != ite)
+	{
+		o << *it << " ";
+		++it;
+	}
+	o << std::endl;
+	return o;
+}*/
 

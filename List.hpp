@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/10 17:41:39 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/11 11:43:51 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,8 @@ template<typename T>
 		void insert (iterator position, int n, const T& val);
 		template <class InputIterator>
 		void insert (iterator position, InputIterator first, InputIterator last);
-		// iterator erase (iterator position);
-		// iterator erase (iterator first, iterator last);
+		iterator erase (iterator position);
+		iterator erase (iterator first, iterator last);
 
 		void swap (List& x);
 		void resize (size_type n, T val);
@@ -162,6 +162,7 @@ template<typename T>
 			{
 				node->prev->next = newElem;
 			}
+			node->prev = newElem;
 			newElem->next = node;
 			newElem->prev = node->prev;
 			this->_size++;
@@ -215,13 +216,9 @@ template<typename T>
 		iterator operator--(int) {iterator tmp(*this); operator--(); return tmp;}
 		bool operator==(const iterator& rhs) const {return p==rhs.p;}
 		bool operator!=(const iterator& rhs) const {return p!=rhs.p;}
-		T& operator*() {return p->value;}
+		T& operator*() const {return p->value;}
+		T* operator->() const {return &p->value;}
 		~iterator(void) {}
-		// iterator& operator=(iterator const & rhs) {
-		// 	*this = rhs;
-		// 	return (*this);
-		// }
-
 	};
 
 
