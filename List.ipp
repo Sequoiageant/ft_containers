@@ -350,39 +350,32 @@ void ft::List<T>::clear()
 template<typename T>
 void ft::List<T>::splice (iterator position, List<T>& x)
 {
-	t_list *tmp = this->_list;
-	iterator it(this->begin());
-	iterator itx(x.begin());
-	t_list *tmpx = x._list;
-
 	if (!x.empty())
-	{
-		while (it != position)
-		{
-			tmp = tmp->next;
-			++it;
-		}
-		while (itx != x.end())
-		{
-			this->insert_node(tmp, tmpx);
-			// tmp = tmp->next;
-			tmpx = tmpx->next;
-			++itx;
-		}
-	}
+		this->insert(position, x.begin(), x.end());
+	x.clear();
 }
 
-// template<typename T>
-// void ft::List<T>::splice (iterator position, List<T>& x, iterator i)
-// {
-// }
+template<typename T>
+void ft::List<T>::splice (iterator position, List<T>& x, iterator i)
+{
+	iterator j = i;
+	++j;
+	if (position == i || position == j)
+		return;
 
-// template<typename T>
-// void ft::List<T>::splice (iterator position, List<T>& x, iterator first, iterator last)
-// {
-// }
+	this->insert(position, *i);
+	x.erase(i);
+}
 
-
+template<typename T>
+void ft::List<T>::splice (iterator position, List<T>& x, iterator first, iterator last)
+{
+	if (first != last)
+	{
+		this->insert(position, first, last);
+		x.erase(first, last);
+	}
+}
 
 template<typename T>
 void ft::List<T>::remove (const T& val)
@@ -542,14 +535,26 @@ void ft::List<T>::reverse()
 	}
 }
 
+// template<typename T>
+// void ft::List<T>::displayList() const
+// {
+// 	t_list *cpy = this->_list;
+// 	while (cpy)
+// 	{
+// 		std::cout << cpy->value << " ";
+// 		cpy = cpy->next;
+// 	}
+// 	std::cout << std::endl;
+// }
+
 template<typename T>
-void ft::List<T>::displayList() const
+void ft::List<T>::displayList()
 {
-	t_list *cpy = this->_list;
-	while (cpy)
+	iterator it = this->begin();
+	while (it != this->end())
 	{
-		std::cout << cpy->value << " ";
-		cpy = cpy->next;
+		std::cout << *it << ' ';
+		++it;
 	}
 	std::cout << std::endl;
 }

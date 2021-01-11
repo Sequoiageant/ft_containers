@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/11 18:13:23 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/11 19:31:28 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,6 @@ template<typename T>
 	// const_reverse_iterator rbegin() const;
 	// reverse_iterator rend();
 	// const_reverse_iterator rend() const;
-
-		// t_list* getList(void) const;
 
 		bool empty() const;
 		unsigned int size() const;
@@ -115,7 +113,7 @@ template<typename T>
 
 		void reverse();
 
-		void displayList() const;
+		void displayList();
 		void displayReverse() const;
 
 	private:

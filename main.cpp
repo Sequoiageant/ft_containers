@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 14:17:44 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/11 18:12:30 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/11 19:31:57 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,18 @@ struct is_lower {
 };
 
 bool same_as (int first, int second){ return ( int(first)==int(second) ); }
+
+
+template<typename T>
+void displayList(T first, T last)
+{
+	while (first != last)
+	{
+		std::cout << *first << ' ';
+		++first;
+	}
+	std::cout << std::endl;
+}
 
 int main(void)
 {
@@ -363,9 +375,9 @@ int main(void)
 	std::cout << std::endl;
 
 	ft::List<int>lst14;
-	lst14.push_back(1);
-	lst14.push_back(2);
-	lst14.push_back(3);
+	lst14.push_back(42);
+	lst14.push_back(42);
+	lst14.push_back(42);
 
 	ft::List<int>::iterator it14 = lst14.begin();
 	while (it14 != lst14.end())
@@ -376,14 +388,21 @@ int main(void)
 	std::cout << std::endl;
 
 	it12 = lst12.begin();
-	lst12.splice(++it12, lst14);
-	it12 = lst12.begin();
-	while (it12 != lst12.end())
-	{
-		std::cout << *it12 << ' ';
-		++it12;
-	}
-	std::cout << std::endl;
+	it14 = lst14.begin();
+	ft::List<int>::iterator it14end = it14;
+	it14end++;
+	it14end++;
+	lst12.splice(++it12, lst14, it14, it14end);
+	
+	displayList(lst12.begin(), lst12.end());
+	lst12.displayList();
+	// it12 = lst12.begin();
+	// while (it12 != lst12.end())
+	// {
+	// 	std::cout << *it12 << ' ';
+	// 	++it12;
+	// }
+	// std::cout << std::endl;
 
 	return (0);
 }
