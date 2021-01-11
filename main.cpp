@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 14:17:44 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/11 12:10:28 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/11 18:12:30 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,7 +263,7 @@ int main(void)
 
 	// it12++; //ATTENTION SI ON INC TROP L'it => SEGFAULT
 	// lst12.insert(it12, 3, 12);
-/*	ft::List<int>::iterator it12 = lst12.begin();
+	ft::List<int>::iterator it12 = lst12.begin();
 	ft::List<int>::iterator ite12 = lst12.end();
 	while (it12 != ite12)
 	{
@@ -275,7 +275,8 @@ int main(void)
 	
 	ft::List<int>::iterator it13 = lst12.begin();
 	it13++;
-	ft::List<int>::iterator itInserted = lst12.insert(it13, 12);
+	it13++;
+	ft::List<int>::iterator itInserted = lst12.insert(it13, 88);
 
 	it12 = lst12.begin();
 	ite12 = lst12.end();
@@ -287,18 +288,6 @@ int main(void)
 	std::cout << std::endl;
 	std::cout << "lst12 size: " << lst12.size() << std::endl;
 	std::cout << "itInserted: " << *itInserted << std::endl;
-
-	ft::List<int> lst14(lst12);
-	ft::List<int>::iterator it14 = lst14.begin();
-	ft::List<int>::iterator ite14 = lst14.end();
-
-	ite14 = lst14.end();
-	while (it14 != ite14)
-	{
-		std::cout << *it14 << ' ';
-		++it14;
-	}*/
-	
 
 	
 	ft::List<int> lst15(lst12);
@@ -315,8 +304,8 @@ int main(void)
 	}
 	std::cout << std::endl;
 
-	ft::List<int>::iterator it12 = lst12.begin();
-	ft::List<int>::iterator ite12 = lst12.end();
+	it12 = lst12.begin();
+	ite12 = lst12.end();
 
 
 	lst12.erase(++it12);
@@ -338,23 +327,63 @@ int main(void)
 		std::cout << *it12 << ' ';
 		++it12;
 	}
+	std::cout << std::endl;
 
 	it12 = lst12.begin();
 	++it12;
 
 	std::vector<int> v;
 	v.push_back(42);
-	v.push_back(42);
-	v.push_back(42);
-	v.push_back(42);
+	v.push_back(43);
+	v.push_back(44);
 	lst12.insert(it12, v.begin(), v.end());
 
-	// it12 = lst12.begin();
-	// while (it12 != ite12)
-	// {
-	// 	std::cout << *it12 << ' ';
-	// 	++it12;
-	// }
+	it12 = lst12.begin();
+	while (it12 != lst12.end())
+	{
+		std::cout << *it12 << ' ';
+		++it12;
+	}
+	std::cout << std::endl;
+	
+	it12 = lst12.begin();
+	ft::List<int>::iterator it12end = it12;
+	++it12end;
+	++it12end;
+	++it12end;
+	++it12end;
+	lst12.erase(++it12, it12end);
+	
+	it12 = lst12.begin();
+	while (it12 != lst12.end())
+	{
+		std::cout << *it12 << ' ';
+		++it12;
+	}
+	std::cout << std::endl;
+
+	ft::List<int>lst14;
+	lst14.push_back(1);
+	lst14.push_back(2);
+	lst14.push_back(3);
+
+	ft::List<int>::iterator it14 = lst14.begin();
+	while (it14 != lst14.end())
+	{
+		std::cout << *it14 << ' ';
+		++it14;
+	}
+	std::cout << std::endl;
+
+	it12 = lst12.begin();
+	lst12.splice(++it12, lst14);
+	it12 = lst12.begin();
+	while (it12 != lst12.end())
+	{
+		std::cout << *it12 << ' ';
+		++it12;
+	}
+	std::cout << std::endl;
 
 	return (0);
 }

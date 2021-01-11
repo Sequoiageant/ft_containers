@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/11 11:43:51 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/11 18:13:23 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,9 @@ template<typename T>
 		void resize (size_type n, T val);
 		void clear();
 
-		// void splice (iterator position, list& x);
-		// void splice (iterator position, list& x, iterator i);
-		// void splice (iterator position, list& x, iterator first, iterator last);
+		void splice (iterator position, List<T>& x);
+		void splice (iterator position, List<T>& x, iterator i);
+		void splice (iterator position, List<T>& x, iterator first, iterator last);
 
 		void remove (const T& val);
 
@@ -149,23 +149,26 @@ template<typename T>
 			this->_size--;
 		}
 
-		void	insert_node(t_list *node, const T& val)
+		void	insert_node(t_list *node, t_list *newElem)
 		{
-			t_list *newElem = new t_list;
-
-			newElem->value = val;
 			if (node->prev == NULL)
-			{
 				this->_list = newElem;
-			}
 			else
-			{
 				node->prev->next = newElem;
-			}
+
+			newElem->prev = node->prev;
 			node->prev = newElem;
 			newElem->next = node;
-			newElem->prev = node->prev;
 			this->_size++;
+		}
+
+		t_list *new_node(const T& val)
+		{
+			t_list *newElem = new t_list;
+			newElem->value = val;
+			newElem->prev = NULL;
+			newElem->next = NULL;
+			return (newElem);
 		}
 
 /*		t_list	*find_node(iterator position)
@@ -211,8 +214,12 @@ template<typename T>
 		iterator(t_list *x) : p(x) {}
 		iterator(const iterator& copy) : p(copy.p) {}
 		iterator& operator++() {p = p->next;return *this;}
+		iterator& operator+=(size_type inc) {
+			for (size_type i = 0; i < inc; ++i) { p = p->next; }return *this;}
 		iterator operator++(int) {iterator tmp(*this); operator++(); return tmp;}
 		iterator& operator--() {p = p->prev;return *this;}
+		iterator& operator-=(size_type inc) {
+			for (size_type i = 0; i < inc; ++i) { p = p->prev; }return *this;}
 		iterator operator--(int) {iterator tmp(*this); operator--(); return tmp;}
 		bool operator==(const iterator& rhs) const {return p==rhs.p;}
 		bool operator!=(const iterator& rhs) const {return p!=rhs.p;}
