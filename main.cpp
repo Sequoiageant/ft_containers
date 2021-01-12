@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 14:17:44 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/12 12:02:36 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/12 18:02:18 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,18 @@ void displayList(T first, T last)
 	{
 		std::cout << *first << ' ';
 		++first;
+	}
+	std::cout << std::endl;
+}
+
+template<typename T>
+void displayList(std::list<T> lst)
+{
+	typename std::list<T>::iterator it = lst.begin();
+	while (it != lst.end())
+	{
+		std::cout << *it << ' ';
+		++it;
 	}
 	std::cout << std::endl;
 }
@@ -101,7 +113,6 @@ int main(void)
 	lst6.push_back(5);
 	lst6.push_back(10);
 	lst6.push_back(1);
-
 	std::cout << "lst6: "; lst6.displayList();
 	std::cout << "lst6 size: " << lst6.size() << std::endl;
 
@@ -111,8 +122,9 @@ int main(void)
 	// lst6.remove_if(is_odd());
 	std::cout << "lst6: "; lst6.displayList();
 	std::cout << "lst6 size: " << lst6.size() << std::endl;
+*/
 
-	ft::List<int> lst7;
+/*	ft::List<int> lst7;
 	lst7.push_back(1);
 	lst7.push_back(2);
 	lst7.push_back(3);
@@ -121,7 +133,7 @@ int main(void)
 	lst7.push_back(6);
 	lst7.reverse();
 	std::cout << "lst7: "; lst7.displayList();
-	std::cout << "lst7 size: " << lst7.size() << std::endl;
+	std::cout << "lst7 size: " << lst7.size() << std::endl;*/
 
 	ft::List<int> lst8;
 	lst8.push_back(42);
@@ -134,63 +146,24 @@ int main(void)
 	lst8.push_back(3);
 	lst8.push_back(28);
 	lst8.push_back(1);
+	std::cout << "lst8: "; lst8.displayList();
 	lst8.sort();
 	// lst8.sort(is_higher);
 	// lst8.sort(is_lower());
 	std::cout << "lst8: "; lst8.displayList();
 	std::cout << "lst8 size: " << lst8.size() << std::endl;
 
-	lst8.unique(same_as);
+/*	lst8.unique(same_as);
 	std::cout << "lst8: "; lst8.displayList();
 	std::cout << "lst8 size: " << lst8.size() << std::endl;
 
 	ft::List<int> lst9(6, 3);
 	lst9.unique();
 	std::cout << "lst9: "; lst9.displayList();
-	std::cout << "lst9 size: " << lst9.size() << std::endl;
+	std::cout << "lst9 size: " << lst9.size() << std::endl;*/
 
-*/	/*
-	ft::List<int> first, second;
-	first.push_back(42);
-	first.push_back(3);
-	first.push_back(12);
-	first.push_back(3);
-	first.push_back(43);
+	
 
-	second.push_back(42);
-	second.push_back(3);
-	second.push_back(12);
-	second.push_back(3);
-	second.push_back(43);
-	second.push_back(5);
-	second.push_back(6);
-	first.sort();
- 	second.sort();
-	first.merge(second);
-	std::cout << "my   contains: "; first.displayList();
-
-	std::list<int> test1, test2;
-	test1.push_back(42);
-	test1.push_back(3);
-	test1.push_back(12);
-	test1.push_back(3);
-	test1.push_back(43);
-
-	test2.push_back(42);
-	test2.push_back(3);
-	test2.push_back(12);
-	test2.push_back(3);
-	test2.push_back(43);
-	test2.push_back(5);
-	test2.push_back(6);
- 	// test1.sort();
- 	// test2.sort();
-	test1.merge(test2);
-	std::cout << "real contains:";
-	for (std::list<int>::iterator it=test1.begin(); it!=test1.end(); ++it)
-		std::cout << ' ' << *it;
-	std::cout << '\n';
-*/
 /*
 	ft::List<char> lst10;
 
@@ -414,16 +387,24 @@ int main(void)
 	lst17.push_back(5);
 	lst17.push_back(7);
 	lst17.displayList();
+	// displayList(lst17);
 
 	ft::List<int> lst18;
 	lst18.push_back(2);
 	lst18.push_back(4);
 	lst18.push_back(6);
 	lst18.push_back(8);
+	lst18.push_back(10);
+	lst18.push_back(0);
+	lst18.push_back(5);
 	lst18.displayList();
+	// displayList(lst18);
 
-	lst17.merge(lst18);
+	lst17.merge(lst18); // MERGE no 1
+	// lst17.merge(lst18, is_higher);  // MERGE no 2
+	// displayList(lst17);
 	lst17.displayList();
+	std::cout << "lst 17 size: " << lst17.size() << std::endl;
 
 	return (0);
 }

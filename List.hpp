@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/12 11:38:31 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/12 16:18:11 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,25 @@ template<typename T>
 			val2 = tmp;
 		}
 
+		void	swap_nodes(t_list *node1, t_list *node2) {
+			t_list tmp;
+
+			tmp.prev = node1->prev;
+			tmp.next = node1->next;
+			
+			// if (node1->prev)		
+			// 	node1->prev->next = node2;
+
+			// if (node2->prev)		
+			// 	node2->prev->next = tmp;
+
+			node1->prev = node2->prev;
+			node1->next = node2->next;
+			node2->prev = tmp.prev;
+			node2->next = tmp.next;
+
+		}
+
 		void	unlink_node(t_list *node)
 		{
 			if (node->prev)
@@ -175,6 +194,18 @@ template<typename T>
 			node->prev = newElem;
 			newElem->next = node;
 			this->_size++;
+		}
+
+		void	insert_end(t_list *newElem)
+		{
+			t_list *copy = this->_list;
+			while(copy->next)
+			{
+				copy = copy->next;
+			}
+			// newElem->next = copy->next;
+			newElem->prev = copy;
+			copy->next = newElem;
 		}
 
 		t_list *new_node(const T& val)
@@ -231,22 +262,22 @@ template<typename T>
 		iterator& operator++() {p = p->next;return *this;}
 		iterator& operator+=(size_type inc) {
 			for (size_type i = 0; i < inc; ++i) { p = p->next; }return *this;}
-		iterator operator++(int) {iterator tmp(*this); operator++(); return tmp;}
-		iterator& operator--() {p = p->prev;return *this;}
-		iterator& operator-=(size_type inc) {
-			for (size_type i = 0; i < inc; ++i) { p = p->prev; }return *this;}
-		iterator operator--(int) {iterator tmp(*this); operator--(); return tmp;}
-		bool operator==(const iterator& rhs) const {return p==rhs.p;}
-		bool operator!=(const iterator& rhs) const {return p!=rhs.p;}
-		T& operator*() const {return p->value;}
-		T* operator->() const {return &p->value;}
-		~iterator(void) {}
-	};
+				iterator operator++(int) {iterator tmp(*this); operator++(); return tmp;}
+			iterator& operator--() {p = p->prev;return *this;}
+			iterator& operator-=(size_type inc) {
+				for (size_type i = 0; i < inc; ++i) { p = p->prev; }return *this;}
+					iterator operator--(int) {iterator tmp(*this); operator--(); return tmp;}
+				bool operator==(const iterator& rhs) const {return p==rhs.p;}
+				bool operator!=(const iterator& rhs) const {return p!=rhs.p;}
+				T& operator*() const {return p->value;}
+				T* operator->() const {return &p->value;}
+				~iterator(void) {}
+			};
 
 
 template<typename T>
-	std::ostream & operator<<(std::ostream & o, List<T> const & rhs);
-}
+			std::ostream & operator<<(std::ostream & o, List<T> const & rhs);
+		}
 
 #include "List.ipp"
 

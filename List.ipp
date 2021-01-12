@@ -176,26 +176,13 @@ template<typename T>
 void ft::List<T>::push_back(const T& val)
 {
 	t_list *newElem;
-	t_list *copy;
 
-	newElem = new t_list;
-
-	newElem->prev = NULL;
-	newElem->next = NULL;
-	newElem->value = val;
+	newElem = this->new_node(val);
 
 	if (this->_size == 0)
 		this->_list = newElem;
 	else
-	{
-		copy = this->_list;
-		while(copy->next)
-		{
-			copy = copy->next;
-		}
-		newElem->prev = copy;
-		copy->next = newElem;
-	}
+		this->insert_end(newElem);
 	this->_size++;
 }
 
@@ -531,48 +518,73 @@ void ft::List<T>::merge (List& x)
 			}
 			else
 				++first1;
-			// if (first2 != last2)
-			// {
-			// 	iterator next = first2;
-			// 	this->splice(last1, x, next++, last2);
-			// 	first2 = next;
-			// }
+		}
+		if (first2 != last2)
+		{
+			this->insert_end(x._list);
+			// this->_size += x._size;
 		}
 	}
 }
 
-/*
-template<typename T>
-void ft::List<T>::merge (List& x)
-{
-	t_list *tmp = this->_list;
-	t_list *tmp2 = x._list;
 
-	if (&x == this)
-		return;
-
-	this->sort();
-	while (tmp)
-	{
-		if (tmp->value < tmp2->value)
-			this->insert_node(tmp, tmp2);
-			tmp = tmp->next;
-			tmp2 = tmp2->next;
-	}
-	while(tmp2)
-	{
-		this->push_back(tmp2->value);
-	}
-	x.clear();
-}
 template<typename T>
 template <class Compare>
 void ft::List<T>::merge (List& x, Compare comp)
 {
+	if (&x != this)
+	{
+		iterator first1 = this->begin();
+		iterator last1 = this->end();
+		iterator first2 = x.begin();
+		iterator last2 = x.end();
 
-}*/
+		while (first1 != last1 && first2 != last2)
+		{
+			if (comp(*first2, *first1))
+			{
+				iterator next = first2;
+				this->splice(first1, x, next++);
+				first2 = next;
+			}
+			else
+				++first1;
+		}
+		if (first2 != last2)
+		{
+			this->insert_end(x._list);
+			// this->_size += x._size;
+		}
+	}
+}
 
+template<typename T>
+void ft::List<T>::sort()
+{
+	iterator first1 = this->begin();
+	iterator last = this->end();
+	iterator first2 = first1;
 
+	++first2;
+	while (first1 != last)
+	{
+		if (*first2 < *first1)
+		{
+			iterator next = first1;
+			next++;
+			this->splice(first1, *this, first2);
+			first1 = next;
+		}
+		else
+			++first2;
+	}
+	// if (first2 != last2)
+	// {
+	// 	this->insert_end(x._list);
+	// 		// this->_size += x._size;
+	// }
+}
+/*
 template<typename T>
 void ft::List<T>::sort()
 {
@@ -591,6 +603,7 @@ void ft::List<T>::sort()
 		i--;
 	}
 }
+*/
 template<typename T>
 template <class Compare>
 void ft::List<T>::sort (Compare comp)
@@ -611,7 +624,7 @@ void ft::List<T>::sort (Compare comp)
 	}
 }
 
-template<typename T>
+/*template<typename T>
 void ft::List<T>::reverse()
 {
 	t_list *tmp = this->_list;
@@ -628,6 +641,28 @@ void ft::List<T>::reverse()
 		tmp = tmp->next;
 		tmp2 = tmp2->prev;
 		i--;
+	}
+}*/
+
+template<typename T>
+void ft::List<T>::reverse()
+{
+	if (this->_list->next == NULL)
+		return;
+
+	t_list *cpy = this->_list;
+	t_list *tmp;
+
+	while (cpy->next)
+		cpy = cpy->next;
+
+	this->_list = cpy;
+	while (cpy)
+	{
+		tmp = cpy->prev;
+		cpy->prev = cpy->next;
+		cpy->next = tmp;
+		cpy = tmp;
 	}
 }
 
