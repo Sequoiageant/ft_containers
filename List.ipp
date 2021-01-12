@@ -351,8 +351,33 @@ template<typename T>
 void ft::List<T>::splice (iterator position, List<T>& x)
 {
 	if (!x.empty())
-		this->insert(position, x.begin(), x.end());
-	x.clear();
+	{
+		iterator it = this->begin();
+		t_list *tmp = this->_list;
+		t_list *tmpx = x._list;
+		iterator last = x.end();
+
+		while (it != position)
+		{
+			tmp = tmp->next;
+			++it;
+		}
+		it = x.begin();
+		iterator next = it;
+		t_list *tmpx2;
+		while (it != last)
+		{
+			tmpx2 = tmpx->next;
+			++next;
+			x.unlink_node(tmpx);
+			this->insert_node(tmp, tmpx);
+			tmpx = tmpx2;
+			it = next;
+		}
+	}
+	// if (!x.empty())
+	// 	this->insert(position, x.begin(), x.end());
+	// x.clear();
 }
 
 template<typename T>
@@ -363,8 +388,28 @@ void ft::List<T>::splice (iterator position, List<T>& x, iterator i)
 	if (position == i || position == j)
 		return;
 
-	this->insert(position, *i);
-	x.erase(i);
+	iterator it = this->begin();
+	t_list *tmp = this->_list;
+	t_list *tmpx = x._list;
+
+	while (it != position)
+	{
+		tmp = tmp->next;
+		++it;
+	}
+	it = x.begin();
+	while (it != i)
+	{
+		tmpx = tmpx->next;
+		++it;
+	}
+	x.unlink_node(tmpx);
+	this->insert_node(tmp, tmpx);
+
+
+	// this->insert(position, *i);
+	// x.erase(i);
+	// std::cerr << "x size: " << x._size << std::endl;
 }
 
 template<typename T>
@@ -372,8 +417,29 @@ void ft::List<T>::splice (iterator position, List<T>& x, iterator first, iterato
 {
 	if (first != last)
 	{
-		this->insert(position, first, last);
-		x.erase(first, last);
+
+		iterator it = this->begin();
+		t_list *tmp = this->_list;
+		t_list *tmpx = x._list;
+
+		while (it != position)
+		{
+			tmp = tmp->next;
+			++it;
+		}
+		iterator next = first;
+		t_list *tmpx2;
+		while (first != last)
+		{
+			tmpx2 = tmpx->next;
+			++next;
+			x.unlink_node(tmpx);
+			this->insert_node(tmp, tmpx);
+			tmpx = tmpx2;
+			first = next;
+		}
+		// this->insert(position, first, last);
+		// x.erase(first, last);
 	}
 }
 
@@ -442,6 +508,36 @@ void ft::List<T>::unique (BinaryPredicate binary_pred)
 		tmp = tmp2;
 		tmp2 = tmp2->next;
 		i--;
+	}
+}
+
+template<typename T>
+void ft::List<T>::merge (List& x)
+{
+	if (&x != this)
+	{
+		iterator first1 = this->begin();
+		iterator last1 = this->end();
+		iterator first2 = x.begin();
+		iterator last2 = x.end();
+
+		while (first1 != last1 && first2 != last2)
+		{
+			if (*first2 < *first1)
+			{
+				iterator next = first2;
+				this->splice(first1, x, next++);
+				first2 = next;
+			}
+			else
+				++first1;
+			// if (first2 != last2)
+			// {
+			// 	iterator next = first2;
+			// 	this->splice(last1, x, next++, last2);
+			// 	first2 = next;
+			// }
+		}
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 14:17:44 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/11 19:31:57 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/12 12:02:36 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -392,9 +392,12 @@ int main(void)
 	ft::List<int>::iterator it14end = it14;
 	it14end++;
 	it14end++;
-	lst12.splice(++it12, lst14, it14, it14end);
+	it14end++;
+	// lst12.splice(++it12, lst14); // splice no 1
+	// lst12.splice(++it12, lst14, it14); // splice no 2
+	lst12.splice(++it12, lst14, it14, it14end); // splice no 3
 	
-	displayList(lst12.begin(), lst12.end());
+	// displayList(lst12.begin(), lst12.end());
 	lst12.displayList();
 	// it12 = lst12.begin();
 	// while (it12 != lst12.end())
@@ -403,6 +406,24 @@ int main(void)
 	// 	++it12;
 	// }
 	// std::cout << std::endl;
+
+
+	ft::List<int> lst17;
+	lst17.push_back(1);
+	lst17.push_back(3);
+	lst17.push_back(5);
+	lst17.push_back(7);
+	lst17.displayList();
+
+	ft::List<int> lst18;
+	lst18.push_back(2);
+	lst18.push_back(4);
+	lst18.push_back(6);
+	lst18.push_back(8);
+	lst18.displayList();
+
+	lst17.merge(lst18);
+	lst17.displayList();
 
 	return (0);
 }

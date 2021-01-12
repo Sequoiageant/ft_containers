@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/11 19:31:28 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/12 11:38:31 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,19 @@ template<typename T>
 			val2 = tmp;
 		}
 
-		void	delete_node(t_list *node)
+		void	unlink_node(t_list *node)
+		{
+			if (node->prev)
+				node->prev->next = node->next;
+			else
+				this->_list = this->_list->next;
+			
+			if (node->next)
+				node->next->prev = node->prev;
+			this->_size--;
+		}
+
+/*		void	unlink_node(t_list *node)
 		{
 			if (node->next == NULL)
 				node->prev->next = NULL;
@@ -138,13 +150,18 @@ template<typename T>
 				node->next->prev = NULL;
 				this->_list = this->_list->next;
 			}
-			else
+			if (node->next)
 			{
 				node->prev->next = node->next;
 				node->next->prev = node->prev;
 			}
-			delete node;
 			this->_size--;
+		}*/
+
+		void	delete_node(t_list *node)
+		{
+			this->unlink_node(node);
+			delete node;
 		}
 
 		void	insert_node(t_list *node, t_list *newElem)
