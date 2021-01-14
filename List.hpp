@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   List.hpp                                           :+:      :+:    :+:   */
+/*   list.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/13 18:54:55 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/14 10:59:30 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,12 @@ template<typename T>
 		typedef	size_t		size_type;
 
 
-
 		list(void);
 		list(unsigned int size, const T &val);
 
 		template<typename InputIterator>
+		typedef typename std::__is_integer<_InputIterator>::__type _Integral;
+00617       _M_initialize_dispatch(__first, __last, _Integral());
 		list(InputIterator first, InputIterator last);
 
 		list(const list<T> & copy);
@@ -57,17 +58,17 @@ template<typename T>
 		list<T> & operator=(list<T> const & rhs);
 
 
-		iterator begin(void) { return iterator(this->_list); }
-		const_iterator begin() const { return const_iterator(this->_list); }
+		iterator begin(void) { std::cerr << "begin" << std::endl; return iterator(this->_list); }
+		const_iterator begin() const { std::cerr << "begin const" << std::endl; return const_iterator(this->_list); }
 		
 		iterator end(void) { return iterator(this->back_ptr()); }
 		const_iterator end() const { return const_iterator(this->back_ptr()); }
 		
-		reverse_iterator rbegin(void) { return reverse_iterator(this->back_ptr()); }
-		const_reverse_iterator rbegin(void) const { return const_reverse_iterator(this->back_ptr()); }
+		reverse_iterator rbegin(void) {std::cerr << "rbegin" << std::endl; return reverse_iterator(this->last_ptr()); }
+		const_reverse_iterator rbegin(void) const {std::cerr << "rbegin const" << std::endl; return const_reverse_iterator(this->last_ptr()); }
 		
-		reverse_iterator rend(void) { return reverse_iterator(this->_list); }
-		const_reverse_iterator rend(void) const { return const_reverse_iterator(this->_list); }
+		reverse_iterator rend(void) { return reverse_iterator(this->_list->prev); }
+		const_reverse_iterator rend(void) const { return const_reverse_iterator(this->_list->prev); }
 
 		bool empty() const;
 		unsigned int size() const;
@@ -248,6 +249,17 @@ template<typename T>
 		// 	return this->_list;
 		// }
 
+		t_list *last_ptr() const
+		{
+			t_list *cpy = this->_list;
+
+			while (cpy->next)
+			{
+				cpy = cpy->next;
+			}
+			return cpy;
+		}
+
 		t_list *back_ptr() const
 		{
 			t_list *cpy = this->_list;
@@ -284,9 +296,10 @@ template<typename T>
 		bool operator==(const iterator& rhs) const {return p==rhs.p;}
 		bool operator!=(const iterator& rhs) const {return p!=rhs.p;}
 		T& operator*() const {return p->value;}
-		T* operator->() const {return &p->value;}
+		T* operator->() const {return &(p->value);}
 		~iterator(void) {}
 };
+
 
 template<typename T>
 	class list<T>::reverse_iterator : public list<T>::iterator
@@ -294,8 +307,8 @@ template<typename T>
 
 	public:
 		reverse_iterator(void) {}
-		reverse_iterator(t_list *x) : iterator::p(x) {}
-		reverse_iterator(const reverse_iterator& copy) : iterator::p(copy.p) {}
+		reverse_iterator(t_list *x) : iterator(x) {}
+		reverse_iterator(const reverse_iterator& copy) : iterator(copy) {}
 		reverse_iterator& operator++() {this->p = this->p->prev;return *this;}
 		reverse_iterator& operator+=(size_type inc) {
 			for (size_type i = 0; i < inc; ++i) { this->p = this->p->prev; } return *this;
@@ -306,6 +319,7 @@ template<typename T>
 			for (size_type i = 0; i < inc; ++i) { this->p = this->p->next; } return *this;
 		}
 		reverse_iterator operator--(int) {reverse_iterator tmp(*this); operator--(); return tmp;}
+		T& operator*() const {return this->p->value;}
 		~reverse_iterator(void) {}
 };
 
@@ -333,7 +347,7 @@ template<typename T>
 		bool operator==(const const_iterator& rhs) const {return p==rhs.p;}
 		bool operator!=(const const_iterator& rhs) const {return p!=rhs.p;}
 		const T& operator*() const {return p->value;}
-		const T* operator->() const {return &p->value;}
+		const T* operator->() const {return &(p->value);}
 		~const_iterator(void) {}
 };
 
@@ -343,8 +357,8 @@ template<typename T>
 
 	public:
 		const_reverse_iterator(void) {}
-		const_reverse_iterator(t_list *x) : iterator::p(x) {}
-		const_reverse_iterator(const const_reverse_iterator& copy) : iterator::p(copy.p) {}
+		const_reverse_iterator(t_list *x) : const_iterator(x) {}
+		const_reverse_iterator(const const_reverse_iterator& copy) : const_iterator(copy) {}
 		const_reverse_iterator& operator++() {this->p = this->p->prev;return *this;}
 		const_reverse_iterator& operator+=(size_type inc) {
 			for (size_type i = 0; i < inc; ++i) { this->p = this->p->prev; } return *this;
@@ -355,7 +369,7 @@ template<typename T>
 			for (size_type i = 0; i < inc; ++i) { this->p = this->p->next; } return *this;
 		}
 		const_reverse_iterator operator--(int) {const_reverse_iterator tmp(*this); operator--(); return tmp;}
-		~reverse_iterator(void) {}
+		~const_reverse_iterator(void) {}
 };
 
 template<typename T>

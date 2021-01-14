@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 14:17:44 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/13 18:22:06 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/14 10:30:10 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -413,27 +413,32 @@ int main(void)
 	lst19.push_back(4);
 	lst19.push_back(5);
 	
-	ft::list<int>lst20;
-	lst20.push_back(1);
-	lst20.push_back(2);
-	lst20.push_back(3);
-	lst20.push_back(4);
-	// lst20.push_back(5);
-	
-	if (lst19 == lst20)
-		std::cout << "lst19 == lst20: " << std::endl;
-	else
-		std::cout << "lst19 != lst20: " << std::endl;	
+	const ft::list<int>lst20(lst19);
 
-	if (lst19 != lst20)
-		std::cout << "lst19 != lst20: " << std::endl;
-	else
-		std::cout << "lst19 == lst20: " << std::endl;
+	ft::list<int>::const_iterator it20 = lst20.begin();
+	ft::list<int>::const_iterator ite20 = lst20.end();
+
+	while (it20 != ite20)
+	{
+		std::cout << *it20 << ' ';
+		++it20;
+	}
+	std::cout << std::endl;
 	
-	if (lst19 < lst20)
-		std::cout << "lst19 < lst20: " << std::endl;
-	else
-		std::cout << "lst19 >= lst20: " << std::endl;
+	// if (lst19 == lst20)
+	// 	std::cout << "lst19 == lst20: " << std::endl;
+	// else
+	// 	std::cout << "lst19 != lst20: " << std::endl;	
+
+	// if (lst19 != lst20)
+	// 	std::cout << "lst19 != lst20: " << std::endl;
+	// else
+	// 	std::cout << "lst19 == lst20: " << std::endl;
+	
+	// if (lst19 < lst20)
+	// 	std::cout << "lst19 < lst20: " << std::endl;
+	// else
+	// 	std::cout << "lst19 >= lst20: " << std::endl;
 
 	return (0);
 }
