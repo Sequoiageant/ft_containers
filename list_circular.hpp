@@ -1,17 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   list.hpp                                           :+:      :+:    :+:   */
+/*   list_circular.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/14 16:21:54 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/14 18:28:17 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIST_HPP
-# define LIST_HPP
+
+#ifndef LIST_CIRCULAR_HPP
+# define LIST_CIRCULAR_HPP
 
 # include <string>
 # include <iostream>
@@ -22,12 +23,18 @@
 namespace ft
 {
 
-template<typename T>
-	struct				t_list
+struct				t_base
 	{
-		T				value;
+		struct t_base	*prev;
+		struct t_base	*next;
+	};
+
+template<typename T>
+	struct				t_list // : t_base
+	{
 		struct t_list	*prev;
 		struct t_list	*next;
+		T				value;
 	};
 
 template<typename T>
@@ -56,17 +63,17 @@ template<typename T>
 		list<T> & operator=(list<T> const & rhs);
 
 
-		iterator begin(void) { std::cerr << "begin" << std::endl; return iterator(this->_list); }
-		const_iterator begin() const { std::cerr << "begin const" << std::endl; return const_iterator(this->_list); }
+		iterator begin(void) { /*std::cerr << "begin" << std::endl;*/ return iterator(this->_list->next); }
+		const_iterator begin() const { /*std::cerr << "begin const" << std::endl;*/ return const_iterator(this->_list->next); }
 		
-		iterator end(void) { return iterator(this->back_ptr()); }
-		const_iterator end() const { return const_iterator(this->back_ptr()); }
+		iterator end(void) { return iterator(this->_list); }
+		const_iterator end() const { return const_iterator(this->_list); }
 		
-		reverse_iterator rbegin(void) {std::cerr << "rbegin" << std::endl; return reverse_iterator(this->last_ptr()); }
-		const_reverse_iterator rbegin(void) const {std::cerr << "rbegin const" << std::endl; return const_reverse_iterator(this->last_ptr()); }
+		reverse_iterator rbegin(void) {/*std::cerr << "rbegin" << std::endl;*/ return reverse_iterator(this->_list->prev); }
+		const_reverse_iterator rbegin(void) const {/*std::cerr << "rbegin const" << std::endl;*/ return const_reverse_iterator(this->_list->prev); }
 		
-		reverse_iterator rend(void) { return reverse_iterator(this->_list->prev); }
-		const_reverse_iterator rend(void) const { return const_reverse_iterator(this->_list->prev); }
+		reverse_iterator rend(void) { return reverse_iterator(this->_list); }
+		const_reverse_iterator rend(void) const { return const_reverse_iterator(this->_list); }
 
 		bool empty() const;
 		size_type size() const;
@@ -130,6 +137,14 @@ template<typename T>
 		t_list			*_list;
 		size_type		_size;
 
+		void init_list()
+		{
+			this->_list = new t_list;
+			this->_list->value = T();
+			this->_list->prev = this->_list;
+			this->_list->next = this->_list;
+		}
+
 		void	swap_values(T& val1, T& val2) {
 			T tmp;
 			tmp = val1;
@@ -158,13 +173,8 @@ template<typename T>
 
 		void	unlink_node(t_list *node)
 		{
-			if (node->prev)
-				node->prev->next = node->next;
-			else
-				this->_list = node->next;
-			
-			if (node->next)
-				node->next->prev = node->prev;
+			node->prev->next = node->next;
+			node->next->prev = node->prev;
 			this->_size--;
 		}
 
@@ -176,11 +186,7 @@ template<typename T>
 
 		void	insert_node(t_list *node, t_list *newElem)
 		{
-			if (node->prev == NULL)
-				this->_list = newElem;
-			else
-				node->prev->next = newElem;
-
+			node->prev->next = newElem;
 			newElem->prev = node->prev;
 			node->prev = newElem;
 			newElem->next = node;
@@ -442,6 +448,6 @@ void swap (list<T>& x, list<T>& y)
 
 }
 
-#include "list.ipp"
+#include "list_circular.ipp"
 
-#endif // LIST_HPP
+#endif // LIST_CIRCULAR_HPP

@@ -6,11 +6,11 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 14:17:44 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/14 10:30:10 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/14 17:01:50 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "list.hpp"
+#include "list_circular.hpp"
 #include <list>
 #include <vector>
 
@@ -439,6 +439,10 @@ int main(void)
 	// 	std::cout << "lst19 < lst20: " << std::endl;
 	// else
 	// 	std::cout << "lst19 >= lst20: " << std::endl;
+
+	std:: list<int> lst30(3,3);
+	std::cout << "MAX SIZE " << lst19.max_size() << std::endl;
+	std::cout << "MAX SIZE " << lst30.max_size() << std::endl;
 
 	return (0);
 }

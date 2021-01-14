@@ -10,12 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "list.hpp"
+#include "list_circular.hpp"
 #include <iostream>
 
 template<typename T>
 ft::list<T>::list(void) : _list(NULL), _size(0)
 {
+	this->init_list();
 	return;
 }
 
@@ -74,7 +75,7 @@ ft::list<T>& ft::list<T>::operator=(list<T> const & rhs)
 template<typename T>
 bool ft::list<T>::empty() const
 {
-	return (this->_size == 0);
+	return (this->_list == this->_list->next);
 }
 
 template<typename T>
@@ -93,37 +94,25 @@ size_t ft::list<T>::max_size() const
 template<typename T>
 T& ft::list<T>::front()
 {
-	return this->_list->value;
+	return this->_list->next->value;
 }
 
 template<typename T>
 const T& ft::list<T>::front() const
 {
-	return this->_list->value;
+	return this->_list->next->value;
 }
 
 template<typename T>
 T& ft::list<T>::back()
 {
-	t_list *cpy = this->_list;
-
-	while (cpy->next)
-	{
-		cpy = cpy->next;
-	}
-	return cpy->value;
+	return this->_list->prev->value;
 }
 
 template<typename T>
 const T& ft::list<T>::back() const
 {
-	t_list *cpy = this->_list;
-
-	while (cpy->next)
-	{
-		cpy = cpy->next;
-	}
-	return cpy->value;
+	return this->_list->prev->value;
 }
 
 template<typename T>
@@ -151,66 +140,32 @@ void ft::list<T>::assign (size_t n, const T& val)
 template<typename T>
 void ft::list<T>::push_front (const T& val)
 {
-	t_list *newElem;
-
-	newElem = new t_list;
-
-	newElem->value = val;
-	newElem->prev = NULL;
-	newElem->next = this->_list;
-	this->_list = newElem;
-	this->_size++;
+	this->insert(this->begin(), val);
 }
 
 template<typename T>
 void ft::list<T>::pop_front()
 {
-	t_list *tmp;
-
-	tmp = this->_list->next;
-	delete this->_list;
-	this->_list = tmp;
-	this->_size--;
+	this->delete_node(this->_list->next);
 }
 
 template<typename T>
 void ft::list<T>::push_back(const T& val)
 {
-	t_list *newElem;
-
-	newElem = this->new_node(val);
-
-	this->insert_end(newElem);
+	this->insert(this->end(), val);
 }
-
-/*void push_back(const value_type &val)
-{
-	node *insert = new node(val);
-	insert->previous = this->tail->previous;
-	insert->next = this->tail;
-	this->tail->previous->next = insert;
-	this->tail->previous = insert;
-	this->total++;
-}*/
 
 template<typename T>
 void ft::list<T>::pop_back()
 {
-	t_list *cpy = this->_list;
-	while (cpy->next->next)
-	{
-		cpy = cpy->next;
-	}
-	delete cpy->next;
-	cpy->next = NULL;
-	this->_size--;
+	this->delete_node(this->_list->prev);
 }
 
 
 template<typename T>
 typename ft::list<T>::iterator ft::list<T>::insert (iterator position, const T& val)
 {
-	t_list *tmp = this->_list;
+	t_list *tmp = this->_list->next;
 	iterator it(this->begin());
 
 	while (it != position)
@@ -261,12 +216,9 @@ void ft::list<T>::insert (iterator position, InputIterator first, InputIterator 
 template<typename T>
 typename ft::list<T>::iterator ft::list<T>::erase (ft::list<T>::iterator position)
 {
-	t_list	*tmp = this->_list;
+	t_list	*tmp = this->_list->next;
 	iterator it = this->begin();
 	iterator ret(position);
-	
-	if (ret++ == NULL)
-		ret = this->end();
 
 	while (it != position)
 	{
@@ -319,16 +271,10 @@ void ft::list<T>::resize (size_t n, T val)
 template<typename T>
 void ft::list<T>::clear()
 {
-	t_list *tmp;
-
 	while (this->_size > 0)
 	{
-		tmp = this->_list->next;
-		delete this->_list;
-		this->_list = tmp;
-		this->_size--;
+		this->pop_back();
 	}
-	this->_list = NULL;
 }
 
 template<typename T>
