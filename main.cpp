@@ -6,11 +6,11 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 14:17:44 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/14 17:01:50 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/15 23:01:31 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "list_circular.hpp"
+#include "list.hpp"
 #include <list>
 #include <vector>
 
@@ -400,11 +400,11 @@ int main(void)
 	lst18.displaylist();
 	// displaylist(lst18);
 
-	lst17.merge(lst18); // MERGE no 1
+	lst18.merge(lst17); // MERGE no 1
 	// lst17.merge(lst18, is_higher);  // MERGE no 2
 	// displaylist(lst17);
-	lst17.displaylist();
-	std::cout << "lst 17 size: " << lst17.size() << std::endl;
+	lst18.displaylist();
+	std::cout << "lst 17 size: " << lst18.size() << std::endl;
 
 	ft::list<int>lst19;
 	lst19.push_back(1);

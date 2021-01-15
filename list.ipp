@@ -10,20 +10,20 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "list_circular.hpp"
+#include "list.hpp"
 #include <iostream>
+#include <limits>
 
 template<typename T>
 ft::list<T>::list(void) : _list(NULL), _size(0)
 {
-	this->init_list();
 	return;
 }
 
 template<typename T>
-ft::list<T>::list(size_t size, const T &val) : _list(NULL), _size(0)
+ft::list<T>::list(unsigned int size, const T &val) : _list(NULL), _size(0)
 {
-	for (size_t i = 0; i < size; ++i)
+	for (unsigned int i = 0; i < size; ++i)
 	{
 		this->push_back(val);
 	}
@@ -55,7 +55,6 @@ template<typename T>
 ft::list<T>::~list(void)
 {
 	this->clear();
-	delete this->_list;
 }
 
 template<typename T>
@@ -76,44 +75,55 @@ ft::list<T>& ft::list<T>::operator=(list<T> const & rhs)
 template<typename T>
 bool ft::list<T>::empty() const
 {
-	return (this->_list == this->_list->next);
+	return (this->_size == 0);
 }
 
 template<typename T>
-size_t ft::list<T>::size() const
+unsigned int ft::list<T>::size() const
 {
 	return this->_size;
 }
 
 template<typename T>
-size_t ft::list<T>::max_size() const
+unsigned int ft::list<T>::max_size() const
 {
-	std::allocator<t_list> a;
-	return a.max_size();
+	return (std::numeric_limits<std::size_t>::max() / sizeof(ft::t_list<T>));
 }
 
 template<typename T>
 T& ft::list<T>::front()
 {
-	return this->_list->next->value;
+	return this->_list->value;
 }
 
 template<typename T>
 const T& ft::list<T>::front() const
 {
-	return this->_list->next->value;
+	return this->_list->value;
 }
 
 template<typename T>
 T& ft::list<T>::back()
 {
-	return this->_list->prev->value;
+	t_list *cpy = this->_list;
+
+	while (cpy->next)
+	{
+		cpy = cpy->next;
+	}
+	return cpy->value;
 }
 
 template<typename T>
 const T& ft::list<T>::back() const
 {
-	return this->_list->prev->value;
+	t_list *cpy = this->_list;
+
+	while (cpy->next)
+	{
+		cpy = cpy->next;
+	}
+	return cpy->value;
 }
 
 template<typename T>
@@ -129,10 +139,10 @@ void ft::list<T>::assign (InputIterator first, InputIterator last)
 }
 
 template<typename T>
-void ft::list<T>::assign (size_t n, const T& val)
+void ft::list<T>::assign (unsigned int n, const T& val)
 {
 	this->clear();
-	for (size_t i = 0; i < n; ++i)
+	for (unsigned int i = 0; i < n; ++i)
 	{
 		this->push_back(val);
 	}
@@ -141,32 +151,66 @@ void ft::list<T>::assign (size_t n, const T& val)
 template<typename T>
 void ft::list<T>::push_front (const T& val)
 {
-	this->insert(this->begin(), val);
+	t_list *newElem;
+
+	newElem = new t_list;
+
+	newElem->value = val;
+	newElem->prev = NULL;
+	newElem->next = this->_list;
+	this->_list = newElem;
+	this->_size++;
 }
 
 template<typename T>
 void ft::list<T>::pop_front()
 {
-	this->delete_node(this->_list->next);
+	t_list *tmp;
+
+	tmp = this->_list->next;
+	delete this->_list;
+	this->_list = tmp;
+	this->_size--;
 }
 
 template<typename T>
 void ft::list<T>::push_back(const T& val)
 {
-	this->insert(this->end(), val);
+	t_list *newElem;
+
+	newElem = this->new_node(val);
+
+	this->insert_end(newElem);
 }
+
+/*void push_back(const value_type &val)
+{
+	node *insert = new node(val);
+	insert->previous = this->tail->previous;
+	insert->next = this->tail;
+	this->tail->previous->next = insert;
+	this->tail->previous = insert;
+	this->total++;
+}*/
 
 template<typename T>
 void ft::list<T>::pop_back()
 {
-	this->delete_node(this->_list->prev);
+	t_list *cpy = this->_list;
+	while (cpy->next->next)
+	{
+		cpy = cpy->next;
+	}
+	delete cpy->next;
+	cpy->next = NULL;
+	this->_size--;
 }
 
 
 template<typename T>
 typename ft::list<T>::iterator ft::list<T>::insert (iterator position, const T& val)
 {
-	t_list *tmp = this->_list->next;
+	t_list *tmp = this->_list;
 	iterator it(this->begin());
 
 	while (it != position)
@@ -182,7 +226,7 @@ template<typename T>
 void ft::list<T>::insert (iterator position, int n, const T& val)
 {
 	iterator it = this->begin();
-	t_list *tmp = this->_list->next;
+	t_list *tmp = this->_list;
 
 	while (it != position)
 	{
@@ -200,7 +244,7 @@ template <class InputIterator>
 void ft::list<T>::insert (iterator position, InputIterator first, InputIterator last)
 {
 	iterator it = this->begin();
-	t_list *tmp = this->_list->next;
+	t_list *tmp = this->_list;
 
 	while (it != position)
 	{
@@ -217,10 +261,12 @@ void ft::list<T>::insert (iterator position, InputIterator first, InputIterator 
 template<typename T>
 typename ft::list<T>::iterator ft::list<T>::erase (ft::list<T>::iterator position)
 {
-	t_list	*tmp = this->_list->next;
+	t_list	*tmp = this->_list;
 	iterator it = this->begin();
 	iterator ret(position);
-	++ret;
+	
+	if (ret++ == NULL)
+		ret = this->end();
 
 	while (it != position)
 	{
@@ -273,10 +319,16 @@ void ft::list<T>::resize (size_t n, T val)
 template<typename T>
 void ft::list<T>::clear()
 {
+	t_list *tmp;
+
 	while (this->_size > 0)
 	{
-		this->pop_back();
+		tmp = this->_list->next;
+		delete this->_list;
+		this->_list = tmp;
+		this->_size--;
 	}
+	this->_list = NULL;
 }
 
 template<typename T>
@@ -285,8 +337,8 @@ void ft::list<T>::splice (iterator position, list<T>& x)
 	if (!x.empty())
 	{
 		iterator it = this->begin();
-		t_list *tmp = this->_list->next;
-		t_list *tmpx = x._list->next;
+		t_list *tmp = this->_list;
+		t_list *tmpx = x._list;
 		iterator last = x.end();
 
 		while (it != position)
@@ -318,8 +370,8 @@ void ft::list<T>::splice (iterator position, list<T>& x, iterator i)
 		return;
 
 	iterator it = this->begin();
-	t_list *tmp = this->_list->next;
-	t_list *tmpx = x._list->next;
+	t_list *tmp = this->_list;
+	t_list *tmpx = x._list;
 
 	while (it != position)
 	{
@@ -343,8 +395,8 @@ void ft::list<T>::splice (iterator position, list<T>& x, iterator first, iterato
 	{
 
 		iterator it = this->begin();
-		t_list *tmp = this->_list->next;
-		t_list *tmpx = x._list->next;
+		t_list *tmp = this->_list;
+		t_list *tmpx = x._list;
 
 		while (it != position)
 		{
@@ -368,9 +420,9 @@ void ft::list<T>::splice (iterator position, list<T>& x, iterator first, iterato
 template<typename T>
 void ft::list<T>::remove (const T& val)
 {
-	t_list *tmp = this->_list->next;
+	t_list *tmp = this->_list;
 	t_list *tmp2 = tmp->next;
-	size_t i = this->_size;
+	unsigned int i = this->_size;
 
 	while (i > 1)
 	{
@@ -386,8 +438,8 @@ template<typename T>
 template <class Predicate>
 void ft::list<T>::remove_if (Predicate pred)
 {
-	t_list *tmp = this->_list->next;
-	size_t i = this->_size;
+	t_list *tmp = this->_list;
+	unsigned int i = this->_size;
 
 	while (i > 0)
 	{
@@ -401,9 +453,9 @@ void ft::list<T>::remove_if (Predicate pred)
 template<typename T>
 void ft::list<T>::unique ()
 {
-	t_list *tmp = this->_list->next;
+	t_list *tmp = this->_list;
 	t_list *tmp2 = tmp->next;
-	size_t i = this->_size;
+	unsigned int i = this->_size;
 
 	while (i > 1)
 	{
@@ -419,9 +471,9 @@ template<typename T>
 template <class BinaryPredicate>
 void ft::list<T>::unique (BinaryPredicate binary_pred)
 {
-	t_list *tmp = this->_list->next;
+	t_list *tmp = this->_list;
 	t_list *tmp2 = tmp->next;
-	size_t i = this->_size;
+	unsigned int i = this->_size;
 
 	while (i > 1)
 	{
@@ -455,7 +507,11 @@ void ft::list<T>::merge (list& x)
 				++first1;
 		}
 		if (first2 != last2)
-			this->splice(last1, x, first2, last2);
+		{
+			this->append_end(x._list);
+			this->_size += x._size;
+			x._size = 0;
+		}
 	}
 }
 
@@ -483,7 +539,11 @@ void ft::list<T>::merge (list& x, Compare comp)
 				++first1;
 		}
 		if (first2 != last2)
-			this->splice(last1, x, first2, last2);
+		{
+			this->append_end(x._list);
+			this->_size += x._size;
+			x._size = 0;
+		}
 	}
 }
 
@@ -545,32 +605,6 @@ void ft::list<T>::sort (Compare comp)
 template<typename T>
 void ft::list<T>::reverse()
 {
-	if (this->_list->next == this->_list)
-		return;
-	
-	iterator first = this->begin();
-	iterator last = this->end();
-
-	t_list *cpy = this->_list;
-	t_list *tmp;
-
-	while (first != last)
-	{
-		tmp = cpy->next;
-		cpy->next = cpy->prev;
-		cpy->prev = tmp;
-		cpy = tmp;
-		++first;
-	}
-	tmp = cpy->next;
-	cpy->next = cpy->prev;
-	cpy->prev = tmp;
-	cpy = tmp;
-}
-
-/*template<typename T>
-void ft::list<T>::reverse()
-{
 	if (this->_list->next == NULL)
 		return;
 
@@ -589,7 +623,6 @@ void ft::list<T>::reverse()
 		cpy = tmp;
 	}
 }
-*/
 // =========================================================
 // Only for debug
 

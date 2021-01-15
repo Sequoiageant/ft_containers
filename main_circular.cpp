@@ -57,6 +57,12 @@ int main(void)
 	ft::list<int> lst1;
 	std::list<int> lst;
 
+	std::vector<int> v;
+	for (int i = 41; i < 46; ++i) { v.push_back(i); }
+	
+	ft::list<int> lst2;
+	for (int i = 1; i < 5; ++i) { lst2.push_back(i); }
+
 	std::cout << "---- empty ? ----" << std::endl;
 	std::cout << std::boolalpha << "empty: " << lst1.empty() << std::endl;
 	
@@ -83,13 +89,11 @@ int main(void)
 	std::cout << lst1.back() << std::endl;
 	
 	std::cout << "---- assign vector(41, 42, 43, 44, 45) ----" << std::endl;
-	std::vector<int> v;
-	for (int i = 41; i < 46; ++i) { v.push_back(i); }
 	lst1.assign(v.begin(), v.end());
 	lst1.displaylist();
 	
-	// std::cout << "---- assign(3, 42) ----" << std::endl;
-	// lst1.assign(3, 43);
+	// std::cout << "---- assign 3 x 42 ----" << std::endl;
+	// lst1.assign(3, 42);
 	// lst1.displaylist();
 
 	std::cout << "---- erase 41 - 43 - 45 by position ----" << std::endl;
@@ -109,19 +113,10 @@ int main(void)
 	lst1.assign(v.begin(), v.end());
 	lst1.displaylist();
 	it1 = lst1.begin();
-	ft::list<int>::iterator it2(++it1);
-	it2 += 3;
-	lst1.erase(it1, it2);
+	ft::list<int>::iterator it1bis(++it1);
+	it1bis += 3;
+	lst1.erase(it1, it1bis);
 	lst1.displaylist();
-
-	// lst.assign(v.begin(), v.end());
-	// std::list<int>::iterator it = lst.begin();
-	// for (int i = 0; i < 5; ++i)
-	// {
-	// 	std::cout << *it++ << ' ';
-	// }
-	// std::cout << std::endl;
-	// lst.erase(it);
 
 	std::cout << "---- insert 42 at 2nd position ----" << std::endl;
 	it1 = lst1.begin();
@@ -133,6 +128,101 @@ int main(void)
 	++it1;
 	lst1.insert(++it1, 3, 43);
 	lst1.displaylist();
+
+	std::cout << "---- insert vector(5, 5, 5, 5) at 2nd position ----" << std::endl;
+	v.assign(5, 5);
+	it1 = lst1.begin();
+	lst1.insert(++it1, v.begin(), v.end());
+	lst1.displaylist();
+	std::cout << "lst1 size: " << lst1.size() << std::endl;
+	
+	std::cout << "---- Resize to 15 with '1' ----" << std::endl;
+	lst1.resize(15, 1);
+	lst1.displaylist();
+	std::cout << std::boolalpha << "size: " << lst1.size() << std::endl;
+
+	std::cout << "---- Resize to 8 ----" << std::endl;
+	lst1.resize(8, 5);
+	lst1.displaylist();
+	std::cout << std::boolalpha << "size: " << lst1.size() << std::endl;
+
+	std::cout << "---- Splice lst2 into lst1 at 2nd position ----" << std::endl;
+	it1 = lst1.begin();
+	lst1.splice(++it1, lst2);
+	lst1.displaylist();
+	std::cout << "lst2 size: " << lst2.size() << std::endl;
+	std::cout << std::boolalpha << "lst2 empty: " << lst2.empty() << std::endl;
+
+	std::cout << "---- Splice lst2 into lst1 at 2nd position ----" << std::endl;
+	for (int i = 1; i < 5; ++i) { lst2.push_back(i); }
+	it1 = lst1.begin();
+	ft::list<int>::iterator it2 = lst2.begin();
+	std::cout << "lst2 before splice: "; lst2.displaylist();
+	lst1.splice(++it1, lst2, ++it2);
+	lst1.displaylist();
+	std::cout << "lst2 after splice: "; lst2.displaylist();
+
+	std::cout << "---- Splice part of lst2 into lst1 at 2nd position ----" << std::endl;
+	lst2.clear();
+	for (int i = 1; i < 5; ++i) { lst2.push_back(i); }
+	it1 = lst1.begin();
+	it2 = lst2.begin();
+	ft::list<int>::iterator it2end = lst2.end();
+	std::cout << "lst2 before splice: "; lst2.displaylist();
+	lst1.splice(++it1, lst2, ++it2, --it2end);
+	lst1.displaylist();
+	std::cout << "lst2 after splice: "; lst2.displaylist();
+
+	std::cout << "---- Remove all 2 and 5 in lst1 ----" << std::endl;
+	lst1.remove(2);
+	lst1.remove(5);
+	lst1.displaylist();
+
+	std::cout << "---- Remove if element < 10 in lst1 ----" << std::endl;
+	lst1.remove_if(single_digit);
+	lst1.displaylist();
+
+	std::cout << "---- Remove all consecutive doublon ----" << std::endl;
+	lst1.push_back(1);
+	lst1.push_back(1);
+	lst1.push_back(2);
+	lst1.push_back(3);
+	lst1.push_back(3);
+	lst1.push_back(3);
+	lst1.push_back(4);
+	lst1.push_back(5);
+	lst1.displaylist();
+	lst1.unique();
+	lst1.displaylist();
+
+	std::cout << "---- Sort() ----" << std::endl;
+	lst1.clear();
+	lst1.push_back(9);
+	lst1.push_back(1);
+	lst1.push_back(5);
+	lst1.push_back(7);
+	lst1.push_back(3);
+	lst1.displaylist();
+	lst1.sort();
+	lst1.displaylist();
+
+	std::cout << "---- Merge lst1 with lst2 ----" << std::endl;
+	lst2.clear();
+	for (int i = 2; i < 11; i+=2) { lst2.push_back(i); }
+	lst2.push_back(42);
+	std::cout << "lst1: "; lst1.displaylist();
+	std::cout << "lst2: "; lst2.displaylist();
+	lst1.merge(lst2);
+	std::cout << "lst1: "; lst1.displaylist();
+
+	std::cout << "---- Reverse lst1 ----" << std::endl;
+	lst1.displaylist();
+	lst1.reverse();
+	lst1.displaylist();
+
+	// std::cout << "---- Clear() ----" << std::endl;
+	// lst1.clear();
+	// std::cout << std::boolalpha << "empty: " << lst1.empty() << std::endl;
 
 	return (0);
 }
