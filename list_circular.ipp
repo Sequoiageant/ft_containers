@@ -55,6 +55,7 @@ template<typename T>
 ft::list<T>::~list(void)
 {
 	this->clear();
+	delete this->_list;
 }
 
 template<typename T>
@@ -181,7 +182,7 @@ template<typename T>
 void ft::list<T>::insert (iterator position, int n, const T& val)
 {
 	iterator it = this->begin();
-	t_list *tmp = this->_list;
+	t_list *tmp = this->_list->next;
 
 	while (it != position)
 	{
@@ -199,7 +200,7 @@ template <class InputIterator>
 void ft::list<T>::insert (iterator position, InputIterator first, InputIterator last)
 {
 	iterator it = this->begin();
-	t_list *tmp = this->_list;
+	t_list *tmp = this->_list->next;
 
 	while (it != position)
 	{
@@ -219,6 +220,7 @@ typename ft::list<T>::iterator ft::list<T>::erase (ft::list<T>::iterator positio
 	t_list	*tmp = this->_list->next;
 	iterator it = this->begin();
 	iterator ret(position);
+	++ret;
 
 	while (it != position)
 	{

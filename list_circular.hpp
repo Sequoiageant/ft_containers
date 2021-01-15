@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/14 18:28:17 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/15 11:51:41 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,12 @@ template<typename T>
 			this->_list->value = T();
 			this->_list->prev = this->_list;
 			this->_list->next = this->_list;
+		}		
+
+		void reset_list()
+		{
+			this->clear();
+			this->init_list();
 		}
 
 		void	swap_values(T& val1, T& val2) {
@@ -180,6 +186,9 @@ template<typename T>
 
 		void	delete_node(t_list *node)
 		{
+			if (node == this->_list)
+				return;
+
 			this->unlink_node(node);
 			delete node;
 		}

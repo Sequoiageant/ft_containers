@@ -1,12 +1,12 @@
-/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
+/* ************************************************************************** */
 /*   main_circular.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 14:17:44 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/14 18:57:17 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/15 11:53:16 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void displaylist(std::list<T> lst)
 int main(void)
 {
 	ft::list<int> lst1;
+	std::list<int> lst;
 
 	std::cout << "---- empty ? ----" << std::endl;
 	std::cout << std::boolalpha << "empty: " << lst1.empty() << std::endl;
@@ -91,14 +92,47 @@ int main(void)
 	// lst1.assign(3, 43);
 	// lst1.displaylist();
 
-	std::cout << "---- erase 41 - 43 - 45 ----" << std::endl;
+	std::cout << "---- erase 41 - 43 - 45 by position ----" << std::endl;
 	ft::list<int>::iterator it1 = lst1.begin();
-	lst1.erase(it1++);
+	lst1.displaylist();
+	++it1;
+	lst1.erase(it1);
+	lst1.displaylist();
+	it1 = lst1.begin();
 	lst1.erase(++it1);
-	it1++;
+	lst1.displaylist();
+	it1 = lst1.begin();
 	lst1.erase(++it1);
 	lst1.displaylist();
 
+	std::cout << "---- erase range [42 ; 44] ----" << std::endl;
+	lst1.assign(v.begin(), v.end());
+	lst1.displaylist();
+	it1 = lst1.begin();
+	ft::list<int>::iterator it2(++it1);
+	it2 += 3;
+	lst1.erase(it1, it2);
+	lst1.displaylist();
+
+	// lst.assign(v.begin(), v.end());
+	// std::list<int>::iterator it = lst.begin();
+	// for (int i = 0; i < 5; ++i)
+	// {
+	// 	std::cout << *it++ << ' ';
+	// }
+	// std::cout << std::endl;
+	// lst.erase(it);
+
+	std::cout << "---- insert 42 at 2nd position ----" << std::endl;
+	it1 = lst1.begin();
+	lst1.insert(++it1, 42);
+	lst1.displaylist();
+
+	std::cout << "---- insert 3 x 43 at 3rd position ----" << std::endl;
+	it1 = lst1.begin();
+	++it1;
+	lst1.insert(++it1, 3, 43);
+	lst1.displaylist();
 
 	return (0);
 }
