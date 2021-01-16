@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "list_circular.hpp"
+#include "functional.hpp"
 #include <iostream>
 
 template<typename T>
@@ -23,6 +24,7 @@ ft::list<T>::list(void) : _list(NULL), _size(0)
 template<typename T>
 ft::list<T>::list(size_t size, const T &val) : _list(NULL), _size(0)
 {
+	this->init_list();
 	for (size_t i = 0; i < size; ++i)
 	{
 		this->push_back(val);
@@ -33,6 +35,7 @@ template<typename T>
 template<typename InputIterator>
 ft::list<T>::list(InputIterator first, InputIterator last) : _list(NULL), _size(0)
 {
+	this->init_list();
 	while(first != last)
 	{
 		this->push_back(*first);
@@ -43,12 +46,15 @@ ft::list<T>::list(InputIterator first, InputIterator last) : _list(NULL), _size(
 template<typename T>
 ft::list<T>::list(list<T> const & copy) : _list(NULL), _size(0)
 {
-	t_list *tmp = copy._list;
-	while (tmp)
+	const_iterator first = copy.begin();
+
+	this->init_list();
+	while(first != copy.end())
 	{
-		this->push_back(tmp->value);
-		tmp = tmp->next;
+		this->push_back(*first);
+		++first;
 	}
+	// list(copy.begin(), copy.end());
 }
 
 template<typename T>
@@ -368,17 +374,17 @@ void ft::list<T>::splice (iterator position, list<T>& x, iterator first, iterato
 template<typename T>
 void ft::list<T>::remove (const T& val)
 {
-	t_list *tmp = this->_list->next;
-	t_list *tmp2 = tmp->next;
-	size_t i = this->_size;
+	iterator first = this->begin();
+	iterator last = this->end();
+	iterator next;
 
-	while (i > 1)
+	while (first != last)
 	{
-		if (tmp->value == val)
-			this->delete_node(tmp);
-		tmp = tmp2;
-		tmp2 = tmp2->next;
-		i--;
+		next = first;
+		++next;
+		if (*first == val)
+			this->erase(first);
+		first = next;
 	}
 }
 
@@ -386,79 +392,49 @@ template<typename T>
 template <class Predicate>
 void ft::list<T>::remove_if (Predicate pred)
 {
-	t_list *tmp = this->_list->next;
-	size_t i = this->_size;
+	iterator first = this->begin();
+	iterator last = this->end();
+	iterator next;
 
-	while (i > 0)
+	while (first != last)
 	{
-		if (pred(tmp->value))
-			this->delete_node(tmp);
-		tmp = tmp->next;
-		i--;
+		next = first;
+		++next;
+		if (pred(*first))
+			this->erase(first);
+		first = next;
 	}
 }
 
 template<typename T>
 void ft::list<T>::unique ()
 {
-	t_list *tmp = this->_list->next;
-	t_list *tmp2 = tmp->next;
-	size_t i = this->_size;
-
-	while (i > 1)
-	{
-		if (tmp->value == tmp2->value)
-			this->delete_node(tmp);
-		tmp = tmp2;
-		tmp2 = tmp2->next;
-		i--;
-	}
+	this->unique(equal_to<T>);
 }
 
 template<typename T>
 template <class BinaryPredicate>
 void ft::list<T>::unique (BinaryPredicate binary_pred)
 {
-	t_list *tmp = this->_list->next;
-	t_list *tmp2 = tmp->next;
-	size_t i = this->_size;
+	iterator first = this->begin();
+	iterator last = this->end();
+	iterator next;
 
-	while (i > 1)
+	while (first != last)
 	{
-		if (binary_pred(tmp->value, tmp2->value))
-			this->delete_node(tmp);
-		tmp = tmp2;
-		tmp2 = tmp2->next;
-		i--;
+		next = first;
+		++next;
+		if (binary_pred(*first, *next))
+			this->erase(first);
+		first = next;
 	}
 }
 
 template<typename T>
 void ft::list<T>::merge (list& x)
 {
-	if (&x != this)
-	{
-		iterator first1 = this->begin();
-		iterator last1 = this->end();
-		iterator first2 = x.begin();
-		iterator last2 = x.end();
-
-		while (first1 != last1 && first2 != last2)
-		{
-			if (*first2 < *first1)
-			{
-				iterator next = first2;
-				this->splice(first1, x, next++);
-				first2 = next;
-			}
-			else
-				++first1;
-		}
-		if (first2 != last2)
-			this->splice(last1, x, first2, last2);
-	}
+	this->merge(x, less<T>);
 }
-
 
 template<typename T>
 template <class Compare>
@@ -490,55 +466,36 @@ void ft::list<T>::merge (list& x, Compare comp)
 template<typename T>
 void ft::list<T>::sort()
 {
-	if (this->_list == NULL || this->_size == 1)
-		return;
-	
-	iterator first1 = this->begin();
-	iterator last = this->end();
-	iterator first2;
-	iterator min;
-
-	while (first1 != last)
-	{
-		first2 = min = first1;
-		first2++;
-		while (first2 != last)
-		{
-			if (*first2 < *min)
-				min = first2;
-			++first2;
-		}
-		this->splice(first1, *this, min);
-		if (min == first1)
-			++first1;
-	}
+	this->sort(less<T>);
 }
 
 template<typename T>
 template <class Compare>
 void ft::list<T>::sort (Compare comp)
 {
-	if (this->_list == NULL || this->_size == 1)
-		return;
-	
-	iterator first1 = this->begin();
-	iterator last = this->end();
-	iterator first2;
-	iterator min;
-
-	while (first1 != last)
+	// Do nothing if the list has length 0 or 1.
+	if (this->_list->next != this->_list
+		&& this->_list->next->next != this->_list)
 	{
-		first2 = min = first1;
-		first2++;
-		while (first2 != last)
+		iterator first1 = this->begin();
+		iterator last = this->end();
+		iterator first2;
+		iterator min;
+
+		while (first1 != last)
 		{
-			if (comp(*first2, *min))
-				min = first2;
-			++first2;
+			first2 = min = first1;
+			first2++;
+			while (first2 != last)
+			{
+				if (comp(*first2, *min))
+					min = first2;
+				++first2;
+			}
+			this->splice(first1, *this, min);
+			if (min == first1)
+				++first1;
 		}
-		this->splice(first1, *this, min);
-		if (min == first1)
-			++first1;
 	}
 }
 
@@ -553,43 +510,24 @@ void ft::list<T>::reverse()
 
 	t_list *cpy = this->_list;
 	t_list *tmp;
-
+	// int i = 1;
 	while (first != last)
 	{
+		// std::cerr << "REVERSE " << i++ << std::endl;
 		tmp = cpy->next;
+		// this->swap(cpy->next, cpy->prev);
 		cpy->next = cpy->prev;
 		cpy->prev = tmp;
 		cpy = tmp;
 		++first;
 	}
 	tmp = cpy->next;
+	// this->swap(cpy->next, cpy->prev);
 	cpy->next = cpy->prev;
 	cpy->prev = tmp;
 	cpy = tmp;
 }
 
-/*template<typename T>
-void ft::list<T>::reverse()
-{
-	if (this->_list->next == NULL)
-		return;
-
-	t_list *cpy = this->_list;
-	t_list *tmp;
-
-	while (cpy->next)
-		cpy = cpy->next;
-
-	this->_list = cpy;
-	while (cpy)
-	{
-		tmp = cpy->prev;
-		cpy->prev = cpy->next;
-		cpy->next = tmp;
-		cpy = tmp;
-	}
-}
-*/
 // =========================================================
 // Only for debug
 
