@@ -94,12 +94,12 @@ int main(void)
 	displaylist(lst1);
 	std::cout << "---- pop_front & pop_back ----" << std::endl;
 	lst1.pop_front();
-	std::cerr << "DISPLAY" << std::endl;
 	lst1.pop_back();
 	displaylist(lst1);
 	std::cout << "---- front & back ----" << std::endl;
-	std::cout << lst1.front() << std::endl;
-	std::cout << lst1.back() << std::endl;
+	std::cout << ++(lst1.front()) << std::endl;
+	std::cout << ++(lst1.back()) << std::endl;
+	displaylist(lst1);
 	
 	std::cout << "---- assign vector(41, 42, 43, 44, 45) ----" << std::endl;
 	lst1.assign(v.begin(), v.end());
@@ -247,9 +247,20 @@ int main(void)
 	}
 	std::cout << std::endl;
 
+	std::cout << "---- Swap lst1 with lst2 ----" << std::endl;
+	std::cout << "lst1: "; displaylist(lst1);
+
+	for (int i = 2; i < 11; i+=2) { lst2.push_back(i); }
+	std::cout << "lst2: "; displaylist(lst2);
+	
+	lst1.swap(lst2);
+	// lst2.push_back(100);
+	std::cout << "lst1: "; displaylist(lst1);
+	std::cout << "lst2: "; displaylist(lst2);
+
 	std::cout << "---- Clear() ----" << std::endl;
 	lst1.clear();
-	std::cout << std::boolalpha << "empty: " << lst1.empty() << std::endl;
+	std::cout << std::boolalpha << "lst1 empty: " << lst1.empty() << std::endl;
 
 	return (0);
 }
