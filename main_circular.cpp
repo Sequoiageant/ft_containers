@@ -14,6 +14,8 @@
 #include <list>
 #include <vector>
 
+#define NS std
+
 bool single_digit (const int& value) { return (value<10); }
 
 struct is_odd {
@@ -28,17 +30,6 @@ struct is_lower {
 
 bool same_as (int first, int second){ return ( int(first)==int(second) ); }
 
-/*
-template<typename T>
-void displaylist(T first, T last)
-{
-	while (first != last)
-	{
-		std::cout << *first << ' ';
-		++first;
-	}
-	std::cout << std::endl;
-}*/
 
 template<typename T>
 void displaylist(ft::list<T>& lst)
@@ -66,13 +57,13 @@ void displaylist(std::list<T>& lst)
 
 int main(void)
 {
-	ft::list<int> lst1;
+	NS::list<int> lst1;
 	std::list<int> lst;
 
 	std::vector<int> v;
 	for (int i = 41; i < 46; ++i) { v.push_back(i); }
 	
-	ft::list<int> lst2;
+	NS::list<int> lst2;
 	for (int i = 1; i < 5; ++i) { lst2.push_back(i); }
 
 	std::cout << "---- empty ? ----" << std::endl;
@@ -97,9 +88,8 @@ int main(void)
 	lst1.pop_back();
 	displaylist(lst1);
 	std::cout << "---- front & back ----" << std::endl;
-	std::cout << ++(lst1.front()) << std::endl;
-	std::cout << ++(lst1.back()) << std::endl;
-	displaylist(lst1);
+	std::cout << "front: " << lst1.front() << std::endl;
+	std::cout << "back : " << lst1.back() << std::endl;
 	
 	std::cout << "---- assign vector(41, 42, 43, 44, 45) ----" << std::endl;
 	lst1.assign(v.begin(), v.end());
@@ -110,15 +100,15 @@ int main(void)
 	// displaylist(lst1);
 
 	std::cout << "---- erase 41 - 43 - 45 by position ----" << std::endl;
-	ft::list<int>::iterator it1 = lst1.begin();
+	NS::list<int>::iterator it1 = lst1.begin();
 	displaylist(lst1);
-	++it1;
 	lst1.erase(it1);
 	displaylist(lst1);
 	it1 = lst1.begin();
 	lst1.erase(++it1);
 	displaylist(lst1);
 	it1 = lst1.begin();
+	++it1;
 	lst1.erase(++it1);
 	displaylist(lst1);
 
@@ -126,8 +116,10 @@ int main(void)
 	lst1.assign(v.begin(), v.end());
 	displaylist(lst1);
 	it1 = lst1.begin();
-	ft::list<int>::iterator it1bis(++it1);
-	it1bis += 3;
+	NS::list<int>::iterator it1bis(++it1);
+	it1bis++;
+	it1bis++;
+	it1bis++;
 	lst1.erase(it1, it1bis);
 	displaylist(lst1);
 
@@ -166,10 +158,10 @@ int main(void)
 	std::cout << "lst2 size: " << lst2.size() << std::endl;
 	std::cout << std::boolalpha << "lst2 empty: " << lst2.empty() << std::endl;
 
-	std::cout << "---- Splice lst2 into lst1 at 2nd position ----" << std::endl;
+	std::cout << "---- Splice 2nd elem of lst2 into lst1 at 2nd position ----" << std::endl;
 	for (int i = 1; i < 5; ++i) { lst2.push_back(i); }
 	it1 = lst1.begin();
-	ft::list<int>::iterator it2 = lst2.begin();
+	NS::list<int>::iterator it2 = lst2.begin();
 	std::cout << "lst2 before splice: "; displaylist(lst2);
 	lst1.splice(++it1, lst2, ++it2);
 	displaylist(lst1);
@@ -180,7 +172,7 @@ int main(void)
 	for (int i = 1; i < 5; ++i) { lst2.push_back(i); }
 	it1 = lst1.begin();
 	it2 = lst2.begin();
-	ft::list<int>::iterator it2end = lst2.end();
+	NS::list<int>::iterator it2end = lst2.end();
 	std::cout << "lst2 before splice: "; displaylist(lst2);
 	lst1.splice(++it1, lst2, ++it2, --it2end);
 	displaylist(lst1);
@@ -239,8 +231,8 @@ int main(void)
 
 	std::cout << "---- Display lst1 with reverse iterator ----" << std::endl;
 	
-	const ft::list<int> lst3 = lst1;
-	ft::list<int>::const_reverse_iterator rit = lst3.rbegin();
+	const NS::list<int> lst3 = lst1;
+	NS::list<int>::const_reverse_iterator rit = lst3.rbegin();
 	while(rit != lst3.rend()) {
 		std::cout << *rit << ' ';
 		++rit;

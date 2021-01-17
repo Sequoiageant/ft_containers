@@ -91,8 +91,8 @@ size_t ft::list<T>::size() const
 
 	const_iterator first = this->begin();
 	while(first != this->end()) {
-	    ++first;
-	    ++size;
+		++first;
+		++size;
 	}
 	return size;
 }
@@ -369,16 +369,21 @@ void ft::list<T>::splice (iterator position, list<T>& x, iterator first, iterato
 			tmp = tmp->next;
 			++it;
 		}
-		iterator next = first;
+		it = x.begin();
+		while(it != first) {
+			tmpx = tmpx->next;
+			++it;
+		}
+		iterator next = it;
 		List_node *tmpx2;
-		while (first != last)
+		while (it != last)
 		{
 			tmpx2 = tmpx->next;
 			++next;
 			x.unlink_node(tmpx);
 			this->insert_node(tmp, tmpx);
 			tmpx = tmpx2;
-			first = next;
+			it = next;
 		}
 	}
 }
@@ -514,30 +519,32 @@ void ft::list<T>::sort (Compare comp)
 template<typename T>
 void ft::list<T>::reverse()
 {
-	if (this->_list->next == this->_list)
-		return;
-	
-	iterator first = this->begin();
-	iterator last = this->end();
+	// Do nothing if the list has length 0 or 1.
+	if (this->_list->next != this->_list
+		&& this->_list->next->next != this->_list)
+	{		
+		iterator first = this->begin();
+		iterator last = this->end();
 
-	List_node *cpy = this->_list;
-	List_node *tmp;
+		List_node *cpy = this->_list;
+		List_node *tmp;
 	// int i = 1;
-	while (first != last)
-	{
+		while (first != last)
+		{
 		// std::cerr << "REVERSE " << i++ << std::endl;
-		tmp = cpy->next;
+			tmp = cpy->next;
 		// this->swap(cpy->next, cpy->prev);
+			cpy->next = cpy->prev;
+			cpy->prev = tmp;
+			cpy = tmp;
+			++first;
+		}
+		tmp = cpy->next;
+	// this->swap(cpy->next, cpy->prev);
 		cpy->next = cpy->prev;
 		cpy->prev = tmp;
 		cpy = tmp;
-		++first;
 	}
-	tmp = cpy->next;
-	// this->swap(cpy->next, cpy->prev);
-	cpy->next = cpy->prev;
-	cpy->prev = tmp;
-	cpy = tmp;
 }
 
 // =========================================================
@@ -570,38 +577,3 @@ void ft::list<T>::displayReverse() const
 	}
 }
 // =========================================================
-
-
-/*template<typename T>
-bool ft::operator== (const ft::list<T>& lhs, const ft::list<T>& rhs)
-{
-	typename ft::list<T>::const_iterator end1 = lhs.end();
-	typename ft::list<T>::const_iterator end2 = rhs.end();
-	typename ft::list<T>::const_iterator first1 = lhs.end();
-	typename ft::list<T>::const_iterator first2 = rhs.end();
-
-	while (first1 != end1 && first2 != end2 && *first1 == *first2)
-	{
-		++first1;
-		++first2;
-	}
-	return (first1 == end1 && first2 == end2);
-}*/
-
-
-
-/*template<typename T>
-std::ostream & operator<<(std::ostream & o, typename ft::list<T> const & rhs)
-{
-	typename ft::list<T>::iterator it = rhs.begin();
-	typename ft::list<T>::iterator ite = rhs.end();
-
-	while (it != ite)
-	{
-		o << *it << " ";
-		++it;
-	}
-	o << std::endl;
-	return o;
-}*/
-
