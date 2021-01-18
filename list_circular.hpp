@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/17 17:09:38 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/18 12:10:35 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 namespace ft
 {
 
-struct			List_node_base
+/*struct			List_node_base
 	{
 		struct	List_node_base	*prev;
 		struct	List_node_base	*next;
@@ -32,12 +32,31 @@ struct			List_node_base
 
 struct			List_node_header //: public List_node_base
 	{
+		List_node_header();
 		size_t 	*size;
-	};
+	};*/
 
 template<typename T>
 	struct		List_node //: public List_node_base
 	{
+		List_node(){
+			this->value = T();
+			this->prev = this->next = this;
+		};
+
+		List_node(const T& val){	
+			this->value = val;
+			this->prev = this->next = this;
+		};
+
+		void	reverse() {
+			List_node *tmp;
+
+			tmp = this->next;
+			this->next = this->prev;
+			prev = tmp;
+		}
+
 		struct	List_node	*prev;
 		struct	List_node	*next;
 		T					value;
@@ -81,34 +100,6 @@ template<typename T>
 		List_node *p;
 };
 
-
-/*template<typename T>
-	class reverse_iterator : public iterator<T>
-	{
-
-	public:
-		typedef	size_t			size_type;
-		typedef	List_node<T>		List_node;
-		typedef	iterator<T>		iterator;
-
-
-		reverse_iterator(void) {}
-		reverse_iterator(List_node *x) : iterator(x) {}
-		reverse_iterator(const reverse_iterator& copy) : iterator(copy) {}
-		reverse_iterator& operator++() {this->p = this->p->prev;return *this;}
-		reverse_iterator& operator+=(size_type inc) {
-			for (size_type i = 0; i < inc; ++i) { this->p = this->p->prev; } return *this;
-		}
-		reverse_iterator operator++(int) {reverse_iterator tmp(*this); operator++(); return tmp;}
-		reverse_iterator& operator--() {this->p = this->p->next;return *this;}
-		reverse_iterator& operator-=(size_type inc) {
-			for (size_type i = 0; i < inc; ++i) { this->p = this->p->next; } return *this;
-		}
-		reverse_iterator operator--(int) {reverse_iterator tmp(*this); operator--(); return tmp;}
-		T& operator*() const {return this->p->value;}
-		~reverse_iterator(void) {}
-};
-*/
 template<typename T>
 	class const_iterator
 	{
@@ -146,42 +137,11 @@ template<typename T>
 		const List_node *p;
 };
 
-/*template<typename T>
-	class const_reverse_iterator : public const_iterator<T>
-	{
-
-	public:
-		typedef	size_t				size_type;
-		typedef	List_node<T>			List_node;
-		typedef	const_iterator<T>	const_iterator;
-
-
-		const_reverse_iterator(void) {}
-		const_reverse_iterator(List_node *x) : const_iterator(x) {}
-		const_reverse_iterator(const const_reverse_iterator& copy) : const_iterator(copy) {}
-		const_reverse_iterator& operator++() {this->p = this->p->prev;return *this;}
-		const_reverse_iterator& operator+=(size_type inc) {
-			for (size_type i = 0; i < inc; ++i) { this->p = this->p->prev; } return *this;
-		}
-		const_reverse_iterator operator++(int) {const_reverse_iterator tmp(*this); operator++(); return tmp;}
-		const_reverse_iterator& operator--() {this->p = this->p->next;return *this;}
-		const_reverse_iterator& operator-=(size_type inc) {
-			for (size_type i = 0; i < inc; ++i) { this->p = this->p->next; } return *this;
-		}
-		const_reverse_iterator operator--(int) {const_reverse_iterator tmp(*this); operator--(); return tmp;}
-		~const_reverse_iterator(void) {}
-};*/
-
 template<typename T>
 	class list
 	{
 
 	public:
-		// class iterator;
-		// class const_iterator;
-		// class reverse_iterator;
-		// class const_reverse_iterator;
-		
 		typedef	List_node<T>							List_node;
 		typedef iterator<T>								iterator;
 		typedef const_iterator<T>						const_iterator;
@@ -201,14 +161,14 @@ template<typename T>
 		list<T> & operator=(list<T> const & rhs);
 
 
-		iterator begin(void) { /*std::cerr << "begin" << std::endl;*/ return iterator(this->_list->next); }
-		const_iterator begin() const { /*std::cerr << "begin const" << std::endl;*/ return const_iterator(this->_list->next); }
+		iterator begin(void) { return iterator(this->_list->next); }
+		const_iterator begin() const { return const_iterator(this->_list->next); }
 		
 		iterator end(void) { return iterator(this->_list); }
 		const_iterator end() const { return const_iterator(this->_list); }
 		
-		reverse_iterator rbegin(void) {/*std::cerr << this->_list->prev->value << std::endl;*/ return reverse_iterator(end()); }
-		const_reverse_iterator rbegin(void) const {/*std::cerr << "rbegin const" << std::endl;*/ return const_reverse_iterator(end()); } //this->_list->prev
+		reverse_iterator rbegin(void) { return reverse_iterator(end()); }
+		const_reverse_iterator rbegin(void) const { return const_reverse_iterator(end()); } //this->_list->prev
 		
 		reverse_iterator rend(void) { return reverse_iterator(begin()); }
 		const_reverse_iterator rend(void) const { return const_reverse_iterator(begin()); } //this->_list
@@ -271,37 +231,27 @@ template<typename T>
 
 	private:
 
-	/*Attributs*/
+		/*Attributs*/
 		List_node		*_list;
-		// size_type		_size;
 
-		void init_list()
+		/*Member functions*/
+		List_node *new_node(const T& val)
 		{
-			this->_list = new List_node;
-			this->_list->value = T();
-			this->_list->prev = this->_list;
-			this->_list->next = this->_list;
-		}		
-
-		void reset_list()
-		{
-			this->clear();
-			this->init_list();
+			return (new List_node(val));
 		}
 
-		void	swap(List_node *next, List_node *prev) {
-			List_node *tmp;
-
-			tmp = next;
-			next = prev;
-			prev = tmp;
+		void	insert_node(List_node *node, List_node *newElem)
+		{
+			node->prev->next = newElem;
+			newElem->prev = node->prev;
+			node->prev = newElem;
+			newElem->next = node;
 		}
 
 		void	unlink_node(List_node *node)
 		{
 			node->prev->next = node->next;
 			node->next->prev = node->prev;
-			// this->_size--;
 		}
 
 		void	delete_node(List_node *node)
@@ -313,56 +263,13 @@ template<typename T>
 			delete node;
 		}
 
-		void	insert_node(List_node *node, List_node *newElem)
-		{
-			node->prev->next = newElem;
-			newElem->prev = node->prev;
-			node->prev = newElem;
-			newElem->next = node;
-			// this->_size++;
-		}
+/*		void	swap(List_node *next, List_node *prev) {
+			List_node *tmp;
 
-		// void	insert_end(List_node *newElem)
-		// {
-		// 	if (this->_list)
-		// 	{
-		// 		List_node *copy = this->_list;
-		// 		while(copy->next)
-		// 		{
-		// 			copy = copy->next;
-		// 		}
-		// 		newElem->prev = copy;
-		// 		copy->next = newElem;
-		// 	}
-		// 	else
-		// 		this->_list = newElem;
-		//	// this->_size++;
-		// }
-
-/*		void	append_end(List_node *x)
-		{
-			if (this->_list)
-			{
-				List_node *copy = this->_list;
-				while(copy->next)
-				{
-					copy = copy->next;
-				}
-				x->prev = copy;
-				copy->next = x;
-			}
-			else
-				this->_list = x;
+			tmp = next;
+			next = prev;
+			prev = tmp;
 		}*/
-
-		List_node *new_node(const T& val)
-		{
-			List_node *newElem = new List_node;
-			newElem->value = val;
-			newElem->prev = NULL;
-			newElem->next = NULL;
-			return (newElem);
-		}
 
 /*		List_node	*find_node(iterator position)
 		{
@@ -375,34 +282,9 @@ template<typename T>
 				++it;
 			}
 			return (node);
-		}*/
-
-		// List_node *front_ptr() const
-		// {
-		// 	return this->_list;
-		// }
-
-		List_node *last_ptr() const
-		{
-			List_node *cpy = this->_list;
-
-			while (cpy->next)
-			{
-				cpy = cpy->next;
-			}
-			return cpy;
 		}
+*/
 
-		List_node *back_ptr() const
-		{
-			List_node *cpy = this->_list;
-
-			while (cpy)
-			{
-				cpy = cpy->next;
-			}
-			return cpy;
-		}
 	};
 
 template<typename T>

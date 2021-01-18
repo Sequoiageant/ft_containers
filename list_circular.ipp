@@ -15,16 +15,14 @@
 #include <iostream>
 
 template<typename T>
-ft::list<T>::list(void) : _list(NULL)//, _size(0)
+ft::list<T>::list(void) : _list(new List_node)
 {
-	this->init_list();
 	return;
 }
 
 template<typename T>
-ft::list<T>::list(size_t size, const T &val) : _list(NULL)//, _size(0)
+ft::list<T>::list(size_t size, const T &val) : _list(new List_node)
 {
-	this->init_list();
 	for (size_t i = 0; i < size; ++i)
 	{
 		this->push_back(val);
@@ -33,9 +31,8 @@ ft::list<T>::list(size_t size, const T &val) : _list(NULL)//, _size(0)
 
 template<typename T>
 template<typename InputIterator>
-ft::list<T>::list(InputIterator first, InputIterator last) : _list(NULL)//, _size(0)
+ft::list<T>::list(InputIterator first, InputIterator last) : _list(new List_node)
 {
-	this->init_list();
 	while(first != last)
 	{
 		this->push_back(*first);
@@ -44,17 +41,15 @@ ft::list<T>::list(InputIterator first, InputIterator last) : _list(NULL)//, _siz
 }
 
 template<typename T>
-ft::list<T>::list(list<T> const & copy) : _list(NULL)//, _size(0)
+ft::list<T>::list(list<T> const & copy) : _list(new List_node)
 {
 	const_iterator first = copy.begin();
 
-	this->init_list();
 	while(first != copy.end())
 	{
 		this->push_back(*first);
 		++first;
 	}
-	// list(copy.begin(), copy.end());
 }
 
 template<typename T>
@@ -281,12 +276,6 @@ void ft::list<T>::resize (size_t n, T val)
 template<typename T>
 void ft::list<T>::clear()
 {
-	// std::cerr << "size: " << this->size() << std::endl;
-	// while (this->size() > 0)
-	// {
-	// 	this->pop_back();
-	// }
-
 	List_node *tmp;
 
 	while (this->_list->next != this->_list)
@@ -546,6 +535,27 @@ void ft::list<T>::reverse()
 		cpy = tmp;
 	}
 }
+
+/*template<typename T>
+void ft::list<T>::reverse()
+{
+	// Do nothing if the list has length 0 or 1.
+	if (this->_list->next != this->_list
+		&& this->_list->next->next != this->_list)
+	{		
+		// iterator first = this->begin();
+		// iterator last = this->end();
+		
+		List_node *tmp = this->_list->next;
+		while (tmp != this->_list)
+		{
+			// std::cerr << "REVERSE " << i++ << std::endl;
+			tmp->reverse();
+			tmp = tmp->next;
+			// ++first;
+		}
+	}
+}*/
 
 // =========================================================
 // Only for debug

@@ -14,7 +14,7 @@
 #include <list>
 #include <vector>
 
-#define NS std
+#define NS ft
 
 bool single_digit (const int& value) { return (value<10); }
 
