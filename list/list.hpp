@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/18 20:01:45 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/18 22:03:53 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,23 +67,22 @@ template<typename T>
 	};
 
 template<typename T>
-	class iterator
+	struct iterator
 	{
 
-	public:
 		typedef	size_t								size_type;
 		typedef	List_node<T>						List_node;
 
 		typedef ptrdiff_t							difference_type;
 		typedef std::bidirectional_iterator_tag		iterator_category;
 		typedef T									value_type;
+		typedef T*									pointer;
 		typedef T&									reference;
-		typedef List_node*							pointer;
 
 
 		iterator(void) {}
 		iterator(List_node *x) : p(x) {}
-		iterator(const iterator& copy) : p(copy.p) {}
+		// iterator(const iterator& copy) : p(copy.p) {}
 		iterator& operator++() {p = p->next;return *this;}
 		iterator& operator+=(size_type inc) {
 			for (size_type i = 0; i < inc; ++i) { p = p->next; } return *this;
@@ -100,28 +99,27 @@ template<typename T>
 		value_type* operator->() const {return &(p->value);}
 		~iterator(void) {}
 
-	private:
 		List_node *p;
 };
 
 template<typename T>
-	class const_iterator
+	struct const_iterator
 	{
 
-	public:
 		typedef	size_t								size_type;
 		typedef	List_node<T>						List_node;
 
 		typedef ptrdiff_t							difference_type;
+		typedef iterator<T>							iterator;
 		typedef std::bidirectional_iterator_tag		iterator_category;
-		typedef	const T								value_type;
-		typedef const List_node*					pointer;
+		typedef	T									value_type;
+		typedef const T*							pointer;
 		typedef const T&							reference;
 
 		const_iterator(void) {}
 		const_iterator(const List_node *x) : p(x) {}
-		const_iterator(const const_iterator& copy) : p(copy.p) {}
-		const_iterator(const iterator<T>& copy) : p(copy.p) {}
+		// const_iterator(const const_iterator& copy) : p(copy.p) {}
+		const_iterator(const iterator& copy) : p(copy.p) {}
 		const_iterator& operator++() {p = p->next;return *this;}
 		const_iterator& operator+=(size_type inc) {
 			for (size_type i = 0; i < inc; ++i) { p = p->next; } return *this;
@@ -138,7 +136,6 @@ template<typename T>
 		const value_type* operator->() const {return &(p->value);}
 		~const_iterator(void) {}
 
-	private:
 		const List_node *p;
 };
 
@@ -156,7 +153,7 @@ template<typename T>
 		typedef	size_t									size_type;
 
 		list(void);
-		list(size_type size, const T &val);
+		list(size_type size, const value_type& val = value_type());
 
 		template<typename InputIterator>
 		list(InputIterator first, InputIterator last);
