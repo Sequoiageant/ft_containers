@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/18 17:22:34 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/18 20:01:45 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,8 @@ template<typename T>
 		typedef ptrdiff_t							difference_type;
 		typedef std::bidirectional_iterator_tag		iterator_category;
 		typedef T									value_type;
-		typedef T*									pointer;
 		typedef T&									reference;
+		typedef List_node*							pointer;
 
 
 		iterator(void) {}
@@ -114,13 +114,14 @@ template<typename T>
 
 		typedef ptrdiff_t							difference_type;
 		typedef std::bidirectional_iterator_tag		iterator_category;
-		typedef	T									value_type;
-		typedef const T*							pointer;
+		typedef	const T								value_type;
+		typedef const List_node*					pointer;
 		typedef const T&							reference;
 
 		const_iterator(void) {}
-		const_iterator(List_node *x) : p(x) {}
+		const_iterator(const List_node *x) : p(x) {}
 		const_iterator(const const_iterator& copy) : p(copy.p) {}
+		const_iterator(const iterator<T>& copy) : p(copy.p) {}
 		const_iterator& operator++() {p = p->next;return *this;}
 		const_iterator& operator+=(size_type inc) {
 			for (size_type i = 0; i < inc; ++i) { p = p->next; } return *this;
@@ -147,6 +148,7 @@ template<typename T>
 
 	public:
 		typedef	List_node<T>							List_node;
+		typedef	T										value_type;
 		typedef iterator<T>								iterator;
 		typedef const_iterator<T>						const_iterator;
 		typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
@@ -202,7 +204,7 @@ template<typename T>
 		iterator erase (iterator first, iterator last);
 
 		void swap (list& x);
-		void resize (size_type n, T val);
+		void resize (size_type n, value_type val = value_type());
 		void clear();
 
 		void splice (iterator position, list<T>& x);
@@ -758,8 +760,9 @@ void ft::list<T>::unique (BinaryPredicate binary_pred)
 		next = first;
 		++next;
 		if (binary_pred(*first, *next))
-			this->erase(first);
-		first = next;
+			this->erase(next);
+		else
+			++first;
 	}
 }
 
