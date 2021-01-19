@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/19 17:26:28 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/19 22:03:30 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,23 +81,27 @@ int main(void)
 	std::cout << "std::vector: " << v.max_size() << std::endl;
 	std::cout << "ft::vector: " << v1.max_size() << std::endl;
 	
-	std::cout << "---- std Iterators ----" << std::endl;
-	v.push_back(5);
-	std::vector<int>::iterator it = v.begin();
-	for (int i = 0; i < 30; ++i)
-	{
-		std::cout << *it++ << std::endl;
+	std::cout << "---- operator [] ----" << std::endl;
+	std::cout << "v1[2]: " << v1[2] << std::endl;
+	try {
+		std::cout << "v1.at(5): " << v1.at(5) << std::endl;
+		// std::cout << "v[1]: " << v.at(5) << std::endl;
 	}
-	// std::cout << "it: " << *it << std::endl;
-	// it++;
-	// it++;
-	// it++;
-	// it++;
-	// it++;
+	catch(const std::exception& e) {
+		std::cerr << e.what() << '\n';
+	}
+
+
+/*	std::cout << "---- std Iterators ----" << std::endl;
+	// v.push_back(5);
+	std::vector<int>::iterator it = v.begin();
+	std::cout << "it: " << *it << std::endl;
+	it++;
 	std::cout << "++it: " << *it << std::endl;
 	std::cout << "v: "; displayVec(v);
 	std::cout << "v size: " << v.size() << std::endl;
 	std::cout << "v capacity: " << v.capacity() << std::endl;
+	*/
 
 	return 0;
 }
