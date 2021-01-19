@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/18 16:23:19 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/19 12:43:38 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,9 +163,14 @@ template <typename T>
 		void clear();
 
 	private:
-		T* data;
+		T*			_array;
+		size_type	_size;
+		size_type	_capacity;
 
 	};
+
+// Non-member function overloads
+// ==================================	
 
 template <class T>
 	std::ostream & operator<<(std::ostream & o, vector<T> const & rhs);
@@ -190,6 +195,53 @@ template <class T>
 
   template <class T>
 	void swap (vector<T>& x, vector<T>& y);
+
 }
+// Non-member function overloads END
+// ==================================
+
+
+// Member function definition
+// ==================================
+
+template<typename T>
+ft::vector<T>::vector(void) : _array(new T[0]), _size(0), _capacity(0)
+{
+	return;
+}
+
+template<typename T>
+ft::vector<T>::vector (size_t n, const T& val) : _array(new T[n]), _size(n), _capacity(n)
+{
+	for (int i = 0; i < n; ++i)
+	{
+		this->_array[i] = val;
+	}
+}
+
+template<typename T>
+template <class InputIterator>
+ft::vector<T>::vector (InputIterator first, InputIterator last) :  _array(NULL), _size(0), _capacity(0)
+{
+
+	while (first != last)
+	{
+		this->_size++;
+		this->_capacity++;
+		++first;
+	}
+	this->_array = new T[this->capacity];
+
+
+
+}
+	// vector(vector const & copy);
+	// ~vector(void);
+	// vector& operator=(vector const & rhs);
+
+
+// Member function definition END
+// ==================================
+
 
 #endif // VECTOR_HPP
