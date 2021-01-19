@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/18 22:03:53 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/19 11:29:35 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,10 @@ template<typename T>
 	};
 
 template<typename T>
-	struct iterator
+	class iterator
 	{
 
+public:
 		typedef	size_t								size_type;
 		typedef	List_node<T>						List_node;
 
@@ -79,10 +80,9 @@ template<typename T>
 		typedef T*									pointer;
 		typedef T&									reference;
 
-
 		iterator(void) {}
 		iterator(List_node *x) : p(x) {}
-		// iterator(const iterator& copy) : p(copy.p) {}
+		iterator(const iterator& copy) : p(copy.p) {}
 		iterator& operator++() {p = p->next;return *this;}
 		iterator& operator+=(size_type inc) {
 			for (size_type i = 0; i < inc; ++i) { p = p->next; } return *this;
@@ -97,15 +97,18 @@ template<typename T>
 		bool operator!=(const iterator& rhs) const {return p!=rhs.p;}
 		value_type& operator*() const {return p->value;}
 		value_type* operator->() const {return &(p->value);}
+		List_node*	get_node() const { return p;}
 		~iterator(void) {}
 
+private:
 		List_node *p;
 };
 
 template<typename T>
-	struct const_iterator
+	class const_iterator
 	{
 
+public:
 		typedef	size_t								size_type;
 		typedef	List_node<T>						List_node;
 
@@ -118,7 +121,7 @@ template<typename T>
 
 		const_iterator(void) {}
 		const_iterator(const List_node *x) : p(x) {}
-		// const_iterator(const const_iterator& copy) : p(copy.p) {}
+		const_iterator(const const_iterator& copy) : p(copy.p) {}
 		const_iterator(const iterator& copy) : p(copy.p) {}
 		const_iterator& operator++() {p = p->next;return *this;}
 		const_iterator& operator+=(size_type inc) {
@@ -134,8 +137,10 @@ template<typename T>
 		bool operator!=(const const_iterator& rhs) const {return p!=rhs.p;}
 		const value_type& operator*() const {return p->value;}
 		const value_type* operator->() const {return &(p->value);}
+		const List_node* get_node() const { return p;}
 		~const_iterator(void) {}
 
+private:
 		const List_node *p;
 };
 
@@ -615,7 +620,7 @@ void ft::list<T>::clear()
 template<typename T>
 void ft::list<T>::splice (iterator position, list<T>& x)
 {
-	if (!x.empty())
+	if (!x.empty() && &x != this)
 	{
 		iterator it = this->begin();
 		List_node *tmp = this->_list->next;
@@ -674,13 +679,14 @@ void ft::list<T>::splice (iterator position, list<T>& x, iterator first, iterato
 {
 	if (first != last)
 	{
-
 		iterator it = this->begin();
 		List_node *tmp = this->_list->next;
 		List_node *tmpx = x._list->next;
 
 		while (it != position)
 		{
+			if (it == first)
+				return;
 			tmp = tmp->next;
 			++it;
 		}
@@ -832,37 +838,6 @@ void ft::list<T>::sort (Compare comp)
 	}
 }
 
-/*template<typename T>
-void ft::list<T>::reverse()
-{
-	// Do nothing if the list has length 0 or 1.
-	if (this->_list->next != this->_list
-		&& this->_list->next->next != this->_list)
-	{		
-		iterator first = this->begin();
-		iterator last = this->end();
-
-		List_node *cpy = this->_list;
-		List_node *tmp;
-	// int i = 1;
-		while (first != last)
-		{
-		// std::cerr << "REVERSE " << i++ << std::endl;
-			tmp = cpy->next;
-		// this->swap(cpy->next, cpy->prev);
-			cpy->next = cpy->prev;
-			cpy->prev = tmp;
-			cpy = tmp;
-			++first;
-		}
-		tmp = cpy->next;
-	// this->swap(cpy->next, cpy->prev);
-		cpy->next = cpy->prev;
-		cpy->prev = tmp;
-		cpy = tmp;
-	}
-}
-*/
 template<typename T>
 void ft::list<T>::reverse()
 {

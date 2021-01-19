@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/16 12:44:55 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/16 12:59:58 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/19 10:14:50 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,12 @@ template<typename T>
 	{
 		return (val1 < val2);
 	}
+
+template<bool B, class T = void>
+struct enable_if {};
+ 
+template<class T>
+struct enable_if<true, T> { typedef T type; };
 
 } // ft
 
