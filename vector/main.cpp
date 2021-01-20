@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/20 16:35:15 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/20 17:12:41 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void displayVec(const ft::vector<T>& v)
 
 int main(void)
 {
-	std::cout << "---- std Vector v = (1,2,3,4) ----" << std::endl;
+	std::cout << "==== std Vector v = (1,2,3,4) ====" << std::endl;
 	std::vector<int> v;
 	for (int i = 1; i < 5; ++i)	{ v.push_back(i); }
 	std::cout << "v: "; displayVec(v);
@@ -78,7 +78,7 @@ int main(void)
 	std::cout << std::endl << "==== Default Constructor ====" << std::endl;
 	
 	NS::vector<int> v1;
-	std::cout << "v1: "; displayVec(v1);
+	std::cout << std::boolalpha << "v1 empty : " << v1.empty() << std::endl;
 	
 	std::cout << "---- Constructor by range (v.begin(), v.end()) ----" << std::endl;
 
@@ -190,6 +190,16 @@ int main(void)
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
 	std::cout << "-- resize(17, 50) -------" << std::endl;
 	v1.resize(17, 50);
+	std::cout << "v1: "; displayVec(v1);	
+	std::cout << "v1 size: " << v1.size() << std::endl;	
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;
+	std::cout << "-- reserve(10) -------" << std::endl;
+	v1.reserve(10);
+	std::cout << "v1: "; displayVec(v1);	
+	std::cout << "v1 size: " << v1.size() << std::endl;	
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
+	std::cout << "-- reserve(20) -------" << std::endl;
+	v1.reserve(20);
 	std::cout << "v1: "; displayVec(v1);	
 	std::cout << "v1 size: " << v1.size() << std::endl;	
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	

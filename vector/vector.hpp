@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/20 16:42:36 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/20 17:19:42 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,7 +238,7 @@ template <typename T>
 				this->_capacity++;
 				++it;
 			}
-			this->_array = new T[this->_capacity];
+			this->allocate_array();
 
 			for (size_type i = 0; i < this->_size; ++i)
 			{
@@ -266,7 +266,7 @@ template <typename T>
 			this->clear();
 			this->_size = rhs._size;
 			this->_capacity = rhs._capacity;
-			this->_array = new T[this->_capacity];
+			this->allocate_array();
 			for (size_type i = 0; i < this->_size; ++i)
 			{
 				this->_array[i] = rhs[i];
@@ -322,7 +322,29 @@ template <typename T>
 			return this->begin() == this->end();
 		}
 
-		void reserve (size_type n);
+		void reserve (size_type n)
+		{
+			T *tmp = NULL;
+			if (n > this->capacity())
+			{
+				this->_capacity = n;
+				try
+				{
+					tmp = new T[this->capacity()];
+				}
+				catch (std::bad_alloc& ba)
+				{
+					std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+				}
+				for (size_type i = 0; i < this->size(); ++i)
+				{
+					tmp[i] = (*this)[i];
+				}
+				this->clear();
+				this->_array = tmp;
+			}
+
+		}
 
 		reference operator[] (size_type n)
 		{
@@ -397,6 +419,17 @@ template <typename T>
 		size_type	_size;
 		size_type	_capacity;
 
+		void	allocate_array()
+		{
+			try
+			{
+				this->_array = new T[this->_capacity];
+			}
+			catch (std::bad_alloc& ba)
+			{
+				std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+			}	
+		}
 		void	range_check(size_type n) const
 		{
 			if (n >= this->size())
@@ -414,8 +447,16 @@ template <typename T>
 				this->_capacity = n;
 			else if (n > this->capacity())
 				this->_capacity *= 2;
+			
+			try
+			{
+				tab = new T[this->capacity()];
+			}
+			catch (std::bad_alloc& ba)
+			{
+				std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+			}
 
-			tab = new T[this->capacity()];
 			for (size_type i = 0; i < this->capacity(); ++i)
 			{
 				if (i < this->size())
