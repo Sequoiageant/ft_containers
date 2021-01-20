@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/19 22:17:40 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/20 12:16:33 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <iostream>
 # include <cstddef>
 # include <exception>
+# include <sstream>
 
 namespace ft
 {
@@ -41,14 +42,14 @@ template<typename T>
 		Vector_iterator(const iterator& copy) : p(copy.p) {}
 		iterator& operator=(const iterator& rhs) { this->p = rhs.p; return *this;}
 		iterator& operator++() { ++p; return *this;}
-		iterator& operator+=(difference_type inc) { p += inc; return *this; }
+		iterator& operator+=(difference_type n) { p += n; return *this; }
 		iterator operator++(int) {iterator tmp(*this); operator++(); return tmp;}
 		iterator& operator--() {--p;return *this;}
-		iterator& operator-=(difference_type inc) { p -= inc; return *this; }
+		iterator& operator-=(difference_type n) { p -= n; return *this; }
 		iterator operator--(int) {iterator tmp(*this); operator--(); return tmp;}
 		iterator operator+(difference_type n) { return iterator(p + n); }
 		iterator operator-(difference_type n) { return iterator(p - n); }
-		iterator operator[](difference_type n) { return p[n]; }
+		reference operator[](difference_type n) { return p[n]; }
 		bool operator==(const iterator& rhs) const { return p==rhs.p; }
 		bool operator!=(const iterator& rhs) const { return p!=rhs.p; }
 		bool operator<(const iterator& rhs) const { return p < rhs.p; }
@@ -56,7 +57,7 @@ template<typename T>
 		pointer operator->() const { return p; }
 		~Vector_iterator(void) {}
 
-		iterator& base() const { return p; }
+		const pointer& base() const { return p; }
 
 	private:
 		value_type *p;
@@ -87,22 +88,22 @@ template<typename T>
 template<typename T>
 	bool operator<=(const Vector_iterator<T>& lhs, const Vector_iterator<T>& rhs)
 	{ 
-		return !(lhs.base() > rhs.base());
+		return lhs.base() <= rhs.base();
 	}
 template<typename T>
 	bool operator>=(const Vector_iterator<T>& lhs, const Vector_iterator<T>& rhs)
 	{ 
-		return !(lhs.base() < rhs.base());
+		return lhs.base() >= rhs.base();
 	}
 template<typename T>
-	Vector_iterator<T> operator+(const Vector_iterator<T>& lhs, const Vector_iterator<T>& rhs)
-	{
-		return lhs.base() + rhs.base();
-	}
-template<typename T>
-	Vector_iterator<T> operator-(const Vector_iterator<T>& lhs, const Vector_iterator<T>& rhs)
+	typename Vector_iterator<T>::difference_type operator-(const Vector_iterator<T>& lhs, const Vector_iterator<T>& rhs)
 	{
 		return lhs.base() - rhs.base();
+	}
+template<typename T>
+	Vector_iterator<T> operator+(typename Vector_iterator<T>::difference_type n , const Vector_iterator<T>& rhs)
+	{
+		return rhs.base() + n;
 	}
 
 // ==================================	
@@ -130,18 +131,21 @@ template<typename T>
 		const_iterator& operator=(const iterator& rhs) { this->p = rhs.p; return *this;}
 		const_iterator& operator=(const const_iterator& rhs) { this->p = rhs.p; return *this;}
 		const_iterator& operator++() {++p; return *this;}
-		const_iterator& operator+=(difference_type inc) { p += inc; return *this; }
+		const_iterator& operator+=(difference_type n) { p += n; return *this; }
 		const_iterator operator++(int) {const_iterator tmp(*this); operator++(); return tmp;}
+		const_iterator operator+(difference_type n) { return const_iterator(p + n); }
+		const_iterator operator-(difference_type n) { return const_iterator(p - n); }
+		reference operator[](difference_type n) { return p[n]; }
 		const_iterator& operator--() {--p; return *this;}
-		const_iterator& operator-=(difference_type inc) { p -= inc; return *this; }
+		const_iterator& operator-=(difference_type n) { p -= n; return *this; }
 		const_iterator operator--(int) {const_iterator tmp(*this); operator--(); return tmp;}
 		bool operator==(const const_iterator& rhs) const {return p==rhs.p;}
 		bool operator!=(const const_iterator& rhs) const {return p!=rhs.p;}
-		const value_type& operator*() const {return *p;}
-		const value_type* operator->() const {return p;}
+		reference operator*() const {return *p;}
+		pointer operator->() const {return p;}
 		~Vector_const_iterator(void) {}
 
-		const_iterator& base() const { return p; }
+		pointer& base() const { return p; }
 
 	private:
 		const value_type *p;
@@ -172,23 +176,24 @@ template<typename T>
 template<typename T>
 	bool operator<=(const Vector_const_iterator<T>& lhs, const Vector_const_iterator<T>& rhs)
 	{ 
-		return !(lhs.base() > rhs.base());
+		return lhs.base() <= rhs.base();
 	}
 template<typename T>
 	bool operator>=(const Vector_const_iterator<T>& lhs, const Vector_const_iterator<T>& rhs)
 	{ 
-		return !(lhs.base() < rhs.base());
+		return lhs.base() >= rhs.base();
 	}
 template<typename T>
-	Vector_const_iterator<T> operator+(const Vector_const_iterator<T>& lhs, const Vector_const_iterator<T>& rhs)
-	{
-		return lhs.base() + rhs.base();
-	}
-template<typename T>
-	Vector_const_iterator<T> operator-(const Vector_const_iterator<T>& lhs, const Vector_const_iterator<T>& rhs)
+	typename Vector_const_iterator<T>::difference_type operator-(const Vector_const_iterator<T>& lhs, const Vector_const_iterator<T>& rhs)
 	{
 		return lhs.base() - rhs.base();
 	}
+template<typename T>
+	Vector_const_iterator<T> operator+(typename Vector_iterator<T>::difference_type n , const Vector_const_iterator<T>& rhs)
+	{
+		return rhs.base() + n;
+	}
+
 
 // ==================================	
 // Non-member function overloads END
@@ -211,6 +216,7 @@ template <typename T>
 
 		explicit vector () : _array(new T[0]), _size(0), _capacity(0)
 		{
+			// std::cout << "FT VECTOR" << std::endl;
 			return;
 		}
 
@@ -285,12 +291,37 @@ template <typename T>
 			return size_type(&this->_array[this->_size] - this->_array);
 		// return this->_size;
 		}
+
 		size_type max_size() const
 		{
 			std::allocator<value_type> a;
 			return a.max_size();
 		}
-		void resize (size_type n, value_type val = value_type());
+
+		void resize (size_type n, value_type val = value_type())
+		{
+			iterator first = this->begin();
+
+			if (n < this->size())
+			{
+				vector v(first, first + n);
+				*this = v;
+			}
+			else
+			{
+				vector v(n, val);
+				iterator it = v.begin();
+				while (first != this->end())
+				{
+					*it++ = *first++;
+					// ++it;
+					// ++first;
+				}
+				*this = v;
+			}
+
+		}
+
 		size_type capacity() const
 		{
 			return this->_capacity;
@@ -299,6 +330,7 @@ template <typename T>
 		{
 			return this->begin() == this->end();
 		}
+
 		void reserve (size_type n);
 
 		reference operator[] (size_type n)
@@ -313,17 +345,35 @@ template <typename T>
 
 		reference at (size_type n)
 		{
-// vector::_M_range_check: __n (which is 5) >= this->size() (which is 4)
-
-			if (n >= this->size())
-				throw std::out_of_range("vector out of range"); //::range_check:n (which is " + n + ") >= this->size() (which is " + this->size() + ")");
+			this->range_check(n);
 			return this->_array[n];
 		}
-		const_reference at (size_type n) const;
-		reference front();
-		const_reference front() const;
-		reference back();
-		const_reference back() const;
+
+		const_reference at (size_type n) const
+		{
+			this->range_check(n);
+			return this->_array[n];
+		}
+
+		reference front()
+		{
+			return *this->_array;
+		}
+
+		const_reference front() const
+		{
+			return *this->_array;
+		}
+
+		reference back()
+		{
+			return this->_array[this->_size - 1];
+		}
+
+		const_reference back() const
+		{
+			return this->_array[this->_size - 1];
+		}
 
 	template <class InputIterator>
 		void assign (InputIterator first, InputIterator last);
@@ -350,18 +400,21 @@ template <typename T>
 			delete [] this->_array;
 		}
 
-		void displayVec() const {
-			for (size_type i = 0; i < this->_size; ++i)
-			{
-				std::cout << this->_array[i] << ' ';
-			}
-			std::cout << std::endl;
-		}
 
 	private:
 		T*			_array;
 		size_type	_size;
 		size_type	_capacity;
+
+		void	range_check(size_type n) const
+		{
+			if (n >= this->size())
+			{
+				std::stringstream	ss;
+				ss << "vector::range_check: n (which is " << n << ") >= this->size() (which is " << this->size() << ")";
+				throw std::out_of_range(ss.str());
+			}
+		}
 
 	};
 

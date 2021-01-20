@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/19 22:03:30 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/20 12:18:46 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,28 @@
 // #include "../list/list.hpp"
 #include <vector>
 
-#define NS std
+#ifndef STD
+# define NS ft
+#else
+# define NS std
+#endif
 
 template<typename T>
 void displayVec(std::vector<T>& v)
 {
 	typename std::vector<T>::iterator it = v.begin();
+	while (it != v.end())
+	{
+		std::cout << *it << ' ';
+		++it;
+	}
+	std::cout << std::endl;
+}
+
+template<typename T>
+void displayVec(const std::vector<T>& v)
+{
+	typename std::vector<T>::const_iterator it = v.begin();
 	while (it != v.end())
 	{
 		std::cout << *it << ' ';
@@ -40,6 +56,18 @@ void displayVec(ft::vector<T>& v)
 	std::cout << std::endl;
 }
 
+template<typename T>
+void displayVec(const ft::vector<T>& v)
+{
+	typename ft::vector<T>::const_iterator it = v.begin();
+	while (it != v.end())
+	{
+		std::cout << *it << ' ';
+		++it;
+	}
+	std::cout << std::endl;
+}
+
 int main(void)
 {
 	std::cout << "---- std Vector v = (1,2,3,4) ----" << std::endl;
@@ -47,50 +75,108 @@ int main(void)
 	for (int i = 1; i < 5; ++i)	{ v.push_back(i); }
 	std::cout << "v: "; displayVec(v);
 
-	std::cout << "---- Default Constructor ----" << std::endl;
+	std::cout << std::endl << "---- Default Constructor ----" << std::endl;
 	
-	ft::vector<int> v1;
-	std::cout << "v1: "; v1.displayVec();
+	NS::vector<int> v1;
+	std::cout << "v1: "; displayVec(v1);
 	
 	std::cout << "---- Constructor by range (v.begin(), v.end()) ----" << std::endl;
 
-	ft::vector<int> v2(v.begin(), v.end());
-	std::cout << "v2: "; v2.displayVec();
+	const NS::vector<int> v2(v.begin(), v.end());
+	std::cout << "v2: "; displayVec(v2);
 
 	std::cout << "---- Constructor by copy v3(v2) ----" << std::endl;
-	ft::vector<int> v3(v2);
-	std::cout << "v3: "; v3.displayVec();
+	NS::vector<int> v3(v2);
+	std::cout << "v3: "; displayVec(v3);
 
 	std::cout << "---- Assignation of v1 = v2 ----" << std::endl;
 	v1 = v2;
-	std::cout << "v1: "; v1.displayVec();
-
-	std::cout << "---- Iterators ----" << std::endl;
-	ft::vector<int>::iterator it1 = v1.begin();
-	std::cout << "it1: " << *it1 << std::endl;
-	it1 += 2;
-	std::cout << "++it1: " << *it1 << std::endl;
-	std::cout << "*it1--: " << *it1-- << std::endl;
-	std::cout << "*it1: " << *it1 << std::endl;
 	std::cout << "v1: "; displayVec(v1);
 
-	std::cout << "---- v1 size ----" << std::endl;
-	std::cout << "v1 size: " << v1.size() << std::endl;
+	std::cout << std::endl << "---- ITERATORS ----" << std::endl;
+	std::cout << "- Inc / Decrementations -------" << std::endl;
+	NS::vector<int>::iterator it1 = v1.begin();
+	std::cout << "v1: "; displayVec(v1);
+	std::cout << "it1: " << *it1 << std::endl;
+	++it1;
+	std::cout << "++it1: " << *it1 << std::endl;
+	it1 += 2;
+	std::cout << "it1 += 2: " << *it1 << std::endl;
+	it1--;
+	std::cout << "it1--: " << *it1 << std::endl;
+	--it1;
+	std::cout << "--it1: " << *it1 << std::endl;
+	it1++;
+	std::cout << "it1++: " << *it1 << std::endl;
+	it1 -= 2;
+	std::cout << "it1 -= 2: " << *it1 << std::endl;
+	
+	std::cout << "- Binary Operations -------" << std::endl;
+	NS::vector<int>::iterator it1bis = v1.begin();
+	it1bis += 2;
+	std::cout << "it1 - it1bis: " << it1 - it1bis << std::endl;
+	std::cout << "it1bis - it1: " << it1bis - it1 << std::endl;
+	std::cout << "it1 + 3: " << *(it1 + 3) << std::endl;
+	std::cout << "it1: " << *it1 << std::endl;
+	it1bis = it1 + 3;
+	std::cout << "it1bis = it1 + 3: " << *it1bis << std::endl;
+	std::cout << std::boolalpha << "it1bis < it1 : " << (it1bis < it1) << std::endl;
+	std::cout << std::boolalpha << "it1bis > it1 : " << (it1bis > it1) << std::endl;
+	it1bis -= 3;
+	std::cout << "it1bis: " << *it1bis << std::endl;
+	std::cout << std::boolalpha << "it1bis == it1 : " << (it1bis == it1) << std::endl;
+	std::cout << "it1[0]: " << it1[0] << std::endl;
+	std::cout << "it1[2]: " << it1[2] << std::endl;
 
-	std::cout << "---- vector max size ----" << std::endl;
+
+	std::cout << std::endl << "---- v1 size ----" << std::endl;
+	std::cout << "v1 size: " << v1.size() << std::endl;	
+
+	std::cout << std::endl << "---- vector max size ----" << std::endl;
 	std::cout << "std::vector: " << v.max_size() << std::endl;
 	std::cout << "ft::vector: " << v1.max_size() << std::endl;
 	
-	std::cout << "---- operator [] ----" << std::endl;
-	std::cout << "v1[2]: " << v1[2] << std::endl;
+	std::cout << std::endl << "---- operator [] & at() ----" << std::endl;
+	std::cout << "- Non const -------" << std::endl;
+	std::cout << "v1[2]   : " << v1[2] << std::endl;
+	std::cout << "v1.at(2): " << v1.at(2) << std::endl;
 	try {
 		std::cout << "v1.at(5): " << v1.at(5) << std::endl;
-		// std::cout << "v[1]: " << v.at(5) << std::endl;
 	}
 	catch(const std::exception& e) {
 		std::cerr << e.what() << '\n';
 	}
+	std::cout << "v1.at(2)++: " << v1.at(2)++ << std::endl;
+	std::cout << "v1: "; displayVec(v1);
+	std::cout << "--v1.at(2): " << --v1.at(2) << std::endl;
+	std::cout << "v1: "; displayVec(v1);
+	std::cout << "----  const -------" << std::endl;
+	std::cout << "v2[2]   : " << v2[2] << std::endl;
+	std::cout << "v2.at(2): " << v2.at(2) << std::endl;
+	
 
+	std::cout << std::endl << "---- front() back() ----" << std::endl;
+	std::cout << "- Non const -------" << std::endl;
+	std::cout << "v1.front(): " << v1.front() << std::endl;	
+	std::cout << "v1.back()++: " << v1.back()++ << std::endl;
+	std::cout << "v1.back(): " << v1.back() << std::endl;
+	std::cout << "v1: "; displayVec(v1);
+
+	std::cout << "----  const -------" << std::endl;
+	std::cout << "v2.front(): " << v2.front() << std::endl;	
+	std::cout << "v2.back(): " << v2.back() << std::endl;
+
+	std::cout << std::endl << "---- resize() ----" << std::endl;
+	std::cout << "- resize(3) -------" << std::endl;
+	v1.resize(3);
+	std::cout << "v1: "; displayVec(v1);	
+	std::cout << "v1 size: " << v1.size() << std::endl;	
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
+	std::cout << "- resize(8, 42) -------" << std::endl;
+	v1.resize(8, 42);
+	std::cout << "v1: "; displayVec(v1);	
+	std::cout << "v1 size: " << v1.size() << std::endl;	
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
 
 /*	std::cout << "---- std Iterators ----" << std::endl;
 	// v.push_back(5);
