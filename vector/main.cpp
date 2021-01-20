@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/20 12:18:46 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/20 16:35:15 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int main(void)
 	for (int i = 1; i < 5; ++i)	{ v.push_back(i); }
 	std::cout << "v: "; displayVec(v);
 
-	std::cout << std::endl << "---- Default Constructor ----" << std::endl;
+	std::cout << std::endl << "==== Default Constructor ====" << std::endl;
 	
 	NS::vector<int> v1;
 	std::cout << "v1: "; displayVec(v1);
@@ -93,7 +93,7 @@ int main(void)
 	v1 = v2;
 	std::cout << "v1: "; displayVec(v1);
 
-	std::cout << std::endl << "---- ITERATORS ----" << std::endl;
+	std::cout << std::endl << "==== ITERATORS ====" << std::endl;
 	std::cout << "- Inc / Decrementations -------" << std::endl;
 	NS::vector<int>::iterator it1 = v1.begin();
 	std::cout << "v1: "; displayVec(v1);
@@ -129,14 +129,14 @@ int main(void)
 	std::cout << "it1[2]: " << it1[2] << std::endl;
 
 
-	std::cout << std::endl << "---- v1 size ----" << std::endl;
+	std::cout << std::endl << "==== v1 size ====" << std::endl;
 	std::cout << "v1 size: " << v1.size() << std::endl;	
 
-	std::cout << std::endl << "---- vector max size ----" << std::endl;
+	std::cout << std::endl << "==== vector max size ====" << std::endl;
 	std::cout << "std::vector: " << v.max_size() << std::endl;
 	std::cout << "ft::vector: " << v1.max_size() << std::endl;
 	
-	std::cout << std::endl << "---- operator [] & at() ----" << std::endl;
+	std::cout << std::endl << "==== operator [] & at() ====" << std::endl;
 	std::cout << "- Non const -------" << std::endl;
 	std::cout << "v1[2]   : " << v1[2] << std::endl;
 	std::cout << "v1.at(2): " << v1.at(2) << std::endl;
@@ -155,7 +155,7 @@ int main(void)
 	std::cout << "v2.at(2): " << v2.at(2) << std::endl;
 	
 
-	std::cout << std::endl << "---- front() back() ----" << std::endl;
+	std::cout << std::endl << "==== front() back() ====" << std::endl;
 	std::cout << "- Non const -------" << std::endl;
 	std::cout << "v1.front(): " << v1.front() << std::endl;	
 	std::cout << "v1.back()++: " << v1.back()++ << std::endl;
@@ -166,14 +166,30 @@ int main(void)
 	std::cout << "v2.front(): " << v2.front() << std::endl;	
 	std::cout << "v2.back(): " << v2.back() << std::endl;
 
-	std::cout << std::endl << "---- resize() ----" << std::endl;
-	std::cout << "- resize(3) -------" << std::endl;
+	std::cout << std::endl << "==== resize() ====" << std::endl;
+	std::cout << "-- resize(3) -------" << std::endl;
+	v1.resize(3);
+	std::cout << "v1: "; displayVec(v1);	
+	std::cout << "v1 size: " << v1.size() << std::endl;	
+	// std::cout << "it end: " << *v1.end() << std::endl;	
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
+	std::cout << "-- resize(3) -------" << std::endl;
 	v1.resize(3);
 	std::cout << "v1: "; displayVec(v1);	
 	std::cout << "v1 size: " << v1.size() << std::endl;	
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
-	std::cout << "- resize(8, 42) -------" << std::endl;
-	v1.resize(8, 42);
+	std::cout << "-- resize(4) -------" << std::endl;
+	v1.resize(4);
+	std::cout << "v1: "; displayVec(v1);	
+	std::cout << "v1 size: " << v1.size() << std::endl;	
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
+	std::cout << "-- resize(6, 42) -------" << std::endl;
+	v1.resize(6, 42);
+	std::cout << "v1: "; displayVec(v1);	
+	std::cout << "v1 size: " << v1.size() << std::endl;	
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
+	std::cout << "-- resize(17, 50) -------" << std::endl;
+	v1.resize(17, 50);
 	std::cout << "v1: "; displayVec(v1);	
 	std::cout << "v1 size: " << v1.size() << std::endl;	
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	

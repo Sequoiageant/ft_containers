@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/20 12:16:33 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/20 16:42:36 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,26 +300,17 @@ template <typename T>
 
 		void resize (size_type n, value_type val = value_type())
 		{
-			iterator first = this->begin();
-
-			if (n < this->size())
+			if (n > this->size())
 			{
-				vector v(first, first + n);
-				*this = v;
+				T* tmp = new_tab(n, val);
+				// for (size_type i = 0; i < this->size(); ++i)
+				// {
+				// 	tmp[i] = this->_array[i];
+				// }
+				this->clear();
+				this->_array = tmp;
 			}
-			else
-			{
-				vector v(n, val);
-				iterator it = v.begin();
-				while (first != this->end())
-				{
-					*it++ = *first++;
-					// ++it;
-					// ++first;
-				}
-				*this = v;
-			}
-
+			this->_size = n;
 		}
 
 		size_type capacity() const
@@ -416,6 +407,26 @@ template <typename T>
 			}
 		}
 
+		T* new_tab(size_type n, T val)
+		{
+			T* tab = NULL;
+			if (n > this->capacity() * 2)
+				this->_capacity = n;
+			else if (n > this->capacity())
+				this->_capacity *= 2;
+
+			tab = new T[this->capacity()];
+			for (size_type i = 0; i < this->capacity(); ++i)
+			{
+				if (i < this->size())
+					tab[i] = (*this)[i];
+				else if (i < n)
+					tab[i] = val;
+				else
+					tab[i] = value_type();
+			}
+			return tab;
+		}
 	};
 
 // Non-member function overloads
