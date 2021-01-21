@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/20 17:19:42 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/21 17:18:24 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,13 +300,9 @@ template <typename T>
 
 		void resize (size_type n, value_type val = value_type())
 		{
-			if (n > this->size())
+			if (n > this->capacity())
 			{
-				T* tmp = new_tab(n, val);
-				// for (size_type i = 0; i < this->size(); ++i)
-				// {
-				// 	tmp[i] = this->_array[i];
-				// }
+				T* tmp = reallocte_tab(n, val);
 				this->clear();
 				this->_array = tmp;
 			}
@@ -389,14 +385,61 @@ template <typename T>
 		}
 
 	template <class InputIterator>
-		void assign (InputIterator first, InputIterator last);
+		void assign (InputIterator first, InputIterator last)
+		{
+			size_type range = last - first;
 
-		void assign (size_type n, const value_type& val);
+			if (range > this->capacity())
+			{
+				T* tmp = new T[range];
+				this->clear();
+				this->_array = tmp;
+				this->_capacity = range;
+			}
+			this->_size = range;
+			for (size_type i = 0; i < range; ++i)
+			{
+				this->_array[i] = *first;
+				++first;
+			}
+		}
 
-		void push_back (const value_type& val);
-		void pop_back();
+		void assign (size_type n, const value_type& val) // NEEDS enable_if
+		{
+			if (n > this->capacity())
+			{
+				T* tmp = new T[n];
+				this->clear();
+				this->_array = tmp;
+				this->_capacity = n;
+			}
+			this->_size = n;
+			for (size_type i = 0; i < n; ++i)
+			{
+				this->_array[i] = val;
+			}
+		}
 
-		iterator insert (iterator position, const value_type& val);
+		void push_back (const value_type& val)
+		{
+			resize (this->size() + 1);
+			this->_array[this->_size - 1] = val;
+
+		}
+		void pop_back()
+		{
+			this->back().~T();
+			--this->_size;
+		}
+
+/*		iterator insert (iterator position, const value_type& val)
+		{
+			T* tmp = 
+
+			resize (this->size() + 1); // reallocates if this->size + 1 > capacity
+
+
+		}*/
 
 		void insert (iterator position, size_type n, const value_type& val);
 
@@ -440,8 +483,14 @@ template <typename T>
 			}
 		}
 
-		T* new_tab(size_type n, T val)
+		// T* new_empty_tab(size_type n, T val = value_type())
+		// {
+		// 	tab = new T[n];
+		// }
+
+		T* reallocte_tab(size_type n, T val = value_type())
 		{
+			std::cout << "REALLOCATION" << std::endl;
 			T* tab = NULL;
 			if (n > this->capacity() * 2)
 				this->_capacity = n;

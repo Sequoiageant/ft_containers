@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/20 17:12:41 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/21 17:22:31 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,33 +169,35 @@ int main(void)
 	std::cout << std::endl << "==== resize() ====" << std::endl;
 	std::cout << "-- resize(3) -------" << std::endl;
 	v1.resize(3);
-	std::cout << "v1: "; displayVec(v1);	
+	std::cout << "v1: "; displayVec(v1);
 	std::cout << "v1 size: " << v1.size() << std::endl;	
 	// std::cout << "it end: " << *v1.end() << std::endl;	
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
 	std::cout << "-- resize(3) -------" << std::endl;
 	v1.resize(3);
-	std::cout << "v1: "; displayVec(v1);	
+	std::cout << "v1: "; displayVec(v1);
 	std::cout << "v1 size: " << v1.size() << std::endl;	
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
 	std::cout << "-- resize(4) -------" << std::endl;
 	v1.resize(4);
-	std::cout << "v1: "; displayVec(v1);	
+	std::cout << "v1: "; displayVec(v1);
 	std::cout << "v1 size: " << v1.size() << std::endl;	
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
 	std::cout << "-- resize(6, 42) -------" << std::endl;
 	v1.resize(6, 42);
-	std::cout << "v1: "; displayVec(v1);	
+	std::cout << "v1: "; displayVec(v1);
 	std::cout << "v1 size: " << v1.size() << std::endl;	
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
 	std::cout << "-- resize(17, 50) -------" << std::endl;
 	v1.resize(17, 50);
-	std::cout << "v1: "; displayVec(v1);	
+	std::cout << "v1: "; displayVec(v1);
 	std::cout << "v1 size: " << v1.size() << std::endl;	
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;
 	std::cout << "-- reserve(10) -------" << std::endl;
+
+	std::cout << std::endl << "==== reserve() ====" << std::endl;
 	v1.reserve(10);
-	std::cout << "v1: "; displayVec(v1);	
+	std::cout << "v1: "; displayVec(v1);
 	std::cout << "v1 size: " << v1.size() << std::endl;	
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
 	std::cout << "-- reserve(20) -------" << std::endl;
@@ -203,6 +205,57 @@ int main(void)
 	std::cout << "v1: "; displayVec(v1);	
 	std::cout << "v1 size: " << v1.size() << std::endl;	
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
+
+	std::cout << std::endl << "==== assign() ====" << std::endl;
+	std::cout << "v3: "; displayVec(v3);
+	std::cout << "v3 size: " << v3.size() << std::endl;	
+	std::cout << "v3 capacity: " << v3.capacity() << std::endl;	
+	std::cout << "-- v3.assign(v1) -------" << std::endl;
+	v3.assign(v1.begin(), v1.end());
+	std::cout << "v3: "; displayVec(v3);
+	std::cout << "v3 size: " << v3.size() << std::endl;	
+	
+/*	std::cout << "-- v3.assign(v1 resized at 3) -------" << std::endl; // NEED enable_if
+	v1.resize(3);
+	v3.assign(v1.begin(), v1.end());
+	std::cout << "v3: "; displayVec(v3);
+	std::cout << "v3 size: " << v3.size() << std::endl;	
+	std::cout << "v3 capacity: " << v3.capacity() << std::endl;
+	std::cout << "-- v3.assign(5, 42) -------" << std::endl;
+	v3.assign(5, 42);
+	std::cout << "v3: "; displayVec(v3);
+	std::cout << "v3 size: " << v3.size() << std::endl;	
+	std::cout << "v3 capacity: " << v3.capacity() << std::endl;	
+*/
+	std::cout << std::endl << "==== push_back() ====" << std::endl;
+	std::cout << "v1: "; displayVec(v1);
+	std::cout << "v1 size: " << v1.size() << std::endl;	
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;	
+	std::cout << "-- v1.push_back() 2 times -------" << std::endl;
+	v1.push_back(10);
+	v1.push_back(11);
+	std::cout << "v1: "; displayVec(v1);
+	std::cout << "v1 size: " << v1.size() << std::endl;	
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;
+	std::cout << "-- v1.push_back(10) 1 more time -------" << std::endl;
+	v1.push_back(12);
+	std::cout << "v1: "; displayVec(v1);
+	std::cout << "v1 size: " << v1.size() << std::endl;	
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;
+	std::cout << "-- v1.push_back(10) 1 more time -------" << std::endl;
+	v1.push_back(13);
+	std::cout << "v1: "; displayVec(v1);
+	std::cout << "v1 size: " << v1.size() << std::endl;	
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;
+
+	std::cout << std::endl << "==== pop_back() ====" << std::endl;
+	std::cout << "-- v1.pop_back() -------" << std::endl;
+	v1.pop_back();
+	std::cout << "v1: "; displayVec(v1);
+	std::cout << "v1 size: " << v1.size() << std::endl;	
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;
+	std::cout << "-- v1.push_back(10) 1 more time -------" << std::endl;
+
 
 /*	std::cout << "---- std Iterators ----" << std::endl;
 	// v.push_back(5);
