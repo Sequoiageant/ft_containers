@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/21 17:22:31 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/21 19:08:20 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,13 +214,15 @@ int main(void)
 	v3.assign(v1.begin(), v1.end());
 	std::cout << "v3: "; displayVec(v3);
 	std::cout << "v3 size: " << v3.size() << std::endl;	
+	std::cout << "v3 capacity: " << v3.capacity() << std::endl;
 	
-/*	std::cout << "-- v3.assign(v1 resized at 3) -------" << std::endl; // NEED enable_if
+	std::cout << "-- v3.assign(v1 resized at 3) -------" << std::endl; // NEED enable_if
 	v1.resize(3);
 	v3.assign(v1.begin(), v1.end());
 	std::cout << "v3: "; displayVec(v3);
 	std::cout << "v3 size: " << v3.size() << std::endl;	
 	std::cout << "v3 capacity: " << v3.capacity() << std::endl;
+/*
 	std::cout << "-- v3.assign(5, 42) -------" << std::endl;
 	v3.assign(5, 42);
 	std::cout << "v3: "; displayVec(v3);

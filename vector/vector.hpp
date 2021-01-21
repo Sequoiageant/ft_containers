@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/21 17:18:24 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/21 19:20:46 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,8 +288,8 @@ template <typename T>
 
 		size_type size() const
 		{
-			return size_type(&this->_array[this->_size] - this->_array);
-		// return this->_size;
+			// return size_type(&this->_array[this->_size] - this->_array);
+			return this->_size;
 		}
 
 		size_type max_size() const
@@ -300,13 +300,31 @@ template <typename T>
 
 		void resize (size_type n, value_type val = value_type())
 		{
+			// std::cout << "SIZE: " << this->size() << std::endl;
 			if (n > this->capacity())
 			{
 				T* tmp = reallocte_tab(n, val);
 				this->clear();
 				this->_array = tmp;
+				this->_size = n;
 			}
-			this->_size = n;
+			else if (n > this->_size)
+			{
+				while (this->_size < n)
+				{
+					// std::cout << "RESIZE II" << std::endl;
+					this->_array[this->_size] = val;
+					++this->_size;
+				}
+			}
+			else
+			{
+				while (this->_size > n)
+				{
+					this->_array[this->_size].~T();
+					--this->_size;
+				}
+			}
 		}
 
 		size_type capacity() const
@@ -396,12 +414,17 @@ template <typename T>
 				this->_array = tmp;
 				this->_capacity = range;
 			}
-			this->_size = range;
 			for (size_type i = 0; i < range; ++i)
 			{
 				this->_array[i] = *first;
 				++first;
 			}
+			for (size_type i = range; i < this->_size; ++i)
+			{
+				first->~T();
+				++first;
+			}
+			this->_size = range;
 		}
 
 		void assign (size_type n, const value_type& val) // NEEDS enable_if
@@ -413,11 +436,15 @@ template <typename T>
 				this->_array = tmp;
 				this->_capacity = n;
 			}
-			this->_size = n;
 			for (size_type i = 0; i < n; ++i)
 			{
 				this->_array[i] = val;
 			}
+			for (size_type i = n; i < this->_size; ++i)
+			{
+				this->_array[i].~T();
+			}
+			this->_size = n;
 		}
 
 		void push_back (const value_type& val)
@@ -490,7 +517,7 @@ template <typename T>
 
 		T* reallocte_tab(size_type n, T val = value_type())
 		{
-			std::cout << "REALLOCATION" << std::endl;
+			// std::cout << "REALLOCATION" << std::endl;
 			T* tab = NULL;
 			if (n > this->capacity() * 2)
 				this->_capacity = n;
