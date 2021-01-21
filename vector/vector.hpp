@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/21 19:20:46 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/21 19:36:52 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -533,14 +533,14 @@ template <typename T>
 				std::cerr << "bad_alloc caught: " << ba.what() << '\n';
 			}
 
-			for (size_type i = 0; i < this->capacity(); ++i)
+			for (size_type i = 0; i < n; ++i)
 			{
 				if (i < this->size())
 					tab[i] = (*this)[i];
-				else if (i < n)
+				else// if (i < n)
 					tab[i] = val;
-				else
-					tab[i] = value_type();
+				// else
+				// 	tab[i] = value_type();
 			}
 			return tab;
 		}
