@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/22 11:48:24 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/22 10:51:58 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,7 +216,7 @@ template <typename T>
 
 		explicit vector () : _array(new T[0]), _size(0), _capacity(0)
 		{
-			// std::cout << "FT VECTOR" << std::endl;
+			// std::cout << "DEFAULT VECTOR CTOR" << std::endl;
 			return;
 		}
 
@@ -421,8 +421,7 @@ template <typename T>
 			}
 			for (size_type i = 0; i < range; ++i)
 			{
-				 // new (this->_array + i, *first);
-				 this->_array[i] = value_type(*first);
+				this->_array[i] = *first;
 				++first;
 			}
 			this->_size = range;
@@ -445,22 +444,21 @@ template <typename T>
 			}
 			for (size_type i = 0; i < n; ++i)
 			{
-				new (static_cast<void*>(this->_array + i)) T(val);
+				this->_array[i] = val;
 			}
 			this->_size = n;
 		}
 
 		void push_back (const value_type& val)
 		{
-			resize(this->size() + 1, val);
+			resize (this->size() + 1, val);
 			// this->_array[this->_size - 1] = val;
 
 		}
 		void pop_back()
 		{
-			resize(this->size() - 1);
-			// this->back().~T();
-			// --this->_size;
+			this->back().~T();
+			--this->_size;
 		}
 
 /*		iterator insert (iterator position, const value_type& val)
