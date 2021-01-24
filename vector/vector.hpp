@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/22 20:24:58 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/24 11:27:11 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -455,14 +455,63 @@ template <typename T>
 			// --this->_size;
 		}
 
-/*		iterator insert (iterator position, const value_type& val)
+		iterator insert (iterator position, const value_type& val)
 		{
-			T* tmp = 
+			iterator first = this->begin();
 
-			resize (this->size() + 1); // reallocates if this->size + 1 > capacity
+			if(this->_size == this->_capacity)
+			{
 
+				T* tmp = static_cast<T*>(::operator new(sizeof(T) * this->_size + 1));
 
-		}*/
+				size_type i(0);
+				while(first != this->end())
+				{
+					if (first < position)
+						new (static_cast<void*>(tmp + i)) value_type(this->_array[i]);
+					else if (first == position)
+					{
+						new (static_cast<void*>(tmp + i)) value_type(val);
+						--i;
+					}
+					else
+						new (static_cast<void*>(tmp + i)) value_type(this->_array[i]);
+					++first;
+					++i;
+				}
+				this->clear();
+				delete (this->_array);
+				this->_array = tmp;
+				this->_size = i;
+			}
+			else
+			{
+				size_type i(0);
+				T tmp;
+				T tmp2;
+				while(first != this->end())
+				{
+					if (first == position)
+					{
+						tmp = this->_array[i];
+						this->_array[i] = val;
+					}
+					else if (first > position)
+					{
+						tmp2 = this->_array[i];
+						this->_array[i] = tmp;
+						tmp = tmp2;
+					}
+					++first;
+					++i;
+				}
+				if (position == this->end())
+					push_back (val);
+				else
+					this->_size++;
+			}
+			return (position);
+		}
 
 		void insert (iterator position, size_type n, const value_type& val);
 
