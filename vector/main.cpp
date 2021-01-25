@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/24 20:14:36 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/25 12:27:30 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,20 @@ int main(void)
 	std::cout << "v3: "; displayVec(v3);
 
 	std::cout << "---- Assignation of v1 = v2 ----" << std::endl;
+/*	v1.push_back(42);
+	v1.push_back(42);
+	// v1.push_back(42);
+	// v1.push_back(42);
+	// v1.push_back(42);
+	std::cout << "v1: "; displayVec(v1);
+	std::cout << "v1 size: " << v1.size() << std::endl;
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;
+	std::cout << "---- Assignation... ----" << std::endl;*/
 	v1 = v2;
 	std::cout << "v1: "; displayVec(v1);
+	std::cout << "v1 size: " << v1.size() << std::endl;
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;
+	std::cout << "v1 end: " << *(++v1.end()) << std::endl;
 
 
 	std::cout << std::endl << "==== ITERATORS ====" << std::endl;
@@ -266,8 +278,8 @@ int main(void)
 	v4.insert(++v4.begin(), 42);
 	v4.insert(++v4.begin(), 42);
 	v4.insert(++v4.begin(), 42);
-	v4.insert(++v4.begin(), 42);
-	v4.insert(++v4.begin(), 42);
+	// v4.insert(++v4.begin(), 42);
+	// v4.insert(++v4.begin(), 42);
 	std::cout << "v4: "; displayVec(v4);
 	std::cout << "v4 size: " << v4.size() << std::endl;
 	std::cout << "v4 capacity: " << v4.capacity() << std::endl;
