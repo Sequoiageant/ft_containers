@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/25 12:27:13 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/25 17:15:18 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ template<typename T>
 		pointer operator->() const {return p;}
 		~Vector_const_iterator(void) {}
 
-		pointer& base() const { return p; }
+		const pointer& base() const { return p; }
 
 	private:
 		const value_type *p;
@@ -263,24 +263,25 @@ template <typename T>
 		{
 			// std::cout << "ASSIGNATION" << std::endl;
 
+			this->assign(rhs.begin(), rhs.end());
+			/*this->destroy_array();
 			if (rhs._size > this->_capacity)
 			{
 				T* tmp = static_cast<T*>(::operator new(sizeof(T) * rhs._size));
-				this->destroy_array();
 				delete (this->_array);
-				this->_array = tmp;				
+				this->_array = tmp;	
 				this->_capacity = rhs._size;
 			}
-			else if (this->_size > rhs._size)
-			{
-				for (size_type i = rhs._size; i < this->_size; ++i)
-				{
-					this->_array[i].~value_type();
-				}
-			}
+			// else if (this->_size > rhs._size)
+			// {
+			// 	for (size_type i = rhs._size; i < this->_size; ++i)
+			// 	{
+			// 		this->_array[i].~value_type();
+			// 	}
+			// }
 			this->_size = rhs._size;
 			memcpy(static_cast<void*>(this->_array), static_cast<void*>(rhs._array), sizeof(value_type) * rhs._size);
-
+*/
 			return *this;
 		}
 
@@ -408,12 +409,12 @@ template <typename T>
 	template <class InputIterator>
 		void assign (InputIterator first, InputIterator last) // NEEDS enable_if
 		{
-			size_type range = last - first;
+			size_type range = static_cast<size_type>(last - first);
 			if (range > this->capacity())
 			{
-				this->clear();
+				this->destroy_array();
 				delete this->_array;
-				this->_array = static_cast<T*>(::operator new(sizeof(T) * range));
+				this->_array = static_cast<T*>(::operator new(sizeof(value_type) * range));
 				this->_capacity = range;
 			}
 			else
@@ -425,7 +426,6 @@ template <typename T>
 			}
 			for (size_type i = 0; i < range; ++i)
 			{
-				 // new (this->_array + i, *first);
 				new (static_cast<void*>(this->_array + i)) T(*first);
 				++first;
 			}
@@ -443,7 +443,8 @@ template <typename T>
 			}
 			for (size_type i = 0; i < n; ++i)
 			{
-				new (static_cast<void*>(this->_array + i)) T(val);
+				this->_array[i] = val;
+				// new (static_cast<void*>(this->_array + i)) T(val);
 			}
 			for (size_type i = n; i < this->_size; ++i)
 			{
@@ -468,15 +469,30 @@ template <typename T>
 		iterator insert (iterator position, const value_type& val)
 		{
 			iterator first = this->begin();
-			value_type i = position - first;
+			// value_type i = position - first;
 
 			if(this->_size == this->_capacity)
 			{
-				T* tmp = static_cast<T*>(::operator new(sizeof(T) * (this->_size + 1)));
+				this->_capacity *= 2;
+				T* tmp = static_cast<T*>(::operator new(sizeof(T) * this->_capacity));
 
-				memcpy(static_cast<void*>(tmp), static_cast<void*>(this->_array), sizeof(value_type) * i);
-				tmp[i] = val;
-				memcpy(static_cast<void*>(tmp + i + 1), static_cast<void*>(this->_array + i), sizeof(value_type) * (this->end() - position));
+				size_type i(0);
+				while(first != this->end())
+				{
+					if (first < position)
+						tmp[i] = this->_array[i];
+					else if (first == position)
+						tmp[i] = val;
+					else
+						tmp[i] = this->_array[i - 1];
+					++first;
+					++i;
+				}
+				tmp[i] = this->_array[i - 1];
+
+				// memcpy(static_cast<void*>(tmp), static_cast<void*>(this->_array), sizeof(value_type) * i);
+				// tmp[i] = val;
+				// memcpy(static_cast<void*>(tmp + i + 1), static_cast<void*>(this->_array + i), sizeof(value_type) * (this->end() - position));
 
 				this->destroy_array();
 				delete (this->_array);
@@ -486,7 +502,10 @@ template <typename T>
 			else
 			{
 				if (position == this->end())
+				{
+					std::cout << "TATA" << std::endl;
 					push_back (val);
+				}
 				else
 				{
 					T tmp;
@@ -508,51 +527,62 @@ template <typename T>
 						++first;
 						++i;
 					}
+					this->_array[i] = tmp;
 					this->_size++;
 				}
 			}
 			return (position);
-		}/*
-		iterator insert (iterator position, const value_type& val)
+		}
+
+		void insert (iterator position, size_type n, const value_type& val)
 		{
 			iterator first = this->begin();
 
-			if(this->_size == this->_capacity)
+			if(this->_capacity < this->_size + n)
 			{
-
-				T* tmp = static_cast<T*>(::operator new(sizeof(T) * this->_size + 1));
+				this->_capacity *= 2;
+				T* tmp = static_cast<T*>(::operator new(sizeof(T) * this->_capacity));
 
 				size_type i(0);
 				while(first != this->end())
 				{
 					if (first < position)
-						new (static_cast<void*>(tmp + i)) value_type(this->_array[i]);
+						tmp[i] = this->_array[i];
 					else if (first == position)
 					{
-						new (static_cast<void*>(tmp + i)) value_type(val);
-						--i;
+						for (size_type j = 0; j < n; ++j)
+						{
+							tmp[i] = val;
+							++i;
+						}
 					}
 					else
-						new (static_cast<void*>(tmp + i)) value_type(this->_array[i]);
+						tmp[i] = this->_array[i - 1];
 					++first;
 					++i;
 				}
-				this->clear();
+				tmp[i] = this->_array[i - 1];
+
+				this->destroy_array();
 				delete (this->_array);
 				this->_array = tmp;
-				this->_size = i;
 			}
 			else
 			{
-				size_type i(0);
 				T tmp;
 				T tmp2;
+				size_type i(0);
 				while(first != this->end())
 				{
 					if (first == position)
 					{
-						tmp = this->_array[i];
-						this->_array[i] = val;
+						std::cout << "TOTO" << std::endl;
+						for (size_type j = 0; j < n; ++j)
+						{
+							tmp = this->_array[i];
+							this->_array[i] = val;
+							++i;
+						}
 					}
 					else if (first > position)
 					{
@@ -563,120 +593,125 @@ template <typename T>
 					++first;
 					++i;
 				}
-				if (position == this->end())
-					push_back (val);
-				else
-					this->_size++;
+				this->_array[i] = tmp;
+				this->_size += n;
 			}
+		}
+
+	// template <class InputIterator>
+	// 		void insert (iterator position, InputIterator first, InputIterator last);
+
+		iterator erase (iterator position)
+		{
+			while (position != this->end())
+			{
+				*position = *(position + 1);
+				++position;
+			}
+			this->pop_back();
 			return (position);
-		}*/
+		}
 
-			void insert (iterator position, size_type n, const value_type& val);
+		iterator erase (iterator first, iterator last);
 
-	template <class InputIterator>
-			void insert (iterator position, InputIterator first, InputIterator last);
+		void swap (vector& x);
 
-			iterator erase (iterator position);
-			iterator erase (iterator first, iterator last);
+		void clear()
+		{
+			this->destroy_array();
+			this->_size = 0;
+		}
 
-			void swap (vector& x);
 
-			void clear()
+	private:
+		size_type	_capacity;
+		size_type	_size;
+		T*			_array;
+
+		void	destroy_array()
+		{
+			for (size_type i = 0; i < this->_size; ++i)
 			{
-				this->destroy_array();
-				this->_size = 0;
+				this->_array[i].~value_type();
 			}
-
-
-		private:
-			size_type	_capacity;
-			size_type	_size;
-			T*			_array;
-
-			void	destroy_array()
+		}
+		void	allocate_array()
+		{
+			try
 			{
-				for (size_type i = 0; i < this->_size; ++i)
-				{
-					this->_array[i].~value_type();
-				}
+				this->_array = new T[this->_capacity];
 			}
-			void	allocate_array()
+			catch (std::bad_alloc& ba)
 			{
-				try
-				{
-					this->_array = new T[this->_capacity];
-				}
-				catch (std::bad_alloc& ba)
-				{
-					std::cerr << "bad_alloc caught: " << ba.what() << '\n';
-				}	
-			}
-			void	range_check(size_type n) const
+				std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+			}	
+		}
+		void	range_check(size_type n) const
+		{
+			if (n >= this->size())
 			{
-				if (n >= this->size())
-				{
 				// std::stringstream	ss;
 				// ss << "vector::range_check: n (which is " << n << ") >= this->size() (which is " << this->size() << ")";
-					throw std::out_of_range("vector");
+				throw std::out_of_range("vector");
 				// throw std::out_of_range(ss.str());
-				}
 			}
+		}
 
 		// T* new_empty_tab(size_type n, T val = value_type())
 		// {
 		// 	tab = new T[n];
 		// }
 
-			T* reallocate_tab(size_type n, T val = value_type())
-			{
+		T* reallocate_tab(size_type n, T val = value_type())
+		{
 			// std::cout << "REALLOCATION" << std::endl;
-				T* tab = NULL;
-				if (n > this->capacity() * 2)
-					this->_capacity = n;
-				else if (n > this->capacity())
-					this->_capacity *= 2;
+			T* tab = NULL;
+			if (n > this->capacity() * 2)
+				this->_capacity = n;
+			else if (n > this->capacity())
+				this->_capacity *= 2;
 
-				tab = static_cast<T*>(::operator new(sizeof(T) * this->_capacity));
+			tab = static_cast<T*>(::operator new(sizeof(T) * this->_capacity));
 
-				for (size_type i = 0; i < n; ++i)
-				{
-					if (i < this->size())
-						new (static_cast<void*>(tab + i)) value_type(this->_array[i]);
-					else
-						new (static_cast<void*>(tab + i)) value_type(val);
-				}
-				return tab;
+			for (size_type i = 0; i < n; ++i)
+			{
+				if (i < this->size())
+					new (static_cast<void*>(tab + i)) value_type(this->_array[i]);
+				else
+					new (static_cast<void*>(tab + i)) value_type(val);
 			}
-		};
+			return tab;
+		}
+	};
 
 // Non-member function overloads
 // ==================================	
 
 template <class T>
-		std::ostream & operator<<(std::ostream & o, vector<T> const & rhs);
+	std::ostream & operator<<(std::ostream & o, vector<T> const & rhs);
 
 template <class T>
-		bool operator== (const vector<T>& lhs, const vector<T>& rhs);
+	bool operator== (const vector<T>& lhs, const vector<T>& rhs);
 
 template <class T>
-		bool operator!= (const vector<T>& lhs, const vector<T>& rhs);
+	bool operator!= (const vector<T>& lhs, const vector<T>& rhs);
 
 template <class T>
-		bool operator<  (const vector<T>& lhs, const vector<T>& rhs);
+	bool operator<  (const vector<T>& lhs, const vector<T>& rhs);
 
 template <class T>
-		bool operator<= (const vector<T>& lhs, const vector<T>& rhs);
+	bool operator<= (const vector<T>& lhs, const vector<T>& rhs);
 
 template <class T>
-		bool operator>  (const vector<T>& lhs, const vector<T>& rhs);
+	bool operator>  (const vector<T>& lhs, const vector<T>& rhs);
 
 template <class T>
-		bool operator>= (const vector<T>& lhs, const vector<T>& rhs);
+	bool operator>= (const vector<T>& lhs, const vector<T>& rhs);
 
   template <class T>
-		void swap (vector<T>& x, vector<T>& y);
+	void swap (vector<T>& x, vector<T>& y);
 
-	}
+}
 // Non-member function overloads END
 // ==================================
 
