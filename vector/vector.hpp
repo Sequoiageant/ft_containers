@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/25 17:15:18 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/26 12:31:55 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -468,10 +468,39 @@ template <typename T>
 
 		iterator insert (iterator position, const value_type& val)
 		{
-			iterator first = this->begin();
-			// value_type i = position - first;
+			size_type n = position - this->begin();
+			size_type len = this->end() - this->begin();
 
-			if(this->_size == this->_capacity)
+			this->resize(this->_size + 1);
+			iterator end = this->begin() + len;
+			while (end != begin() + n)
+			{
+				*end = *(end - 1);
+				--end;
+			}
+			*(begin() + n) = val;
+			return (begin() + n);
+		}
+
+		void insert (iterator position, size_type n, const value_type& val)
+		{
+			for (size_type i = 0; i < n; ++i)
+			{
+				insert(position, val);
+				++position;
+			}
+		}
+	/*
+		iterator insert (iterator position, const value_type& val)
+		{
+			iterator first = this->begin();
+
+			if (position == this->end())
+			{
+				std::cout << "TATA" << std::endl;
+				push_back (val);
+			}
+			else if(this->_size == this->_capacity)
 			{
 				this->_capacity *= 2;
 				T* tmp = static_cast<T*>(::operator new(sizeof(T) * this->_capacity));
@@ -480,92 +509,30 @@ template <typename T>
 				while(first != this->end())
 				{
 					if (first < position)
-						tmp[i] = this->_array[i];
+					{
+						std::cout << "I: " << *first << std::endl;
+						tmp[i] = *first;
+					}
 					else if (first == position)
+					{
+						std::cout << "II: " << *first << std::endl;
 						tmp[i] = val;
+					}
 					else
-						tmp[i] = this->_array[i - 1];
+					{
+						std::cout << "III: " << *first << std::endl;
+						tmp[i] = *(first - 1);
+					}
 					++first;
 					++i;
 				}
-				tmp[i] = this->_array[i - 1];
-
-				// memcpy(static_cast<void*>(tmp), static_cast<void*>(this->_array), sizeof(value_type) * i);
-				// tmp[i] = val;
-				// memcpy(static_cast<void*>(tmp + i + 1), static_cast<void*>(this->_array + i), sizeof(value_type) * (this->end() - position));
+				new (static_cast<void*>(tmp + i)) value_type(*(first - 1));
+				// tmp[i] = this->_array[i - 1];
 
 				this->destroy_array();
 				delete (this->_array);
 				this->_array = tmp;
 				this->_size++;
-			}
-			else
-			{
-				if (position == this->end())
-				{
-					std::cout << "TATA" << std::endl;
-					push_back (val);
-				}
-				else
-				{
-					T tmp;
-					T tmp2;
-					size_type i(0);
-					while(first != this->end())
-					{
-						if (first == position)
-						{
-							tmp = this->_array[i];
-							this->_array[i] = val;
-						}
-						else if (first > position)
-						{
-							tmp2 = this->_array[i];
-							this->_array[i] = tmp;
-							tmp = tmp2;
-						}
-						++first;
-						++i;
-					}
-					this->_array[i] = tmp;
-					this->_size++;
-				}
-			}
-			return (position);
-		}
-
-		void insert (iterator position, size_type n, const value_type& val)
-		{
-			iterator first = this->begin();
-
-			if(this->_capacity < this->_size + n)
-			{
-				this->_capacity *= 2;
-				T* tmp = static_cast<T*>(::operator new(sizeof(T) * this->_capacity));
-
-				size_type i(0);
-				while(first != this->end())
-				{
-					if (first < position)
-						tmp[i] = this->_array[i];
-					else if (first == position)
-					{
-						for (size_type j = 0; j < n; ++j)
-						{
-							tmp[i] = val;
-							++i;
-						}
-					}
-					else
-						tmp[i] = this->_array[i - 1];
-					++first;
-					++i;
-				}
-				tmp[i] = this->_array[i - 1];
-
-				this->destroy_array();
-				delete (this->_array);
-				this->_array = tmp;
 			}
 			else
 			{
@@ -576,13 +543,8 @@ template <typename T>
 				{
 					if (first == position)
 					{
-						std::cout << "TOTO" << std::endl;
-						for (size_type j = 0; j < n; ++j)
-						{
-							tmp = this->_array[i];
-							this->_array[i] = val;
-							++i;
-						}
+						tmp = this->_array[i];
+						this->_array[i] = val;
 					}
 					else if (first > position)
 					{
@@ -593,17 +555,28 @@ template <typename T>
 					++first;
 					++i;
 				}
-				this->_array[i] = tmp;
-				this->_size += n;
+				new (static_cast<void*>(this->_array + i)) value_type(tmp);
+					// this->_array[i] = tmp;
+				this->_size++;
 			}
+			return (position);
 		}
+
+		void insert (iterator position, size_type n, const value_type& val)
+		{
+			for (size_type i = 0; i < n; ++i)
+			{
+				insert(position, val);
+				++position;
+			}
+		}*/
 
 	// template <class InputIterator>
 	// 		void insert (iterator position, InputIterator first, InputIterator last);
 
 		iterator erase (iterator position)
 		{
-			while (position != this->end())
+			while (position + 1 != this->end())
 			{
 				*position = *(position + 1);
 				++position;
@@ -612,9 +585,30 @@ template <typename T>
 			return (position);
 		}
 
-		iterator erase (iterator first, iterator last);
+		iterator erase (iterator first, iterator last)
+		{
+			size_type range = static_cast<size_type>(last - first);
 
-		void swap (vector& x);
+			while (first != last && last != this->end())
+			{
+				*first = *last;
+				++first;
+				++last;
+			}
+			this->_size -= range;
+			return (first);
+		}
+
+		void swap (vector& x)
+		{
+			// pointer tmp;
+			// tmp = this->_array;
+			// this->_array = x._array;
+			// x._array = tmp;
+			this->swap_values(this->_array, x._array);
+			this->swap_values(this->_size, x._size);
+			this->swap_values(this->_capacity, x._capacity);
+		}
 
 		void clear()
 		{
@@ -627,6 +621,17 @@ template <typename T>
 		size_type	_capacity;
 		size_type	_size;
 		T*			_array;
+		
+		template <class Value>
+		void	swap_values(Value& a, Value& b)
+		{
+			Value tmp;
+
+			tmp = a;
+			a = b;
+			b = tmp;
+		}
+		
 
 		void	destroy_array()
 		{
