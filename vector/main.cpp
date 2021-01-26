@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/26 12:38:45 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/26 16:05:42 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,13 +275,16 @@ int main(void)
 	std::cout << "v4 capacity: " << v4.capacity() << std::endl;
 
 	std::cout << std::endl << "==== insert() ====" << std::endl;
-	std::cout << "-- v4.insert() 42, 43 & 44 at begin, 2nd pos and end -------" << std::endl;
-	v4.insert(v4.begin(), 42);
-	v4.insert(++v4.begin(), 43);
-	v4.insert(v4.end(), 44);
-	v4.insert(++v4.begin(), 5);
-	v4.insert(++v4.begin(), 5);
-	v4.insert(++v4.begin(), 5);
+/*	std::cout << "-- v4.insert() 42, 43 & 44 at begin, 2nd pos and end -------" << std::endl;
+	NS::vector<int>::iterator pos;
+	pos = v4.insert(v4.begin(), 42);
+	std::cout << "pos: " << *pos << std::endl;
+	pos = v4.insert(++v4.begin(), 43);
+	std::cout << "pos: " << *pos << std::endl;
+	pos = v4.insert(v4.end(), 44);
+	std::cout << "pos: " << *pos << std::endl;
+	pos = v4.insert(++v4.begin(), 5);
+	std::cout << "pos: " << *pos << std::endl;
 	v4.insert(++v4.begin(), 5);
 	v4.insert(++v4.begin(), 5);
 	v4.insert(++v4.begin(), 5);
@@ -291,12 +294,20 @@ int main(void)
 	std::cout << "-- v4.insert(n, xx) -------" << std::endl;
 	v4.insert(v4.begin(), 2, 77);
 	v4.insert(v4.end(), 4, 99);
-	v4.insert(++v4.begin(), 5, 88);
+	v4.insert(++v4.begin(), 6, 88);
+	std::cout << "v4: "; displayVec(v4);
+	std::cout << "v4 size: " << v4.size() << std::endl;
+	std::cout << "v4 capacity: " << v4.capacity() << std::endl;*/
+	std::cout << "-- v4.insert(range) -------" << std::endl;
+	std::cout << "v1: "; displayVec(v1);
+	// v4.insert(v4.begin(), v1.begin(), v1.end());
+	// v4.insert(++v4.begin(), v1.begin(), v1.end());
+	v4.insert(v4.end(), v1.begin(), v1.end());
 	std::cout << "v4: "; displayVec(v4);
 	std::cout << "v4 size: " << v4.size() << std::endl;
 	std::cout << "v4 capacity: " << v4.capacity() << std::endl;
 
-/*	std::cout << std::endl << "==== erase() ====" << std::endl;
+	std::cout << std::endl << "==== erase() ====" << std::endl;
 	std::cout << "-- v4.erase(++begin) -------" << std::endl;
 	v4.erase(++v4.begin());
 	std::cout << "v4: "; displayVec(v4);
@@ -325,18 +336,18 @@ int main(void)
 	std::cout << "v4: "; displayVec(v4);
 	std::cout << "v4 size: " << v4.size() << std::endl;
 	std::cout << "v4 capacity: " << v4.capacity() << std::endl;
-*/
 
-	// std::cout << "---- std Iterators ----" << std::endl;
-	// // v.push_back(5);
-	// std::vector<int>::iterator it = v.begin();
-	// std::cout << "it: " << *it << std::endl;
-	// it++;
-	// std::cout << "++it: " << *it << std::endl;
-	// std::cout << "v: "; displayVec(v);
-	// std::cout << "v size: " << v.size() << std::endl;
-	// std::cout << "v capacity: " << v.capacity() << std::endl;
+	std::cout << std::endl << "==== OPERATORS ====" << std::endl;
+	std::cout << "v1: "; displayVec(v1);
+	std::cout << "v2: "; displayVec(v2);
+	std::cout << "v3: "; displayVec(v3);
+	std::cout << "v4: "; displayVec(v4);
 	
+	std::cout << std::boolalpha << "v3 == v4: " << (v3 == v4) << std::endl;
+	std::cout << std::boolalpha << "v2 == v4: " << (v2 == v4) << std::endl;
+	std::cout << std::boolalpha << "v1 == v2: " << (v1 == v2) << std::endl;
+	std::cout << std::boolalpha << "v2 < v1: " << (v2 < v1) << std::endl;
+
 
 	return 0;
 }

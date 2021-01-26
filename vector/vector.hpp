@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/26 12:31:55 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/26 16:04:19 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,26 +262,8 @@ template <typename T>
 		vector& operator=(vector const & rhs)
 		{
 			// std::cout << "ASSIGNATION" << std::endl;
-
 			this->assign(rhs.begin(), rhs.end());
-			/*this->destroy_array();
-			if (rhs._size > this->_capacity)
-			{
-				T* tmp = static_cast<T*>(::operator new(sizeof(T) * rhs._size));
-				delete (this->_array);
-				this->_array = tmp;	
-				this->_capacity = rhs._size;
-			}
-			// else if (this->_size > rhs._size)
-			// {
-			// 	for (size_type i = rhs._size; i < this->_size; ++i)
-			// 	{
-			// 		this->_array[i].~value_type();
-			// 	}
-			// }
-			this->_size = rhs._size;
-			memcpy(static_cast<void*>(this->_array), static_cast<void*>(rhs._array), sizeof(value_type) * rhs._size);
-*/
+
 			return *this;
 		}
 
@@ -357,7 +339,10 @@ template <typename T>
 			{
 				this->_capacity = n;
 				T *tmp = static_cast<T*>(::operator new(sizeof(T) * n));
-				memcpy(static_cast<void*>(tmp), static_cast<void*>(this->_array), sizeof(value_type) * this->_size);
+				for (size_type i = 0; i < this->size(); ++i)
+				{
+					new (static_cast<void*>(tmp + i)) value_type(this->_array[i]);
+				}
 				this->destroy_array();
 				delete (this->_array);
 				this->_array = tmp;
@@ -456,9 +441,8 @@ template <typename T>
 		void push_back (const value_type& val)
 		{
 			resize(this->size() + 1, val);
-			// this->_array[this->_size - 1] = val;
-
 		}
+
 		void pop_back()
 		{
 			resize(this->size() - 1);
@@ -468,28 +452,47 @@ template <typename T>
 
 		iterator insert (iterator position, const value_type& val)
 		{
-			size_type n = position - this->begin();
-			size_type len = this->end() - this->begin();
-
-			this->resize(this->_size + 1);
-			iterator end = this->begin() + len;
-			while (end != begin() + n)
-			{
-				*end = *(end - 1);
-				--end;
-			}
-			*(begin() + n) = val;
-			return (begin() + n);
+			this->insert (position, 1, val);
+			return (position);
 		}
 
 		void insert (iterator position, size_type n, const value_type& val)
 		{
+			size_type pos = position - this->begin();
+
+			this->resize(this->_size + n);
+			iterator end = this->end() - 1;
+			while (end != (begin() + pos))
+			{
+				*end = *(end - n);
+				--end;
+			}
 			for (size_type i = 0; i < n; ++i)
 			{
-				insert(position, val);
-				++position;
+				*(begin() + pos + i) = val;
 			}
 		}
+
+	template <class InputIterator>
+		void insert (iterator position, InputIterator first, InputIterator last) // NEEDS enable_if
+		{
+			size_type pos = position - this->begin();
+			size_type n = last - first;
+
+			this->resize(this->_size + n);
+			iterator end = this->end() - 1;
+			while (end != (begin() + pos))
+			{
+				*end = *(end - n);
+				--end;
+			}
+			for (size_type i = 0; i < n; ++i)
+			{
+				*(begin() + pos + i) = *first;
+				++first;
+			}
+		}
+
 	/*
 		iterator insert (iterator position, const value_type& val)
 		{
@@ -571,8 +574,6 @@ template <typename T>
 			}
 		}*/
 
-	// template <class InputIterator>
-	// 		void insert (iterator position, InputIterator first, InputIterator last);
 
 		iterator erase (iterator position)
 		{
@@ -631,7 +632,6 @@ template <typename T>
 			a = b;
 			b = tmp;
 		}
-		
 
 		void	destroy_array()
 		{
@@ -640,17 +640,7 @@ template <typename T>
 				this->_array[i].~value_type();
 			}
 		}
-		void	allocate_array()
-		{
-			try
-			{
-				this->_array = new T[this->_capacity];
-			}
-			catch (std::bad_alloc& ba)
-			{
-				std::cerr << "bad_alloc caught: " << ba.what() << '\n';
-			}	
-		}
+
 		void	range_check(size_type n) const
 		{
 			if (n >= this->size())
@@ -661,11 +651,6 @@ template <typename T>
 				// throw std::out_of_range(ss.str());
 			}
 		}
-
-		// T* new_empty_tab(size_type n, T val = value_type())
-		// {
-		// 	tab = new T[n];
-		// }
 
 		T* reallocate_tab(size_type n, T val = value_type())
 		{
@@ -696,25 +681,69 @@ template <class T>
 	std::ostream & operator<<(std::ostream & o, vector<T> const & rhs);
 
 template <class T>
-	bool operator== (const vector<T>& lhs, const vector<T>& rhs);
+	bool operator== (const vector<T>& lhs, const vector<T>& rhs)
+	{
+		typename vector<T>::const_iterator first1 = lhs.begin();
+		typename vector<T>::const_iterator first2 = rhs.begin();
+		typename vector<T>::const_iterator end1 = lhs.end();
+
+		while (first1 != end1)
+		{
+			if (*first1 != *first2)
+				return (false);
+			first1++;
+			first2++;
+		}
+		return (lhs.size() == rhs.size());
+	}
+
 
 template <class T>
-	bool operator!= (const vector<T>& lhs, const vector<T>& rhs);
+	bool operator!= (const vector<T>& lhs, const vector<T>& rhs)
+	{
+		return !(lhs == rhs);
+	}
 
 template <class T>
-	bool operator<  (const vector<T>& lhs, const vector<T>& rhs);
+	bool operator<  (const vector<T>& lhs, const vector<T>& rhs)
+	{
+		typename vector<T>::const_iterator first1 = lhs.begin();
+		typename vector<T>::const_iterator first2 = rhs.begin();
+		typename vector<T>::const_iterator end1 = lhs.end();
+
+		while (first1 != end1)
+		{
+			if (*first1 < *first2)
+				return (true);
+			++first1;
+			++first2;
+		}
+		return (false);
+	}
 
 template <class T>
-	bool operator<= (const vector<T>& lhs, const vector<T>& rhs);
+	bool operator<= (const vector<T>& lhs, const vector<T>& rhs)
+	{
+		return !(rhs < lhs);
+	}
 
 template <class T>
-	bool operator>  (const vector<T>& lhs, const vector<T>& rhs);
+	bool operator>  (const vector<T>& lhs, const vector<T>& rhs)
+	{
+		return (rhs < lhs);
+	}
 
 template <class T>
-	bool operator>= (const vector<T>& lhs, const vector<T>& rhs);
+	bool operator>= (const vector<T>& lhs, const vector<T>& rhs)
+	{
+		return !(lhs < rhs);
+	}
 
   template <class T>
-	void swap (vector<T>& x, vector<T>& y);
+	void swap (vector<T>& x, vector<T>& y)
+	{
+		x.swap(y);
+	}
 
 }
 // Non-member function overloads END
