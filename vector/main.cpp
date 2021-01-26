@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/26 16:05:42 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/26 16:08:48 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,19 +89,19 @@ int main(void)
 	std::cout << "v3: "; displayVec(v3);
 
 	std::cout << "==== Assignation of v1 = v2 ====" << std::endl;
-/*	std::cout << "---- v1 before assignation... ----" << std::endl;
+	std::cout << "---- v1 before assignation... ----" << std::endl;
 	
-	// v1.push_back(42);
-	// v1.push_back(42);
-	// v1.push_back(42);
-	// v1.push_back(42);
-	// v1.push_back(42);
+	v1.push_back(42);
+	v1.push_back(42);
+	v1.push_back(42);
+	v1.push_back(42);
+	v1.push_back(42);
 
 	std::cout << "v1: "; displayVec(v1);
 	std::cout << "v1 size: " << v1.size() << std::endl;
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;
 	std::cout << "---- Assignation... ----" << std::endl;
-*/	v1 = v2;
+	v1 = v2;
 	std::cout << "v1: "; displayVec(v1);
 	std::cout << "v1 size: " << v1.size() << std::endl;
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;
