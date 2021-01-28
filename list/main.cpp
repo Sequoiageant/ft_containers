@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 14:26:07 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/28 16:32:59 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/28 16:55:23 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,39 +287,20 @@ int main(void)
 	ft::list<int> lst5(5,5);
 	ft::list<int>::iterator it5 = lst5.begin();
 	std::cout << "lst5: "; displaylist(lst5);
-	// std::cout << "it5: " << it5.p << std::endl;
-	// std::cout << "it5: " << it5.get_node() << std::endl;
 
-	// std::cout << "---- this into splice ----" << std::endl;
-	// std::cout << "lst2: "; displaylist(lst2);
-	// std::cout << "v   : ";
-	// for (unsigned int i = 0; i < v.size(); ++i)
-	// {
-	// 	std::cout << v[i] << ' ';
-	// }
-	// std::cout << std::endl;
-	// it2 = lst2.begin();
-	// ++it2;
-	// ++it2;
-	// lst2.insert(it2, lst2.begin(), lst2.end());
-	// std::cout << "lst2: "; displaylist(lst2);
+	std::cout << "---- splice ----" << std::endl;
+	std::cout << "lst2: "; displaylist(lst2);
+	std::cout << "lst5: "; displaylist(lst5);
+	
+	std::cout << "---- splice lst2 into lst5 at 2nd pos ----" << std::endl;
+	lst5.splice(++lst5.begin(), lst2);
+	std::cout << "lst5: "; displaylist(lst5);
 
-	// std::list<int> lst6;
-	// lst6.push_back(5);
-	// lst6.push_back(5);
-	// lst6.push_back(5);
-	// std::cout << "lst6: "; displaylist(lst6);
-
-	// lst.push_back(1);
-	// lst.push_back(2);
-	// lst.push_back(3);
-	// lst.push_back(4);
-	// std::cout << "lst: "; displaylist(lst);
-	// lst.splice(--lst.end(), lst);
-	// std::cout << "lst: "; displaylist(lst);
-	// std::cout << "lst6: "; displaylist(lst6);
-
-
+	std::cout << "---- splice lst6 (2nd pos) into lst5 before the end ----" << std::endl;
+	NS::list<int> lst6(lst3);
+	std::cout << "lst6: "; displaylist(lst6);
+	lst5.splice(--lst5.end(), lst6, ++lst6.begin());
+	std::cout << "lst5: "; displaylist(lst5);
 
 	return (0);
 }

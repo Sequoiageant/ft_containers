@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/28 16:31:19 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/28 17:04:40 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,9 +164,9 @@ list(void) : _list(new List_node)
 	return;
 }
 
-list(size_t size, const T &val) : _list(new List_node)
+list(size_type size, const T &val) : _list(new List_node)
 {
-	for (size_t i = 0; i < size; ++i)
+	for (size_type i = 0; i < size; ++i)
 	{
 		this->push_back(val);
 	}
@@ -217,9 +217,9 @@ bool empty() const
 	return (this->_list == this->_list->next);
 }
 
-size_t size() const
+size_type size() const
 {
-	size_t size = 0;
+	size_type size = 0;
 
 	const_iterator first = this->begin();
 	while(first != this->end()) {
@@ -229,7 +229,7 @@ size_t size() const
 	return size;
 }
 
-size_t max_size() const
+size_type max_size() const
 {
 	std::allocator<List_node> a;
 	return a.max_size();
@@ -266,10 +266,10 @@ void assign (InputIterator first, typename ft::enable_if< !ft::is_integral< Inpu
 	}
 }
 
-void assign (size_t n, const T& val)
+void assign (size_type n, const T& val)
 {
 	this->clear();
-	for (size_t i = 0; i < n; ++i)
+	for (size_type i = 0; i < n; ++i)
 	{
 		this->push_back(val);
 	}
@@ -310,7 +310,7 @@ iterator insert (iterator position, const T& val)
 	return --it;
 }
 
-void insert (iterator position, int n, const T& val)
+void insert (iterator position, size_type n, const T& val)
 {
 	iterator it = this->begin();
 	List_node *tmp = this->_list->next;
@@ -320,7 +320,7 @@ void insert (iterator position, int n, const T& val)
 		tmp = tmp->next;
 		++it;
 	}
-	for (int i = 0; i < n; ++i)
+	for (size_type i = 0; i < n; ++i)
 	{
 		this->insert_node(tmp, new_node(val));
 	}
@@ -378,7 +378,7 @@ void swap (list& x)
 	x._list = tmp; 
 }
 
-void resize (size_t n, T val)
+void resize (size_type n, T val)
 {
 	iterator i = this->begin();
 
@@ -683,6 +683,10 @@ void reverse()
 
 	};
 
+
+// Non-member function overloads
+// ==================================
+
 template<typename T>
 	std::ostream & operator<<(std::ostream & o, list<T> const & rhs);
 
@@ -754,10 +758,10 @@ void swap (list<T>& x, list<T>& y)
 
 
 }
+// Non-member function overloads END
+// ==================================
 
-
-
-// =========================================================
+/*// =========================================================
 // Only for debug
 
 template<typename T>
@@ -786,5 +790,5 @@ void ft::list<T>::displayReverse() const
 		cpy = cpy->prev;
 	}
 }
-// =========================================================
+// =========================================================*/
 #endif // LIST_HPP

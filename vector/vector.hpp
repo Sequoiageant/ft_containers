@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/28 16:07:27 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/28 17:04:11 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,7 +295,6 @@ template <typename T>
 
 		void resize (size_type n, value_type val = value_type())
 		{
-			// std::cout << "SIZE: " << this->size() << std::endl;
 			if (n > this->capacity())
 			{
 				T* tmp = reallocate_tab(n, val);
@@ -308,7 +307,6 @@ template <typename T>
 			{
 				while (this->_size < n)
 				{
-					// std::cout << "RESIZE II" << std::endl;
 					new (static_cast<void*>(this->_array + this->_size)) value_type(val);
 					++this->_size;
 				}
