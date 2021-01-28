@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 14:26:07 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/19 11:28:52 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/28 16:32:59 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,13 +103,13 @@ int main(void)
 	std::cout << "front: " << lst1.front() << std::endl;
 	std::cout << "back : " << lst1.back() << std::endl;
 	
+	std::cout << "---- assign 3 x 42 ----" << std::endl;
+	lst1.assign(3, 42);
+	displaylist(lst1);
+
 	std::cout << "---- assign vector(41, 42, 43, 44, 45) ----" << std::endl;
 	lst1.assign(v.begin(), v.end());
-	displaylist(lst1);
-	
-	// std::cout << "---- assign 3 x 42 ----" << std::endl;
-	// lst1.assign(3, 42);
-	// displaylist(lst1);
+	displaylist(lst1);	
 
 	std::cout << "---- erase 41 - 43 - 45 by position ----" << std::endl;
 	NS::list<int>::iterator it1 = lst1.begin();
@@ -288,7 +288,7 @@ int main(void)
 	ft::list<int>::iterator it5 = lst5.begin();
 	std::cout << "lst5: "; displaylist(lst5);
 	// std::cout << "it5: " << it5.p << std::endl;
-	std::cout << "it5: " << it5.get_node() << std::endl;
+	// std::cout << "it5: " << it5.get_node() << std::endl;
 
 	// std::cout << "---- this into splice ----" << std::endl;
 	// std::cout << "lst2: "; displaylist(lst2);

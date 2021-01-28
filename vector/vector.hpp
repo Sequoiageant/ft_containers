@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/27 12:21:38 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/28 16:07:27 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <sstream>
 # include <cstring>
 # include "integral_traits.hpp"
+# include "functional.hpp"
 
 namespace ft
 {
@@ -233,42 +234,7 @@ template <typename T>
 		}
 
 	template <class InputIterator>
-		vector (InputIterator first, InputIterator last)
-		{
-			if (ft::is_integral<InputIterator>::value)
-			{
-				std::cout << "TO FILL CTOR" << std::endl;
-				this->choose_ctor(first, last, ft::is_integral<InputIterator>::value);
-			}
-			else
-			{
-				this->_capacity = last - first;
-				this->_size = this->_capacity;
-				this->_array = static_cast<T*>(::operator new(sizeof(T) * this->_capacity));
-
-				size_type i = 0;
-				while (first != last)
-				{
-					new (static_cast<void*>(this->_array + i)) value_type(*first);
-					++first;
-					++i;
-				}
-			}
-		}
-
-		template<typename _Integer>
-		void choose_ctor(_Integer n, _Integer val, bool type = false)
-		{
-			(void)n;
-			(void)val;
-			if (type)
-				std::cout << "FILL CTOR CHOSEN" << std::endl;
-			else
-				std::cout << "RANGE CTOR CHOSEN" << std::endl;
-		}
-/*
-	template <class InputIterator>
-		vector (InputIterator first, InputIterator last)
+		vector (InputIterator first, typename ft::enable_if< !ft::is_integral< InputIterator >::value, InputIterator >::type last)
 		: _capacity(last - first), _size(_capacity), _array(static_cast<T*>(::operator new(sizeof(T) * _capacity)))
 		{
 			size_type i = 0;
@@ -279,7 +245,7 @@ template <typename T>
 				++i;
 			}
 		}
-*/
+
 		vector(vector const & copy)
 		: _capacity(copy._capacity), _size(copy._size), _array(static_cast<T*>(::operator new(sizeof(T) * _capacity)))
 		{
@@ -428,7 +394,7 @@ template <typename T>
 		}
 
 	template <class InputIterator>
-		void assign (InputIterator first, InputIterator last) // NEEDS enable_if
+		void assign (InputIterator first, typename ft::enable_if< !ft::is_integral< InputIterator >::value, InputIterator >::type last) // NEEDS enable_if
 		{
 			size_type range = static_cast<size_type>(last - first);
 			if (range > this->capacity())
@@ -510,7 +476,7 @@ template <typename T>
 		}
 
 	template <class InputIterator>
-		void insert (iterator position, InputIterator first, InputIterator last) // NEEDS enable_if
+		void insert (iterator position, InputIterator first, typename ft::enable_if< !ft::is_integral< InputIterator >::value, InputIterator >::type last) // NEEDS enable_if
 		{
 			size_type pos = position - this->begin();
 			size_type n = last - first;
@@ -528,88 +494,6 @@ template <typename T>
 				++first;
 			}
 		}
-
-	/*
-		iterator insert (iterator position, const value_type& val)
-		{
-			iterator first = this->begin();
-
-			if (position == this->end())
-			{
-				std::cout << "TATA" << std::endl;
-				push_back (val);
-			}
-			else if(this->_size == this->_capacity)
-			{
-				this->_capacity *= 2;
-				T* tmp = static_cast<T*>(::operator new(sizeof(T) * this->_capacity));
-
-				size_type i(0);
-				while(first != this->end())
-				{
-					if (first < position)
-					{
-						std::cout << "I: " << *first << std::endl;
-						tmp[i] = *first;
-					}
-					else if (first == position)
-					{
-						std::cout << "II: " << *first << std::endl;
-						tmp[i] = val;
-					}
-					else
-					{
-						std::cout << "III: " << *first << std::endl;
-						tmp[i] = *(first - 1);
-					}
-					++first;
-					++i;
-				}
-				new (static_cast<void*>(tmp + i)) value_type(*(first - 1));
-				// tmp[i] = this->_array[i - 1];
-
-				this->destroy_array();
-				delete (this->_array);
-				this->_array = tmp;
-				this->_size++;
-			}
-			else
-			{
-				T tmp;
-				T tmp2;
-				size_type i(0);
-				while(first != this->end())
-				{
-					if (first == position)
-					{
-						tmp = this->_array[i];
-						this->_array[i] = val;
-					}
-					else if (first > position)
-					{
-						tmp2 = this->_array[i];
-						this->_array[i] = tmp;
-						tmp = tmp2;
-					}
-					++first;
-					++i;
-				}
-				new (static_cast<void*>(this->_array + i)) value_type(tmp);
-					// this->_array[i] = tmp;
-				this->_size++;
-			}
-			return (position);
-		}
-
-		void insert (iterator position, size_type n, const value_type& val)
-		{
-			for (size_type i = 0; i < n; ++i)
-			{
-				insert(position, val);
-				++position;
-			}
-		}*/
-
 
 		iterator erase (iterator position)
 		{
@@ -766,7 +650,7 @@ template <class T>
 			++first1;
 			++first2;
 		}
-		return (false);
+		return (first1 == end1);
 	}
 
 template <class T>
