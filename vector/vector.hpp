@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/28 17:04:11 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/29 10:03:51 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -462,7 +462,7 @@ template <typename T>
 
 			this->resize(this->_size + n);
 			iterator end = this->end() - 1;
-			while (end != (begin() + pos))
+			while (end != (begin() + pos + n - 1))
 			{
 				*end = *(end - n);
 				--end;
@@ -481,7 +481,7 @@ template <typename T>
 
 			this->resize(this->_size + n);
 			iterator end = this->end() - 1;
-			while (end != (begin() + pos))
+			while (end != (begin() + pos + n - 1))
 			{
 				*end = *(end - n);
 				--end;

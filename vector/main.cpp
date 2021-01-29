@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/28 16:08:49 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/29 10:05:24 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,11 +283,11 @@ int main(void)
 	std::cout << "-- v4.insert() 42, 43 & 44 at begin, 2nd pos and end -------" << std::endl;
 	NS::vector<int>::iterator pos;
 	pos = v4.insert(v4.begin(), 42);
-	std::cout << "pos: " << *pos << std::endl;
+	std::cout << "insert ret (pos): " << *pos << std::endl;
 	pos = v4.insert(++v4.begin(), 43);
-	std::cout << "pos: " << *pos << std::endl;
+	std::cout << "insert ret (pos): " << *pos << std::endl;
 	pos = v4.insert(v4.end(), 44);
-	std::cout << "pos: " << *pos << std::endl;
+	std::cout << "insert ret (pos): " << *pos << std::endl;
 	std::cout << "v4: "; displayVec(v4);
 	std::cout << "v4 size: " << v4.size() << std::endl;
 	std::cout << "v4 capacity: " << v4.capacity() << std::endl;
@@ -308,7 +308,7 @@ int main(void)
 	std::cout << "v4: "; displayVec(v4);
 	std::cout << "v4 size: " << v4.size() << std::endl;
 	std::cout << "v4 capacity: " << v4.capacity() << std::endl;
-
+	
 	std::cout << std::endl << "==== erase() ====" << std::endl;
 	std::cout << "-- v4.erase(++begin) -------" << std::endl;
 	v4.erase(++v4.begin());
@@ -322,6 +322,7 @@ int main(void)
 	std::cout << "v4: "; displayVec(v4);
 	std::cout << "v4 size: " << v4.size() << std::endl;
 	std::cout << "v4 capacity: " << v4.capacity() << std::endl;
+
 
 	std::cout << std::endl << "==== SWAP ====" << std::endl;
 	std::cout << "v1: "; displayVec(v1);
@@ -344,7 +345,6 @@ int main(void)
 	std::cout << "v2: "; displayVec(v2);
 	v3.assign(v2.begin(), v2.end());
 	std::cout << "v3: "; displayVec(v3);
-	// v4.push_back(4);
 	std::cout << "v4: "; displayVec(v4);
 	
 	std::cout << std::boolalpha << "v2 == v3: " << (v2 == v3) << std::endl;
