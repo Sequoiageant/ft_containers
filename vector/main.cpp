@@ -6,12 +6,12 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/29 10:05:24 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/29 12:52:44 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vector.hpp"
-// #include "../list/list.hpp"
+#include "Fixed.hpp"
 #include <vector>
 
 #ifndef STD
@@ -304,7 +304,10 @@ int main(void)
 	std::cout << "v1: "; displayVec(v1);
 	// v4.insert(v4.begin(), v1.begin(), v1.end());
 	// v4.insert(++v4.begin(), v1.begin(), v1.end());
-	v4.insert(v4.end(), v1.begin(), v1.end());
+	NS::vector<int>::iterator v1b = v1.begin(); // to test InputIterator
+	NS::vector<int>::iterator v1e = v1.end(); // to test InputIterator
+
+	v4.insert(v4.end(), v1b, v1e);
 	std::cout << "v4: "; displayVec(v4);
 	std::cout << "v4 size: " << v4.size() << std::endl;
 	std::cout << "v4 capacity: " << v4.capacity() << std::endl;
@@ -352,6 +355,19 @@ int main(void)
 	std::cout << std::boolalpha << "v1 == v2: " << (v1 == v2) << std::endl;
 	std::cout << std::boolalpha << "v4 < v2: " << (v4 < v2) << std::endl;
 	std::cout << std::boolalpha << "v2 > v4: " << (v2 > v4) << std::endl;
+
+/*	std::cout << std::endl << "==== FIXED ====" << std::endl;
+	
+	Fixed a(42);
+	Fixed b;
+
+	NS::vector<Fixed> v6;
+
+	v6.push_back(a);
+	v6.push_back(b);
+	std::cout << "v6: "; displayVec(v6);
+	std::cout << "v6 size: " << v6.size() << std::endl;
+	std::cout << "v6 capacity: " << v6.capacity() << std::endl;*/
 
 	return 0;
 }

@@ -16,3 +16,6 @@ then
 else
 	echo "${RED}ERRORS${NC}"
 fi
+
+rm ft
+rm std

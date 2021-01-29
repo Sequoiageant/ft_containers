@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/29 10:03:51 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/29 12:37:19 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,8 +235,18 @@ template <typename T>
 
 	template <class InputIterator>
 		vector (InputIterator first, typename ft::enable_if< !ft::is_integral< InputIterator >::value, InputIterator >::type last)
-		: _capacity(last - first), _size(_capacity), _array(static_cast<T*>(::operator new(sizeof(T) * _capacity)))
+		: _capacity(0)
 		{
+			InputIterator first_cpy(first);
+			while (first_cpy != last)
+			{
+				++this->_capacity;
+				++first_cpy;
+			}
+
+			this->_size = this->_capacity;
+			this->_array = static_cast<T*>(::operator new(sizeof(T) * _capacity));
+
 			size_type i = 0;
 			while (first != last)
 			{
@@ -394,7 +404,13 @@ template <typename T>
 	template <class InputIterator>
 		void assign (InputIterator first, typename ft::enable_if< !ft::is_integral< InputIterator >::value, InputIterator >::type last) // NEEDS enable_if
 		{
-			size_type range = static_cast<size_type>(last - first);
+			InputIterator first_cpy(first);
+			size_type range = 0;
+			while (first_cpy != last)
+			{
+				++range;
+				++first_cpy;
+			}
 			if (range > this->capacity())
 			{
 				this->destroy_array();
@@ -477,7 +493,15 @@ template <typename T>
 		void insert (iterator position, InputIterator first, typename ft::enable_if< !ft::is_integral< InputIterator >::value, InputIterator >::type last) // NEEDS enable_if
 		{
 			size_type pos = position - this->begin();
-			size_type n = last - first;
+
+			InputIterator first_cpy(first);
+			size_type n = 0;
+			while (first_cpy != last)
+			{
+				++n;
+				++first_cpy;
+			}
+			// size_type n = last - first;
 
 			this->resize(this->_size + n);
 			iterator end = this->end() - 1;
