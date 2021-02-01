@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/29 12:37:19 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/01 14:07:51 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,8 +224,13 @@ template <typename T>
 			return;
 		}
 
-		explicit vector (size_type n, const value_type& val = value_type()) : _capacity(n), _size(n), _array(static_cast<T*>(::operator new(sizeof(T) * _capacity)))
+		explicit vector (size_type n, const value_type& val = value_type())
+		: _capacity(n), _size(n), _array(static_cast<T*>(::operator new(sizeof(T) * _capacity)))
 		{
+			// std::cout << "VECTOR FILL CTOR" << std::endl;
+			// this->_capacity = n;
+			// this->_size = n;
+			// this->_array = static_cast<T*>(::operator new(sizeof(T) * n));
 			for (size_type i = 0; i < n; ++i)
 			{
 				new (static_cast<void*>(this->_array + i)) value_type(val);
@@ -259,6 +264,9 @@ template <typename T>
 		vector(vector const & copy)
 		: _capacity(copy._capacity), _size(copy._size), _array(static_cast<T*>(::operator new(sizeof(T) * _capacity)))
 		{
+			// this->_capacity = copy._capacity;
+			// this->_size = copy._size;
+			// this->_array = static_cast<T*>(::operator new(sizeof(T) * _capacity));
 			for (size_type i = 0; i < this->_size; ++i)
 			{
 				new (static_cast<void*>(this->_array + i)) value_type(copy._array[i]);
@@ -268,7 +276,7 @@ template <typename T>
 		~vector()
 		{
 			this->clear();
-			delete this->_array;
+			::operator delete(this->_array);
 		}
 
 		vector& operator=(vector const & rhs)
@@ -307,14 +315,16 @@ template <typename T>
 		{
 			if (n > this->capacity())
 			{
+				// std::cout << "RESIZE I" << std::endl;
 				T* tmp = reallocate_tab(n, val);
 				this->clear();
-				delete this->_array;
+				::operator delete(this->_array);
 				this->_array = tmp;
 				this->_size = n;
 			}
 			else if (n > this->_size)
 			{
+				// std::cout << "RESIZE II" << std::endl;
 				while (this->_size < n)
 				{
 					new (static_cast<void*>(this->_array + this->_size)) value_type(val);
@@ -323,6 +333,7 @@ template <typename T>
 			}
 			else
 			{
+				// std::cout << "RESIZE III" << std::endl;
 				while (this->_size > n)
 				{
 					this->_array[this->_size].~value_type();
@@ -354,7 +365,7 @@ template <typename T>
 					new (static_cast<void*>(tmp + i)) value_type(this->_array[i]);
 				}
 				this->destroy_array();
-				delete (this->_array);
+				::operator delete(this->_array);
 				this->_array = tmp;
 			}
 		}
@@ -414,7 +425,7 @@ template <typename T>
 			if (range > this->capacity())
 			{
 				this->destroy_array();
-				delete this->_array;
+				::operator delete(this->_array);
 				this->_array = static_cast<T*>(::operator new(sizeof(value_type) * range));
 				this->_capacity = range;
 			}
@@ -438,7 +449,7 @@ template <typename T>
 			if (n > this->capacity())
 			{
 				this->clear();
-				delete this->_array;
+				::operator delete(this->_array);
 				this->_array = static_cast<T*>(::operator new(sizeof(T) * n));
 				this->_capacity = n;
 			}
@@ -456,14 +467,23 @@ template <typename T>
 
 		void push_back (const value_type& val)
 		{
-			resize(this->size() + 1, val);
+			if (this->_size == this->capacity())
+			{
+				T* tmp = reallocate_tab(this->_size + 1, val, true);
+				this->destroy_array();
+				::operator delete(this->_array);
+				this->_array = tmp;
+			}
+			else
+				new (static_cast<void*>(this->_array + this->_size)) value_type(val);
+			++this->_size;
 		}
 
 		void pop_back()
 		{
-			resize(this->size() - 1);
-			// this->back().~T();
-			// --this->_size;
+			// resize(this->size() - 1);
+			this->_array[this->_size].~value_type();
+			--this->_size;
 		}
 
 		iterator insert (iterator position, const value_type& val)
@@ -555,6 +575,7 @@ template <typename T>
 
 		void clear()
 		{
+			// std::cout << "CLEAR" << std::endl;
 			this->destroy_array();
 			this->_size = 0;
 		}
@@ -606,23 +627,43 @@ template <typename T>
 			}
 		}
 
-		T* reallocate_tab(size_type n, T val = value_type())
+		void set_capacity(size_type n, bool push)
 		{
-			// std::cout << "REALLOCATION" << std::endl;
-			T* tab = NULL;
-			if (n > this->capacity() * 2)
-				this->_capacity = n;
-			else if (n > this->capacity())
-				this->_capacity *= 2;
+			if (push)
+			{
+				if (n <= this->capacity() * 2)
+					this->_capacity *= 2;
+				else
+					this->_capacity = n;	
+			}
+			else
+			{
+				if (n <= this->size() * 2)
+					this->_capacity = this->_size * 2;
+				else
+					this->_capacity = n;
+			}
+		}
 
-			tab = static_cast<T*>(::operator new(sizeof(T) * this->_capacity));
+		T* reallocate_tab(size_type n, const T& val, bool push = false)
+		{
+			// std::cout << "REALLOCATION: n = " << n << std::endl;
 
+			this->set_capacity(n, push);
+
+			T* tab = static_cast<T*>(::operator new(sizeof(T) * this->_capacity));
 			for (size_type i = 0; i < n; ++i)
 			{
 				if (i < this->size())
+				{
+					// std::cout << "ICI" << std::endl;
 					new (static_cast<void*>(tab + i)) value_type(this->_array[i]);
+				}
 				else
+				{
+					// std::cout << "LA" << std::endl;
 					new (static_cast<void*>(tab + i)) value_type(val);
+				}
 			}
 			return tab;
 		}

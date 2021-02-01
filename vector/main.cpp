@@ -6,13 +6,14 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/29 12:52:44 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/01 11:34:39 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vector.hpp"
 #include "Fixed.hpp"
 #include <vector>
+#include <list>
 
 #ifndef STD
 # define NS ft
@@ -187,14 +188,17 @@ int main(void)
 	std::cout << "v2.back(): " << v2.back() << std::endl;
 
 	std::cout << std::endl << "==== resize() ====" << std::endl;
+	std::cout << "v1: "; displayVec(v1);
+	std::cout << "v1 size: " << v1.size() << std::endl;
+	std::cout << "v1 capacity: " << v1.capacity() << std::endl;
 	std::cout << "-- resize(3) -------" << std::endl;
 	v1.resize(3);
 	std::cout << "v1: "; displayVec(v1);
 	std::cout << "v1 size: " << v1.size() << std::endl;
 	// std::cout << "it end: " << *v1.end() << std::endl;
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;
-	std::cout << "-- resize(3) -------" << std::endl;
-	v1.resize(3);
+	std::cout << "-- resize(9) -------" << std::endl;
+	v1.resize(9);
 	std::cout << "v1: "; displayVec(v1);
 	std::cout << "v1 size: " << v1.size() << std::endl;
 	std::cout << "v1 capacity: " << v1.capacity() << std::endl;
@@ -295,19 +299,21 @@ int main(void)
 	std::cout << "-- v4.insert(n, xx) -------" << std::endl;
 	v4.insert(v4.begin(), 2, 77);
 	v4.insert(v4.end(), 4, 99);
-	v4.insert(++v4.begin(), 6, 88);
+	v4.insert(++v4.begin(), 5, 88);
 	std::cout << "v4: "; displayVec(v4);
 	std::cout << "v4 size: " << v4.size() << std::endl;
 	std::cout << "v4 capacity: " << v4.capacity() << std::endl;
 	
-	std::cout << "-- v4.insert(range) -------" << std::endl;
+	std::cout << "-- v4.insert(list range) -------" << std::endl;
 	std::cout << "v1: "; displayVec(v1);
 	// v4.insert(v4.begin(), v1.begin(), v1.end());
 	// v4.insert(++v4.begin(), v1.begin(), v1.end());
-	NS::vector<int>::iterator v1b = v1.begin(); // to test InputIterator
-	NS::vector<int>::iterator v1e = v1.end(); // to test InputIterator
+	
+	std::list<int> lst(3, 55);
+	std::list<int>::iterator lstb = lst.begin(); // to test InputIterator
+	std::list<int>::iterator lste = lst.end(); // to test InputIterator
 
-	v4.insert(v4.end(), v1b, v1e);
+	v4.insert(v4.end(), lstb, lste);
 	std::cout << "v4: "; displayVec(v4);
 	std::cout << "v4 size: " << v4.size() << std::endl;
 	std::cout << "v4 capacity: " << v4.capacity() << std::endl;
@@ -356,18 +362,28 @@ int main(void)
 	std::cout << std::boolalpha << "v4 < v2: " << (v4 < v2) << std::endl;
 	std::cout << std::boolalpha << "v2 > v4: " << (v2 > v4) << std::endl;
 
-/*	std::cout << std::endl << "==== FIXED ====" << std::endl;
+	// std::cout << std::endl << "==== FIXED ====" << std::endl;
 	
-	Fixed a(42);
-	Fixed b;
+	// Fixed a(42);
+	// Fixed b;
 
-	NS::vector<Fixed> v6;
+	// NS::vector<Fixed> v6(1, 42);
 
-	v6.push_back(a);
-	v6.push_back(b);
-	std::cout << "v6: "; displayVec(v6);
-	std::cout << "v6 size: " << v6.size() << std::endl;
-	std::cout << "v6 capacity: " << v6.capacity() << std::endl;*/
+	// v6.push_back(a);
+	// v6.push_back(b);
+	// v6.push_back(b);
+	// v6.push_back(b);
+	// v6.push_back(b);
+	// v6.pop_back();
+	// v6.pop_back();
+	// v6.pop_back();
+	// std::cout << "v6: "; displayVec(v6);
+	// std::cout << "v6 size: " << v6.size() << std::endl;
+	// std::cout << "v6 capacity: " << v6.capacity() << std::endl;
 
-	return 0;
+
+/*	NS::vector<int> test(3, 3);
+	NS::vector<NS::vector<int> > self_assign;
+	self_assign.assign(4, test);
+*/	return 0;
 }

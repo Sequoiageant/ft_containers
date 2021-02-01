@@ -5,8 +5,8 @@ GREEN='\033[0;32;1m' # Green bold
 YELLOW='\033[0;33;1m' # Yellow bold
 NC='\033[0m' # No Color
 
-clang++ -Wall -Wextra -Werror -std=c++98 -I../includes main.cpp && ./a.out > ft
-clang++ -Wall -Wextra -Werror -std=c++98 -I../includes -D STD main.cpp && ./a.out > std
+clang++ -Wall -Wextra -Werror -std=c++98 -I../includes *.cpp && ./a.out > ft
+clang++ -Wall -Wextra -Werror -std=c++98 -I../includes -D STD *.cpp && ./a.out > std
 
 diff ft std
 
@@ -17,5 +17,5 @@ else
 	echo "${RED}ERRORS${NC}"
 fi
 
-rm ft
-rm std
+# rm ft
+# rm std

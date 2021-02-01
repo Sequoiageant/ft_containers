@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/27 10:49:03 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/27 11:53:27 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/01/29 13:15:32 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@ namespace ft
 	struct is_integral<char> 
 	{ static const bool value = true; };
 	
-	template <> 
+/*	template <> 
 	struct is_integral<char16_t> 
 	{ static const bool value = true; };
 	
 	template <> 
 	struct is_integral<char32_t> 
-	{ static const bool value = true; };
+	{ static const bool value = true; };*/
 	
 	template <> 
 	struct is_integral<wchar_t> 
