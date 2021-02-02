@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/01 11:34:39 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/01 17:50:06 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -362,26 +362,49 @@ int main(void)
 	std::cout << std::boolalpha << "v4 < v2: " << (v4 < v2) << std::endl;
 	std::cout << std::boolalpha << "v2 > v4: " << (v2 > v4) << std::endl;
 
-	// std::cout << std::endl << "==== FIXED ====" << std::endl;
+	std::cout << "v1: "; displayVec(v1);
+	std::cout << "v2: "; displayVec(v2);
+	std::cout << "v3: "; displayVec(v3);
+	std::cout << "v4: "; displayVec(v4);
+	std::cout << "v5: "; displayVec(v5);
+	NS::vector<int> v6(v2.begin(), v2.end());
+// try {
+// }
+// catch(const std::exception& e) {
+// 	std::cerr << e.what() << '\n';
+// }
+	std::cout << "v6: "; displayVec(v6);
+
+
+
+/*	std::cout << std::endl << "==== FIXED ====" << std::endl;
 	
-	// Fixed a(42);
-	// Fixed b;
+	Fixed a(1);
 
-	// NS::vector<Fixed> v6(1, 42);
-
-	// v6.push_back(a);
-	// v6.push_back(b);
-	// v6.push_back(b);
-	// v6.push_back(b);
-	// v6.push_back(b);
-	// v6.pop_back();
-	// v6.pop_back();
-	// v6.pop_back();
-	// std::cout << "v6: "; displayVec(v6);
-	// std::cout << "v6 size: " << v6.size() << std::endl;
-	// std::cout << "v6 capacity: " << v6.capacity() << std::endl;
+	NS::vector<Fixed> v6(5, 42);
+	// NS::vector<Fixed> v7(3, 21);
 
 
+	v6.resize(4);
+	std::cout << "v6: "; displayVec(v6);
+	std::cout << "v6 size: " << v6.size() << std::endl;
+	std::cout << "v6 capacity: " << v6.capacity() << std::endl;
+	
+
+	// std::cout << "v7: "; displayVec(v7);
+	// std::cout << "v7 size: " << v7.size() << std::endl;
+	// std::cout << "v7 capacity: " << v7.capacity() << std::endl;
+
+	// v7.assign(v6.begin(), v6.end());
+
+	v6.insert(v6.begin(), a);
+	std::cout << "v6: "; displayVec(v6);
+	std::cout << "v6 size: " << v6.size() << std::endl;
+	std::cout << "v6 capacity: " << v6.capacity() << std::endl;
+
+	// std::cout << "v7: "; displayVec(v7);
+	// std::cout << "v7 size: " << v7.size() << std::endl;*/
+	// std::cout << "v7 capacity: " << v7.capacity() << std::endl;
 /*	NS::vector<int> test(3, 3);
 	NS::vector<NS::vector<int> > self_assign;
 	self_assign.assign(4, test);

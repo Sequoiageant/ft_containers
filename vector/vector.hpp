@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/01 14:07:51 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/01 18:02:27 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,14 +242,9 @@ template <typename T>
 		vector (InputIterator first, typename ft::enable_if< !ft::is_integral< InputIterator >::value, InputIterator >::type last)
 		: _capacity(0)
 		{
-			InputIterator first_cpy(first);
-			while (first_cpy != last)
-			{
-				++this->_capacity;
-				++first_cpy;
-			}
-
+			this->_capacity = this->distance(first, last);
 			this->_size = this->_capacity;
+
 			this->_array = static_cast<T*>(::operator new(sizeof(T) * _capacity));
 
 			size_type i = 0;
@@ -415,52 +410,65 @@ template <typename T>
 	template <class InputIterator>
 		void assign (InputIterator first, typename ft::enable_if< !ft::is_integral< InputIterator >::value, InputIterator >::type last) // NEEDS enable_if
 		{
-			InputIterator first_cpy(first);
-			size_type range = 0;
-			while (first_cpy != last)
+			size_type n = this->distance(first, last);
+			if (n > this->capacity())
 			{
-				++range;
-				++first_cpy;
-			}
-			if (range > this->capacity())
-			{
+				T* tmp = static_cast<T*>(::operator new(sizeof(value_type) * n));
+				this->_capacity = n;
+				for (size_type i = 0; i < n; ++i)
+				{
+					new (static_cast<void*>(tmp + i)) T(*first);
+					++first;
+				}
 				this->destroy_array();
 				::operator delete(this->_array);
-				this->_array = static_cast<T*>(::operator new(sizeof(value_type) * range));
-				this->_capacity = range;
+				this->_array = tmp;
 			}
 			else
 			{
-				for (size_type i = 0; i < this->_size; ++i)
+				for (size_type i = 0; i < n; ++i)
+				{
+					if (i < this->_size)
+						this->_array[i] = *first;
+					else
+						new (static_cast<void*>(this->_array + i)) T(*first);	
+					++first;
+				}
+				for (size_type i = n; i < this->_size; ++i)
 				{
 					this->_array[i].~T();
 				}
 			}
-			for (size_type i = 0; i < range; ++i)
-			{
-				new (static_cast<void*>(this->_array + i)) T(*first);
-				++first;
-			}
-			this->_size = range;
+			this->_size = n;
 		}
 
 		void assign (size_type n, const value_type& val)
 		{
 			if (n > this->capacity())
 			{
-				this->clear();
-				::operator delete(this->_array);
-				this->_array = static_cast<T*>(::operator new(sizeof(T) * n));
+				T* tmp = static_cast<T*>(::operator new(sizeof(value_type) * n));
 				this->_capacity = n;
+				for (size_type i = 0; i < n; ++i)
+				{
+					new (static_cast<void*>(tmp + i)) T(val);
+				}
+				this->destroy_array();
+				::operator delete(this->_array);
+				this->_array = tmp;
 			}
-			for (size_type i = 0; i < n; ++i)
+			else
 			{
-				this->_array[i] = val;
-				// new (static_cast<void*>(this->_array + i)) T(val);
-			}
-			for (size_type i = n; i < this->_size; ++i)
-			{
-				this->_array[i].~T();
+				for (size_type i = 0; i < n; ++i)
+				{
+					if (i < this->_size)
+						this->_array[i] = val;
+					else
+						new (static_cast<void*>(this->_array + i)) T(val);
+				}
+				for (size_type i = n; i < this->_size; ++i)
+				{
+					this->_array[i].~T();
+				}
 			}
 			this->_size = n;
 		}
@@ -469,7 +477,7 @@ template <typename T>
 		{
 			if (this->_size == this->capacity())
 			{
-				T* tmp = reallocate_tab(this->_size + 1, val, true);
+				T* tmp = reallocate_tab(this->_size + 1, val);
 				this->destroy_array();
 				::operator delete(this->_array);
 				this->_array = tmp;
@@ -494,6 +502,7 @@ template <typename T>
 
 		void insert (iterator position, size_type n, const value_type& val)
 		{
+			// std::cout << "INSERT" << std::endl;
 			size_type pos = position - this->begin();
 
 			this->resize(this->_size + n);
@@ -514,13 +523,7 @@ template <typename T>
 		{
 			size_type pos = position - this->begin();
 
-			InputIterator first_cpy(first);
-			size_type n = 0;
-			while (first_cpy != last)
-			{
-				++n;
-				++first_cpy;
-			}
+			size_type n = this->distance(first, last);
 			// size_type n = last - first;
 
 			this->resize(this->_size + n);
@@ -539,10 +542,13 @@ template <typename T>
 
 		iterator erase (iterator position)
 		{
-			while (position + 1 != this->end())
+			if (position != this->end())
 			{
-				*position = *(position + 1);
-				++position;
+				while (position + 1 != this->end())
+				{
+					*position = *(position + 1);
+					++position;
+				}
 			}
 			this->pop_back();
 			return (position);
@@ -558,16 +564,16 @@ template <typename T>
 				++first;
 				++last;
 			}
-			this->_size -= range;
+			for (size_type i = 0; i < range; ++i)
+			{
+				this->_array[this->_size].~value_type();
+				this->_size --;
+			}
 			return (first);
 		}
 
 		void swap (vector& x)
 		{
-			// pointer tmp;
-			// tmp = this->_array;
-			// this->_array = x._array;
-			// x._array = tmp;
 			this->swap_values(this->_array, x._array);
 			this->swap_values(this->_size, x._size);
 			this->swap_values(this->_capacity, x._capacity);
@@ -627,29 +633,14 @@ template <typename T>
 			}
 		}
 
-		void set_capacity(size_type n, bool push)
-		{
-			if (push)
-			{
-				if (n <= this->capacity() * 2)
-					this->_capacity *= 2;
-				else
-					this->_capacity = n;	
-			}
-			else
-			{
-				if (n <= this->size() * 2)
-					this->_capacity = this->_size * 2;
-				else
-					this->_capacity = n;
-			}
-		}
-
-		T* reallocate_tab(size_type n, const T& val, bool push = false)
+		T* reallocate_tab(size_type n, const T& val)
 		{
 			// std::cout << "REALLOCATION: n = " << n << std::endl;
 
-			this->set_capacity(n, push);
+			if (n <= this->size() * 2)
+				this->_capacity = this->_size * 2;
+			else
+				this->_capacity = n;
 
 			T* tab = static_cast<T*>(::operator new(sizeof(T) * this->_capacity));
 			for (size_type i = 0; i < n; ++i)
@@ -666,6 +657,19 @@ template <typename T>
 				}
 			}
 			return tab;
+		}
+
+		template<class InputIterator>
+		size_type distance(InputIterator first, InputIterator last)
+		{
+			InputIterator first_cpy(first);
+			size_type n = 0;
+			while (first_cpy != last)
+			{
+				++n;
+				++first_cpy;
+			}
+			return n;
 		}
 	};
 
