@@ -6,11 +6,10 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 10:29:50 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/02 18:27:50 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/03 19:54:17 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-namespace ft {
 
 #ifndef MAP_HPP
 # define MAP_HPP
@@ -25,19 +24,38 @@ namespace ft {
 # include "functional.hpp"
 # include "Map_iterator.hpp"
 
-template<typename Key, typename T>
-	struct Node {
-		T	data;
-		Key	key;
-		struct Node* left;
-		struct Node* right;
+namespace ft {
 
-		Node(T val)
-		{
-			data = val;
-			left = NULL;
-			right = NULL;
-		}
+/*template<typename Pair>
+	struct Node {
+		Pair			value;
+		struct Node* 	left;
+		struct Node* 	right;
+
+		Node()
+		: value(Pair()), left(NULL), right(NULL)
+		{}
+
+		Node(Pair val)
+		: value(val), left(NULL), right(NULL)
+		{}
+	};
+*/
+template<typename KeyType, typename ValueType>
+	struct Node {
+		KeyType			key;
+		ValueType		value;
+		struct Node* 	left;
+		struct Node* 	right;
+		int				color; // left 0, right 1
+
+		Node()
+		: key(KeyType()), value(ValueType()), left(NULL), right(NULL), color(-1)
+		{}
+
+		Node(KeyType key, ValueType val)
+		: key(key), value(val), left(NULL), right(NULL), color(-1)
+		{}
 	};
 
 template<typename Key, typename T, typename Compare = std::less<Key> >
@@ -47,7 +65,9 @@ public:
 
 	typedef Key										key_type;
 	typedef T										mapped_type;
+	typedef Node<key_type, mapped_type>				node_type;
 	typedef std::pair<const Key, T>					value_type;
+	// typedef Node<value_type>						node_type;
 	typedef Compare									key_compare;
 	typedef Map_iterator<T*>						iterator;
 	typedef Map_iterator<const T*>					const_iterator;
@@ -71,7 +91,8 @@ public:
 	};
 	
 
-	explicit map (const key_compare& comp = key_compare());
+	explicit map (const key_compare& comp = key_compare()) : _root(NULL), _comp(comp)
+	{(void)comp;}
 
 	template <class InputIterator>
 	map (InputIterator first, InputIterator last, const key_compare& comp = key_compare());
@@ -79,7 +100,15 @@ public:
 	map (const map& x);
 
 	map& operator=(map const & x);
-	~map ();
+	~map () {}
+
+/*	void insert(key_type key, value_type val)
+	{
+		if (this->_root == NULL)
+			this->_root = new node_type(key, val);
+		else
+			insert(this->_root, key, val);
+	}*/
 
 /*	iterator begin() { return iterator(this->_array); }
 	const_iterator begin() const { return const_iterator(this->_array); }
@@ -98,7 +127,7 @@ public:
 	size_type max_size() const;
 	mapped_type& operator[] (const key_type& k);
 
-	std::pair<iterator,bool> insert (const value_type& val);
+	// std::pair<iterator,bool> insert (const value_type& val);
 	iterator insert (iterator position, const value_type& val);
 	template <class InputIterator>
 	void insert (InputIterator first, InputIterator last);
@@ -122,15 +151,73 @@ public:
 	iterator upper_bound (const key_type& k);
 	const_iterator upper_bound (const key_type& k) const;
 
-	pair<const_iterator,const_iterator>	equal_range (const key_type& k) const;
-	pair<iterator,iterator>				equal_range (const key_type& k);
+	std::pair<const_iterator,const_iterator>	equal_range (const key_type& k) const;
+	std::pair<iterator,iterator>				equal_range (const key_type& k);
 
+	void displayMap()
+	{
+		printInorder (this->_root);
+	}
+
+	void printInorder(node_type *node)
+	{
+		if (node == NULL)
+			return ;
+		printInorder(node->left);
+		if (node->color == 0)
+			std::cout << "map[" << node->key << "] = " << node->value << " (left)" << std::endl;
+		else if (node->color == 1)
+			std::cout << "map[" << node->key << "] = " << node->value << " (right)" << std::endl;
+		else
+			std::cout << "map[" << node->key << "] = " << node->value << std::endl;
+		printInorder(node->right);
+	}
+
+	void insert (const value_type& val)
+	{
+		node_type *n = new node_type(val.first, val.second);
+
+		if (this->_root == NULL)
+		{
+			this->_root = n;
+			return ;
+		}
+		insertRecurse(this->_root, n);
+	}
+
+	void insertRecurse(node_type *node, node_type *n)
+	{	
+  		// Descente récursive dans l'arbre jusqu'à atteindre une feuille
+		if (node != NULL && n->key < node->key) {
+			if (node->left != NULL) {
+				insertRecurse(node->left, n);
+				return;
+			}
+			else
+			{
+				n->color = 0;
+				node->left = n;
+			}
+		} 
+		else if (node != NULL) {
+			if (node->right != NULL) {
+				insertRecurse(node->right, n);
+				return;
+			}
+			else
+			{
+				n->color = 1;
+				node->right = n;
+			}
+		}
+	}
 
 private:
-	Node *node;
+	node_type	*_root;
+	key_compare	_comp;
 };
 
-std::ostream & operator<<(std::ostream & o, map const & rhs);
+// std::ostream & operator<<(std::ostream & o, map const & rhs);
 
 #endif // MAP_HPP
 
