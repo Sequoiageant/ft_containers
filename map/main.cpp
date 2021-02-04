@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/03 11:01:52 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/03 19:57:44 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/04 18:26:22 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,28 @@ int main(void)
 
 	ft::map<char, int> map;
 
+	std::cout << std::boolalpha << "empty: " << map.empty() << std::endl;
+
 	map.insert(pair('a', 2));
-	map.insert(pair('b', 3));
-	map.insert(pair('d', 5));
 	map.insert(pair('e', 12));
 	map.insert(pair('c', 42));
+	map.insert(pair('b', 3));
+	map.insert(pair('d', 5));
+	map.insert(pair('g', 5));
+	map.insert(pair('f', 5));
 	map.insert(pair('Z', 6));
 	map.insert(pair('D', 7));
 	map.insert(pair('E', 8));
 
 	map.displayMap();
+	std::cout << "size: " << map.size() << std::endl;
+	std::cout << std::boolalpha << "empty: " << map.empty() << std::endl;
+	std::cout << std::boolalpha << "find('b'): " << map.find('b') << std::endl;
 
+	std::cout << "CLEAR" << std::endl;
+	map.clear();
+	map.displayMap();
+	std::cout << std::boolalpha << "empty: " << map.empty() << std::endl;
 
 	return 0;
 }
