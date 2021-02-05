@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 10:29:50 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/04 18:39:00 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/05 19:04:44 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,14 @@ template<typename KeyType, typename ValueType>
 		ValueType		value;
 		struct Node* 	left;
 		struct Node* 	right;
-		int				color; // left 0, right 1
+		char			side; // left 'l', right 'r', root : 'h' ==> FOR DEBUG
 
 		Node()
-		: key(KeyType()), value(ValueType()), left(NULL), right(NULL), color(-1)
+		: key(KeyType()), value(ValueType()), left(NULL), right(NULL), side('h')
 		{}
 
 		Node(KeyType key, ValueType val)
-		: key(key), value(val), left(NULL), right(NULL), color(-1)
+		: key(key), value(val), left(NULL), right(NULL), side('h')
 		{}
 	};
 
@@ -145,7 +145,6 @@ public:
 	{
 		deleteRecurse(this->_root);
 		this->_size = 0;
-		this->_root = NULL;
 	}
 
 	key_compare key_comp() const;
@@ -173,12 +172,10 @@ public:
 		if (node == NULL)
 			return ;
 		printInorder(node->left);
-		if (node->color == 0)
-			std::cout << "map[" << node->key << "] = " << node->value << " (left)" << std::endl;
-		else if (node->color == 1)
-			std::cout << "map[" << node->key << "] = " << node->value << " (right)" << std::endl;
+		if (node->side == 'h')
+			std::cout << "map[" << node->key << "] = " << node->value << " (HEAD)" << std::endl;
 		else
-			std::cout << "map[" << node->key << "] = " << node->value << std::endl;
+			std::cout << "map[" << node->key << "] = " << node->value << " (" << node->side << ")" << std::endl;
 		printInorder(node->right);
 	}
 
@@ -206,7 +203,7 @@ public:
 			}
 			else
 			{
-				n->color = 0;
+				n->side = 'L';
 				node->left = n;
 			}
 		} 
@@ -217,21 +214,24 @@ public:
 			}
 			else
 			{
-				n->color = 1;
+				n->side = 'R';
 				node->right = n;
 			}
 		}
 	}
 
-	void deleteRecurse(node_type *node)
-	{	
-		if (node->left)
-			deleteRecurse(node->left);
-		if (node->right)
-			deleteRecurse(node->right);
+	void deleteRecurse(node_type *&node)
+	{
+		if (node)
+		{
+			if (node->left)
+				deleteRecurse(node->left);
+			if (node->right)
+				deleteRecurse(node->right);
 		// std::cout << "Deleting: " << node->key << std::endl;
-		delete node;
-		node = NULL;
+			delete node;
+			node = NULL;
+		}
 	}
 
 	bool find (const key_type& k)
@@ -263,13 +263,71 @@ public:
 			return ;
 		eraseRecurse(this->_root, k);
 	}
+	
+	node_type* searchLeftRightest(node_type* node, node_type* &parent)
+	{
+		node_type *cpy = node;
+		while (cpy->right != NULL)
+		{
+			parent = cpy;
+			cpy = cpy->right;
+		}
+		return cpy;
+	}
 
-	void eraseRecurse(node_type *node, const key_type& k)
+	void eraseRecurse(node_type*& node, const key_type& k)
+	{
+		if (node == NULL)
+			return;
+		if (node->key == k)
+		{
+			if (node->left == NULL && node->right == NULL)
+			{
+				this->delete_node(node);
+				return ;
+			}
+			else if (node->left == NULL)
+			{
+				this->delete_node(node, node->right);
+				return ;
+			}
+			else if (node->right == NULL)
+			{
+				this->delete_node(node, node->left);
+				return ;
+			}
+			else
+			{
+				node_type *last_parent = node;
+				node_type* min = searchLeftRightest(node->left, last_parent);				
+				
+				if (last_parent == this->_root) // FOR DEBUG
+					min->side = 'h';	//
+				
+				if (last_parent != node)
+				{
+					last_parent->right = NULL;
+					min->left = node->left;
+				}
+				min->right = node->right;
+				
+				this->delete_node(node, min);
+				return ;
+			}
+		}
+		else if (k < node->key)
+			eraseRecurse(node->left, k);
+		else
+			eraseRecurse(node->right, k);
+	}
+/*
+	void eraseRecurse(node_type*& node, const key_type& k)
 	{
 		if (node)
 		{
 			if (k < node->key)
 			{
+				std::cout << "k < key" << std::endl;
 				if (node->left && k == node->left->key)
 					this->delete_node(node, LEFT);
 				else
@@ -277,6 +335,7 @@ public:
 			}
 			else if (k > node->key)
 			{
+				std::cout << "k > key" << std::endl;
 				if (node->right && k == node->right->key)
 					this->delete_node(node, RIGHT);
 				else
@@ -285,7 +344,7 @@ public:
 			else
 				this->delete_node(node, THIS);
 		}
-	}
+	}*/
 
 
 private:
@@ -293,11 +352,11 @@ private:
 	size_type	_size;
 	key_compare	_comp;
 
-	void delete_node(node_type* node, int pos)
+	void delete_node(node_type*& node, node_type* child = NULL)
 	{
-		(void)node;
-		(void)pos;
-		return;
+		delete node;
+		node = child;
+		--this->_size;
 	}
 };
 

@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/03 11:01:52 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/04 18:26:22 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/05 19:00:02 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,15 @@ int main(void)
 	std::cout << std::boolalpha << "empty: " << map.empty() << std::endl;
 	std::cout << std::boolalpha << "find('b'): " << map.find('b') << std::endl;
 
-	std::cout << "CLEAR" << std::endl;
-	map.clear();
+	// std::cout << "CLEAR" << std::endl;
+	// map.erase('Z');
+	// map.erase('g');
+	map.erase('a');
+	// map.erase('b');
 	map.displayMap();
+	std::cout << "size: " << map.size() << std::endl;
+	std::cout << "===== CLEAR =====" << std::endl;
+	map.clear();
 	std::cout << std::boolalpha << "empty: " << map.empty() << std::endl;
 
 	return 0;
