@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 10:29:50 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/05 19:04:44 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/08 19:23:25 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,38 +30,6 @@
 
 namespace ft {
 
-/*template<typename Pair>
-	struct Node {
-		Pair			value;
-		struct Node* 	left;
-		struct Node* 	right;
-
-		Node()
-		: value(Pair()), left(NULL), right(NULL)
-		{}
-
-		Node(Pair val)
-		: value(val), left(NULL), right(NULL)
-		{}
-	};
-*/
-template<typename KeyType, typename ValueType>
-	struct Node {
-		KeyType			key;
-		ValueType		value;
-		struct Node* 	left;
-		struct Node* 	right;
-		char			side; // left 'l', right 'r', root : 'h' ==> FOR DEBUG
-
-		Node()
-		: key(KeyType()), value(ValueType()), left(NULL), right(NULL), side('h')
-		{}
-
-		Node(KeyType key, ValueType val)
-		: key(key), value(val), left(NULL), right(NULL), side('h')
-		{}
-	};
-
 template<typename Key, typename T, typename Compare = std::less<Key> >
 class map {
 
@@ -69,12 +37,12 @@ public:
 
 	typedef Key										key_type;
 	typedef T										mapped_type;
-	typedef Node<key_type, mapped_type>				node_type;
+	// typedef Tree_node<key_type, mapped_type>		node_type;
 	typedef std::pair<const Key, T>					value_type;
-	// typedef Node<value_type>						node_type;
+	typedef Tree_node<value_type>					node_type;
 	typedef Compare									key_compare;
-	typedef Map_iterator<T*>						iterator;
-	typedef Map_iterator<const T*>					const_iterator;
+	typedef Map_iterator<value_type>				iterator;
+	typedef Map_iterator<const value_type>			const_iterator;
 	typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
 	typedef std::reverse_iterator<iterator>			reverse_iterator;
 	typedef	size_t									size_type;
@@ -106,12 +74,13 @@ public:
 	map& operator=(map const & x);
 	~map () {}
 
-/*	iterator begin() { return iterator(this->_array); }
-	const_iterator begin() const { return const_iterator(this->_array); }
+	iterator begin() { return iterator(LeftMost(this->_root)); }
+	const_iterator begin() const { return const_iterator(LeftMost(this->_root)); }
 
-	iterator end() { return iterator(&this->_array[this->_size]); }
-	const_iterator end() const { return const_iterator(&this->_array[this->_size]); }
+	iterator end() { return iterator(NULL); }
+	const_iterator end() const { return const_iterator(NULL); }
 
+/*	
 	reverse_iterator rbegin(void) { return reverse_iterator(this->end()); }
 	const_reverse_iterator rbegin(void) const { return const_reverse_iterator(this->end()); }
 
@@ -173,15 +142,16 @@ public:
 			return ;
 		printInorder(node->left);
 		if (node->side == 'h')
-			std::cout << "map[" << node->key << "] = " << node->value << " (HEAD)" << std::endl;
+			std::cout << "map[" << node->value.first << "] = " << node->value.second << " (HEAD)" << std::endl;
 		else
-			std::cout << "map[" << node->key << "] = " << node->value << " (" << node->side << ")" << std::endl;
+			std::cout << "map[" << node->value.first << "] = " << node->value.second << " (" << node->side << ")" << std::endl;
 		printInorder(node->right);
 	}
 
 	void insert (const value_type& val)
 	{
-		node_type *n = new node_type(val.first, val.second);
+		node_type *n = new node_type(val); // for typename Pair
+		// node_type *n = new node_type(val.first, val.second);
 
 		if (this->_root == NULL)
 		{
@@ -196,7 +166,7 @@ public:
 	void insertRecurse(node_type *node, node_type *n)
 	{	
   		// Descente récursive dans l'arbre jusqu'à atteindre une feuille
-		if (node != NULL && this->_comp(n->key, node->key)) {
+		if (node != NULL && this->_comp(n->value.first, node->value.first)) {
 			if (node->left != NULL) {
 				insertRecurse(node->left, n);
 				return;
@@ -204,6 +174,7 @@ public:
 			else
 			{
 				n->side = 'L';
+				n->parent = node;
 				node->left = n;
 			}
 		} 
@@ -215,6 +186,7 @@ public:
 			else
 			{
 				n->side = 'R';
+				n->parent = node;
 				node->right = n;
 			}
 		}
@@ -247,9 +219,9 @@ public:
 		if (node)
 		{
 			// std::cerr << "key: " << node->key << std::endl;
-			if (this->_comp(k, node->key))
+			if (this->_comp(k, node->value.first))
 				return findRecurse(node->left, k);
-			else if (this->_comp(node->key, k))
+			else if (this->_comp(node->value.first, k))
 				return findRecurse(node->right, k);
 			else
 				return (true);
@@ -264,22 +236,55 @@ public:
 		eraseRecurse(this->_root, k);
 	}
 	
-	node_type* searchLeftRightest(node_type* node, node_type* &parent)
+	node_type* RightMost(node_type* node)
 	{
-		node_type *cpy = node;
-		while (cpy->right != NULL)
+		// node_type *cpy = node;
+		while (node->right)
 		{
-			parent = cpy;
-			cpy = cpy->right;
+			node = node->right;
 		}
-		return cpy;
+		return node;
+	}
+
+	node_type* LeftMost(node_type* node)
+	{
+		// node_type *cpy = node;
+		while (node->left)
+		{
+			node = node->left;
+		}
+		return node;
+	}
+	
+	node_type* searchRightest(node_type* node, node_type* &parent = NULL)
+	{
+		// node_type *cpy = node;
+		while (node->right)
+		{
+			if (parent)
+				parent = node;
+			node = node->right;
+		}
+		return node;
+	}
+
+	node_type* searchLeftest(node_type* node, node_type* &parent = NULL)
+	{
+		// node_type *cpy = node;
+		while (node->left)
+		{
+			if (parent)
+				parent = node;
+			node = node->left;
+		}
+		return node;
 	}
 
 	void eraseRecurse(node_type*& node, const key_type& k)
 	{
 		if (node == NULL)
 			return;
-		if (node->key == k)
+		if (node->value.first == k)
 		{
 			if (node->left == NULL && node->right == NULL)
 			{
@@ -299,7 +304,7 @@ public:
 			else
 			{
 				node_type *last_parent = node;
-				node_type* min = searchLeftRightest(node->left, last_parent);				
+				node_type* min = searchRightest(node->left, last_parent);				
 				
 				if (last_parent == this->_root) // FOR DEBUG
 					min->side = 'h';	//
@@ -315,7 +320,7 @@ public:
 				return ;
 			}
 		}
-		else if (k < node->key)
+		else if (k < node->value.first)
 			eraseRecurse(node->left, k);
 		else
 			eraseRecurse(node->right, k);
