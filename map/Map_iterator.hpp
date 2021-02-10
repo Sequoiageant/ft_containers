@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 10:55:32 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/08 19:43:21 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/10 18:36:40 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,42 +63,51 @@ template<typename T> //T is a pair<Key, Val>
 
 
 		Map_iterator(void) : p(NULL) {}
-		Map_iterator(node_type *x) : p(x) {}
+		Map_iterator(node_type* x) : p(x) {}
 		Map_iterator(const iterator& copy) : p(copy.p) {}
-		iterator& operator=(const iterator& rhs) { this->p = rhs.p; return *this;}
-		// iterator& operator++()
-		// {
-		// 	if (p->right != NULL) {
-		// // find the leftmost child of the right node
-		// 		p = p->right;
-		// 		while (p->left != NULL)
-		// 		{
-		// 			p = p->left;
-		// 		}
-		// 	}
-		// 	else {
-		//  // go upwards along right branches...  stop after the first left
-		// 		while (p->parent != NULL && p->parent->right == p) 
-		// 		{
-		// 			p = p->parent;
-		// 		}
-		// 		p = p->parent;
-		// 	}
-		// 	return *this;
-		// }
+
+		iterator& operator=(const iterator& rhs)
+		{
+			this->p = rhs.p;
+			return *this;
+		}
+
 		iterator& operator++()
 		{
-			std::cerr << "OPERATOR++" << std::endl;
+			// std::cerr << "p->value: " << p->value.first << std::endl;
+			if (p->right != NULL)
+			{ // find the leftmost child of the right node
+				// if (p->parent)
+				// 	std::cerr << "p->parent->value: " << p->parent->value.first << std::endl;
+				p = p->right;
+				while (p->left != NULL)
+				{
+					p = p->left;
+				}
+			}
+			else
+			{ // go upwards along right branches...  stop after the first left
+				// std::cerr << "UP" << std::endl;
+				while (p->parent != NULL && p->parent->right == p) 
+				{
+					p = p->parent;
+					// std::cerr << "p->parent->value: " << p->value.first << std::endl;
+				}
+				if (p->right != p)
+					p = p->parent;
+			}
+			return *this;
+		}
+/*		iterator& operator++()
+		{
 			if (p->right != NULL) {
 				p = p->right;
 				while (p->left != NULL)
 					p = p->left;
 			}
 			else {
-				std::cerr << "AVANT" << std::endl;
 				node_type* tmp = p->parent;
-				while (p == tmp->right) {
-				std::cerr << "APRES" << std::endl;
+				while (tmp != NULL && p == tmp->right) {
 					p = tmp;
 					tmp = tmp->parent;
 				}
@@ -106,11 +115,30 @@ template<typename T> //T is a pair<Key, Val>
 					p = tmp;
 			}
 			return *this;
+		}*/
+
+		iterator operator++(int) { iterator tmp(*this);	operator++(); return tmp; }
+		
+		iterator& operator--()
+		{
+			if (p->left != NULL)
+			{ // find the rightmost child of the left node
+				p = p->left;
+				while (p->right != NULL)
+				{
+					p = p->right;
+				}
+			}
+			else
+			{ // go upwards along left branches...  stop after the first right
+				while (p->parent != NULL && p->parent->left == p) 
+				{
+					p = p->parent;
+				}
+				p = p->parent;
+			}
+			return *this;
 		}
-		iterator& operator+=(difference_type n) {p += n; return *this; }
-		iterator operator++(int) {iterator tmp(*this); operator++(); return tmp;}
-		iterator& operator--() {--p;return *this;}
-		iterator& operator-=(difference_type n) { p -= n; return *this; }
 		iterator operator--(int) {iterator tmp(*this); operator--(); return tmp;}
 		iterator operator+(difference_type n) { return iterator(p + n); }
 		iterator operator-(difference_type n) { return iterator(p - n); }
@@ -118,7 +146,7 @@ template<typename T> //T is a pair<Key, Val>
 		bool operator==(const iterator& rhs) const { return p==rhs.p; }
 		bool operator!=(const iterator& rhs) const { return p!=rhs.p; }
 		bool operator<(const iterator& rhs) const { return p < rhs.p; }
-		reference operator*() const { return *p; }
+		reference operator*() const { return p->value; }
 		value_type* operator->() const { return &(p->value); }
 		~Map_iterator(void) {}
 
