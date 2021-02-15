@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/03 11:01:52 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/10 18:35:16 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/15 18:24:33 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ int main(void)
 {
 	typedef std::pair<char, int>	pair;
 
+	
 	ft::map<char, int> map;
 
 	std::cout << std::boolalpha << "empty: " << map.empty() << std::endl;
@@ -83,14 +84,14 @@ int main(void)
 	map.insert(pair('c', 42));
 	map.insert(pair('b', 3));
 	map.insert(pair('d', 5));
-	map.insert(pair('g', 5));
+	map.insert(pair('g', 10));
 	map.insert(pair('f', 5));
 	map.insert(pair('Z', 6));
 	map.insert(pair('D', 7));
 	map.insert(pair('E', 8));
 
-	displayMap(map);
-	// map.displayMap();
+	// displayMap(map);
+	map.displayMap();
 	
 	// std::cout << std::endl << "===== ITERATOR =====" << std::endl;
 	// std::cout << "------ reverse ------" << std::endl;
@@ -106,36 +107,50 @@ int main(void)
 	std::cout << std::boolalpha << "find('b'): " << map.find('b') << std::endl;
 
 	std::cout << std::endl << "===== ERASE =====" << std::endl;
-	map.erase('a');
-	map.erase('Z');
+	// map.erase('a');
+	// map.erase('Z');
 	// map.erase('E');
 	// map.erase('D');
 	// map.erase('e');
 	// map.erase('b');
-	// map.erase('b');
-	map.displayMap();
+	// map.erase('c');
+	// map.displayMap();
 	// displayMap(map);
 	std::cout << "size: " << map.size() << std::endl;
-
+	displayMapReverse(map);
 	ft::map<char, int>::iterator it = map.begin();
-	while(it != map.end()) {
-	std::cout << it->first << ": " << it->second << std::endl;
-	++it;
-	}
-	std::cout << std::endl;
+	ft::map<char, int>::iterator ite = map.end();
+
+	// for (int i = 0; i < 30; ++i)
+	// {
+	// 	std::cout << "IT: " << it->first << ": " << it->second << std::endl;
+	// 	++it;
+	// }
+	// for (int i = 0; i < 10; ++i)
+	// {
+	// 	std::cout << "IT: " << ite->first << ": " << ite->second << std::endl;
+	// 	++ite;
+	// }
+
+	// --ite;
+	// std::cout << "ite: " << ite->first << std::endl;
+	// while(it != ite) {
+	// std::cout << it->first << ": " << it->second << std::endl;
+	// ++it;
+	// }
 	// std::cout << "it: " << it->first << std::endl;
 	// ++it;
 	// std::cout << "it: " << it->first << std::endl;
 	// ++it;
 	// std::cout << "it: " << it->first << std::endl;
 
-
-	std::cout << "===== CLEAR =====" << std::endl;
+	std::cout << std::endl << "===== CLEAR =====" << std::endl;
 	map.clear();
 	std::cout << std::boolalpha << "empty: " << map.empty() << std::endl;
 
 
-	/*std::cout << std::endl << "===== REAL MAP =====" << std::endl;
+/*
+	std::cout << std::endl << "===== REAL MAP =====" << std::endl;
 
 
 	std::map<char, int> map2;
@@ -147,29 +162,43 @@ int main(void)
 	map2.insert(pair('c', 42));
 	map2.insert(pair('b', 3));
 	map2.insert(pair('d', 5));
-	map2.insert(pair('g', 5));
+	map2.insert(pair('g', 10));
 	map2.insert(pair('f', 5));
 	map2.insert(pair('Z', 6));
 	map2.insert(pair('D', 7));
 	map2.insert(pair('E', 8));
 
-	displayMap(map2);
+	// displayMap(map2);
 	// std::cout << "------ reverse ------" << std::endl;
 	// displayMapReverse(map2);
 	std::cout << "size: " << map2.size() << std::endl;
 	std::cout << std::boolalpha << "empty: " << map2.empty() << std::endl;
 	// std::cout << std::boolalpha << "find('b'): " << map2.find('b') << std::endl;
 
-	map2.erase('a');
+	// map2.erase('a');
 	// map2.erase('b');
 	// map2.erase('d');
 	// map2.erase('e');
 	std::cout << "size: " << map2.size() << std::endl;
 
-	displayMap(map2);
-	std::map<char, int>::iterator it2 = --map2.end();
-	// --it2;
-	std::cout << "IT: " << it2->second << std::endl;
+	// displayMap(map2);
+	// std::map<char, int>::iterator it2 = map2.begin();
+	std::map<char, int>::iterator it2e = map2.end();
+	// --it2e;
+	// while(it2 != it2e) {
+	// 	std::cout << it2->first << ": " << it2->second << std::endl;
+	// 	++it2;
+	// }
+	// for (int i = 0; i < 30; ++i)
+	// {
+	// 	std::cout << "IT: " << it2->first << ": " << it2->second << std::endl;
+	// 	++it2;
+	// }
+	for (int i = 0; i < 10; ++i)
+	{
+		std::cout << "IT: " << it2e->first << ": " << it2e->second << std::endl;
+		++it2e;
+	}
 
 
 	std::cout << "===== CLEAR =====" << std::endl;

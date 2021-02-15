@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 10:55:32 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/10 18:36:40 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/15 18:12:42 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,25 +62,27 @@ template<typename T> //T is a pair<Key, Val>
 		
 
 
-		Map_iterator(void) : p(NULL) {}
-		Map_iterator(node_type* x) : p(x) {}
-		Map_iterator(const iterator& copy) : p(copy.p) {}
+		Map_iterator(void) : p(NULL), head(NULL) {}
+		Map_iterator(node_type* x, node_type* head) : p(x), head(head) {}
+		Map_iterator(const iterator& copy) : p(copy.p), head(copy.head) {}
 
 		iterator& operator=(const iterator& rhs)
 		{
 			this->p = rhs.p;
+			this->head = rhs.head;
 			return *this;
 		}
 
 		iterator& operator++()
 		{
+			// std::cerr << "HEAD IT: " << head << std::endl;
 			// std::cerr << "p->value: " << p->value.first << std::endl;
-			if (p->right != NULL)
+			if (p->right != head)
 			{ // find the leftmost child of the right node
 				// if (p->parent)
 				// 	std::cerr << "p->parent->value: " << p->parent->value.first << std::endl;
 				p = p->right;
-				while (p->left != NULL)
+				while (p->left != head)
 				{
 					p = p->left;
 				}
@@ -88,9 +90,10 @@ template<typename T> //T is a pair<Key, Val>
 			else
 			{ // go upwards along right branches...  stop after the first left
 				// std::cerr << "UP" << std::endl;
-				while (p->parent != NULL && p->parent->right == p) 
+				while (p->parent != head && p->parent->right == p) 
 				{
 					p = p->parent;
+					// std::cerr << "ITERATOR" << std::endl;
 					// std::cerr << "p->parent->value: " << p->value.first << std::endl;
 				}
 				if (p->right != p)
@@ -121,17 +124,17 @@ template<typename T> //T is a pair<Key, Val>
 		
 		iterator& operator--()
 		{
-			if (p->left != NULL)
+			if (p->left != head)
 			{ // find the rightmost child of the left node
 				p = p->left;
-				while (p->right != NULL)
+				while (p->right != NULL && p->right != head)
 				{
 					p = p->right;
 				}
 			}
 			else
 			{ // go upwards along left branches...  stop after the first right
-				while (p->parent != NULL && p->parent->left == p) 
+				while (p->parent != head && p->parent->left == p) 
 				{
 					p = p->parent;
 				}
@@ -154,6 +157,7 @@ template<typename T> //T is a pair<Key, Val>
 
 	private:
 		node_type *p;
+		node_type *head;
 	};
 
 // Non-member function overloads

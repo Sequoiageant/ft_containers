@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 10:29:50 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/10 18:37:20 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/15 18:23:45 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ public:
 	typedef	size_t									size_type;
 	typedef	ptrdiff_t								difference_type;
 
-	class value_compare
+/*	class value_compare
 	{	// in C++98, it is required to inherit binary_function<value_type,value_type,bool>
 		friend class map;
 		
@@ -60,11 +60,15 @@ public:
 			{
 				return comp(x.first, y.first);
 			}
-	};
+	};*/
 	
 
 	explicit map (const key_compare& comp = key_compare()) : _root(NULL), _size(0), _comp(comp)
-	{}
+	{
+		this->_head.parent = NULL;
+		this->_head.left = &this->_head;
+		this->_head.right = &this->_head;
+	}
 
 	template <class InputIterator>
 	map (InputIterator first, InputIterator last, const key_compare& comp = key_compare());
@@ -74,14 +78,13 @@ public:
 	map& operator=(map const & x);
 	~map () {}
 
-	iterator begin() { return iterator(LeftMost(this->_root)); }
-	const_iterator begin() const { return const_iterator(LeftMost(this->_root)); }
+	iterator begin() { return iterator(LeftMost(this->_root), &this->_head); }
+	const_iterator begin() const { return const_iterator(LeftMost(this->_root), &this->_head); }
 
-	iterator end() { return iterator(); }
-	const_iterator end() const { return const_iterator(); }
-
-/*	
-	reverse_iterator rbegin(void) { return reverse_iterator(this->end()); }
+	iterator end() { return iterator(&this->_head, &this->_head); }
+	const_iterator end() const { return const_iterator(&this->_head, &this->_head); }
+	
+/*	reverse_iterator rbegin(void) { return reverse_iterator(this->end()); }
 	const_reverse_iterator rbegin(void) const { return const_reverse_iterator(this->end()); }
 
 	reverse_iterator rend(void) { return reverse_iterator(this->begin()); }
@@ -118,7 +121,7 @@ public:
 
 	key_compare key_comp() const;
 
-	value_compare value_comp() const;
+	// value_compare value_comp() const;
 
 	// iterator find (const key_type& k);
 	const_iterator find (const key_type& k) const;
@@ -138,7 +141,7 @@ public:
 
 	void printInorder(node_type *node)
 	{
-		if (node == NULL)
+		if (node == NULL || node == &this->_head)
 			return ;
 		printInorder(node->left);
 		// std::cout << "this->root: " << this->_root->value.first << std::endl;
@@ -152,10 +155,17 @@ public:
 	void insert (const value_type& val)
 	{
 		node_type *n = new node_type(val); // for typename Pair
+		n->left = &this->_head;
+		n->right = &this->_head;
+		n->parent = &this->_head;
+		this->_head.left = this->_root;
+		this->_head.right = LeftMost(this->_root);
+
 		// node_type *n = new node_type(val.first, val.second);
 
 		if (this->_root == NULL)
 		{
+			n->parent = &this->_head;
 			this->_root = n;
 			++this->_size;
 			return ;
@@ -168,7 +178,7 @@ public:
 	{	
   		// Descente récursive dans l'arbre jusqu'à atteindre une feuille
 		if (node != NULL && this->_comp(n->value.first, node->value.first)) {
-			if (node->left != NULL) {
+			if (node->left != NULL && node->left != &this->_head) {
 				insertRecurse(node->left, n);
 				return;
 			}
@@ -176,11 +186,12 @@ public:
 			{
 				n->side = 'L';
 				n->parent = node;
+				n->left = node->left;
 				node->left = n;
 			}
 		} 
 		else if (node != NULL) {
-			if (node->right != NULL) {
+			if (node->right != NULL && node->right != &this->_head) {
 				insertRecurse(node->right, n);
 				return;
 			}
@@ -188,6 +199,7 @@ public:
 			{
 				n->side = 'R';
 				n->parent = node;
+				n->right = node->right;
 				node->right = n;
 			}
 		}
@@ -195,7 +207,7 @@ public:
 
 	void deleteRecurse(node_type *&node)
 	{
-		if (node)
+		if (node != &this->_head)
 		{
 			if (node->left)
 				deleteRecurse(node->left);
@@ -232,7 +244,7 @@ public:
 
 	void erase (const key_type& k)
 	{
-		if (this->_root == NULL)
+		if (this->_root == NULL || this->_root == &this->_head)
 			return ;
 		eraseRecurse(this->_root, k);
 	}
@@ -240,9 +252,12 @@ public:
 	node_type* RightMost(node_type* node)
 	{
 		// node_type *cpy = node;
-		while (node->right)
+		if (node)
 		{
-			node = node->right;
+			while (node->right != &this->_head)
+			{
+				node = node->right;
+			}
 		}
 		return node;
 	}
@@ -250,9 +265,13 @@ public:
 	node_type* LeftMost(node_type* node)
 	{
 		// node_type *cpy = node;
-		while (node->left)
+		if (node)
 		{
-			node = node->left;
+			while (node->left != &this->_head && node->left != NULL)
+			{
+				node = node->left;
+				// std::cerr << "first: " << node->value.first << std::endl;
+			}
 		}
 		return node;
 	}
@@ -260,7 +279,7 @@ public:
 	node_type* searchRightest(node_type* node, node_type* &parent = NULL)
 	{
 		// node_type *cpy = node;
-		while (node->right)
+		while (node->right != &this->_head)
 		{
 			if (parent)
 				parent = node;
@@ -283,37 +302,57 @@ public:
 
 	void eraseRecurse(node_type*& node, const key_type& k)
 	{
-		if (node == NULL)
+		if (node == NULL || node == &this->_head)
 			return;
 		if (node->value.first == k)
 		{
-			if (node->left == NULL && node->right == NULL)
+			if (node->left == &this->_head && node->right == &this->_head)
 			{
-				delete node;
-				node = NULL;
-				--this->_size;
+				std::cerr << "--> I <--" << std::endl;
+				// delete node;
+				// node = NULL;
+				// --this->_size;
+				this->delete_node(node);
 				return ;
 			}
-			else if (node->left == NULL)
+			else if (node->left == NULL || node == &this->_head)
 			{
+				std::cerr << "--> II <--" << std::endl;
+				// node_type *child = node->right;
+				// child->parent = node->parent;
+				// delete node;
+				// node = child;
+				// --this->_size;
 				this->delete_node(node, node->right);
 				return ;
 			}
-			else if (node->right == NULL)
+			else if (node->right == NULL || node == &this->_head)
 			{
+				std::cerr << "--> III <--" << std::endl;
+				// node_type *child = node->left;
+				// child->parent = node->parent;
+				// delete node;
+				// node = child;
+				// --this->_size;
 				this->delete_node(node, node->left);
 				return ;
 			}
 			else
 			{
+				std::cerr << "ICI" << std::endl;
 				node_type *last_parent = node;
 				node_type* min = searchRightest(node->left, last_parent);				
 				if (node == this->_root) // FOR DEBUG
 					min->side = 'h';	//
 				
+/*				if (min == last_parent->left)
+					last_parent->left = min->left;
+				else
+					last_parent->right = min->left;
+*/				
 				if (last_parent != node)
 				{
-					last_parent->right = NULL;
+					last_parent->right = min->right;
 					min->left = node->left;
 				}
 				min->right = node->right;
@@ -331,15 +370,17 @@ public:
 	}
 
 private:
+	node_type	_head;
 	node_type	*_root;
 	size_type	_size;
 	key_compare	_comp;
 
-	void delete_node(node_type*& node, node_type* &child)
+	void delete_node(node_type*& node, node_type* substitute = NULL) // substitute is a copy of chils or min, not a ref
 	{
-		child->parent = node->parent;
+		if (substitute)
+			substitute->parent = node->parent;
 		delete node;
-		node = child;
+		node = substitute;
 		--this->_size;
 	}
 };
