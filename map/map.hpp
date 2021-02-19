@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 10:29:50 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/15 18:23:45 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/19 15:43:19 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@
 # include "functional.hpp"
 # include "Map_iterator.hpp"
 
-# define LEFT	-1
-# define RIGHT	1
-# define THIS	0
+// # define LEFT	-1
+// # define RIGHT	1
+// # define THIS	0
 
 namespace ft {
 
@@ -48,7 +48,7 @@ public:
 	typedef	size_t									size_type;
 	typedef	ptrdiff_t								difference_type;
 
-/*	class value_compare
+	class value_compare
 	{	// in C++98, it is required to inherit binary_function<value_type,value_type,bool>
 		friend class map;
 		
@@ -60,36 +60,57 @@ public:
 			{
 				return comp(x.first, y.first);
 			}
-	};*/
+	};
 	
 
-	explicit map (const key_compare& comp = key_compare()) : _root(NULL), _size(0), _comp(comp)
+	explicit map (const key_compare& comp = key_compare())
+	: _root(NULL), _size(0), _comp(comp)
 	{
-		this->_head.parent = NULL;
-		this->_head.left = &this->_head;
-		this->_head.right = &this->_head;
+		this->_sentinel = new node_type();
+		// this->_sentinel->parent = NULL;
+		// this->_sentinel->left = this->_sentinel;
+		// this->_sentinel->right = this->_sentinel;
 	}
 
 	template <class InputIterator>
-	map (InputIterator first, InputIterator last, const key_compare& comp = key_compare());
+	map (InputIterator first, InputIterator last, const key_compare& comp = key_compare())
+	: _root(NULL), _size(0), _comp(comp)
+	{
+		this->insert(first, last);
+	}
 
-	map (const map& x);
+	map (const map& x)
+	{
+		this->_comp = x._comp;
+		this->insert(x.begin(), x.end());
+	}
 
-	map& operator=(map const & x);
-	~map () {}
+	map& operator=(map const & x)
+	{
+		this->clear();
+		this->_comp = x._comp;
+		this->insert(x.begin(), x.end());
 
-	iterator begin() { return iterator(LeftMost(this->_root), &this->_head); }
-	const_iterator begin() const { return const_iterator(LeftMost(this->_root), &this->_head); }
+		return *this;
+	}
+	~map ()
+	{
+		this->clear();
+		delete this->_sentinel;
+	}
 
-	iterator end() { return iterator(&this->_head, &this->_head); }
-	const_iterator end() const { return const_iterator(&this->_head, &this->_head); }
+	iterator begin() { return iterator(LeftMost(this->_root), this->_sentinel); }
+	const_iterator begin() const { return const_iterator(LeftMost(this->_root), this->_sentinel); }
+
+	iterator end() { return iterator(this->_sentinel, this->_sentinel); }
+	const_iterator end() const { return const_iterator(this->_sentinel, this->_sentinel); }
 	
-/*	reverse_iterator rbegin(void) { return reverse_iterator(this->end()); }
+	reverse_iterator rbegin(void) { return reverse_iterator(this->end()); }
 	const_reverse_iterator rbegin(void) const { return const_reverse_iterator(this->end()); }
 
 	reverse_iterator rend(void) { return reverse_iterator(this->begin()); }
 	const_reverse_iterator rend(void) const { return const_reverse_iterator(this->begin()); }
-*/
+
 	bool empty() const
 	{
 		return (this->_root == NULL);
@@ -100,161 +121,255 @@ public:
 		return (this->_size);
 	}
 
-	size_type max_size() const;
-	mapped_type& operator[] (const key_type& k);
+	size_type max_size() const
+	{
+		std::allocator<node_type> a;
+		return a.max_size();
+	}
 
-	// std::pair<iterator,bool> insert (const value_type& val);
-	iterator insert (iterator position, const value_type& val);
+	mapped_type& operator[] (const key_type& k)
+	{
+		return (*((this->insert(std::make_pair(k,mapped_type()))).first)).second;
+	}
+
+	std::pair<iterator,bool> insert (const value_type& val)
+	{
+		if (this->_root == NULL)
+		{
+			this->_root = this->new_node(val);
+			this->_sentinel->left = this->_root;
+			this->_sentinel->right = this->_root;
+			++this->_size;
+			return (std::make_pair(iterator(this->_root, this->_sentinel), true));
+		}
+		return this->insertRecurse(this->_root, val);
+	}
+
+	iterator insert (iterator position, const value_type& val)
+	{
+		node_type* node = position.base();
+
+		if (this->_comp(val.first, node->value.first) && node->left == this->_sentinel)
+		{
+			std::cerr << "- Insert It I -" << std::endl;
+			node_type *n = this->new_node(val);
+			n->parent = node;
+			node->left = n;
+			++this->_size;
+			return iterator(n, this->_sentinel);
+		}
+		else if (this->_comp(node->value.first, val.first) && node->right == this->_sentinel)
+		{
+			std::cerr << "- Insert It II -" << std::endl;
+			node_type *n = this->new_node(val);
+			n->parent = node;
+			node->right = n;
+			++this->_size;			
+			return iterator(n, this->_sentinel);
+		}
+		std::cerr << "- Insert It III -" << std::endl;
+		return this->insert(val).first;
+	}
+
 	template <class InputIterator>
-	void insert (InputIterator first, InputIterator last);
+	void insert (InputIterator first, InputIterator last)
+	{
+		while (first != last)
+		{
+			this->insert(*first);
+			++first;
+		}
+	}
 
-	void erase (iterator position);
-	// size_type erase (const key_type& k);
-	void erase (iterator first, iterator last);
+	void erase (iterator position)
+	{
+		this->eraseRecurse(this->_root, position->first);
+	}
 
-	void swap (map& x);
+	size_type erase (const key_type& k)
+	{
+		return this->eraseRecurse(this->_root, k);
+	}
+
+	void erase (iterator first, iterator last)
+	{
+		while (first != last)
+		{
+			this->erase(first++);
+		}
+	}
+
+	void swap (map& x)
+	{
+		this->swap_values(this->_root, x._root);
+		this->swap_values(this->_sentinel, x._sentinel); //works with sentinel as pointer (or a node_base ?)
+		this->swap_values(this->_size, x._size);
+		this->swap_values(this->_comp, x._comp);
+	}
+
 	void clear ()
 	{
 		deleteRecurse(this->_root);
 		this->_size = 0;
 	}
 
-	key_compare key_comp() const;
+	key_compare key_comp() const
+	{
+		return this->_comp;
+	}
 
-	// value_compare value_comp() const;
+	value_compare value_comp() const
+	{
+		return value_compare(this->_comp);
+	}
 
-	// iterator find (const key_type& k);
-	const_iterator find (const key_type& k) const;
-	size_type count (const key_type& k) const;
-	iterator lower_bound (const key_type& k);
-	const_iterator lower_bound (const key_type& k) const;
-	iterator upper_bound (const key_type& k);
-	const_iterator upper_bound (const key_type& k) const;
+	iterator find (const key_type& k)
+	{
+		if (this->_root == NULL)
+			return (this->end());
+		return iterator(this->findRecurse(this->_root, k), this->_sentinel);
+	}
 
-	std::pair<const_iterator,const_iterator>	equal_range (const key_type& k) const;
-	std::pair<iterator,iterator>				equal_range (const key_type& k);
+	const_iterator find (const key_type& k) const
+	{
+		if (this->_root == NULL)
+			return (this->end());
+		return const_iterator(this->findRecurse(this->_root, k), this->_sentinel);
+	}
 
+	size_type count (const key_type& k) const
+	{
+		if (this->findRecurse(this->_root, k) != this->_sentinel)
+			return 1;
+		return 0;
+	}
+
+	iterator lower_bound (const key_type& k)
+	{
+		iterator it = this->begin();
+		while (it != this->end() && _comp(it->first, k))
+		{
+			++it;
+		}
+		return it;
+	}
+
+	const_iterator lower_bound (const key_type& k) const
+	{
+		const_iterator it = this->begin();
+		while (it != this->end() && _comp(it->first, k))
+		{
+			++it;
+		}
+		return it;
+	}
+
+	iterator upper_bound (const key_type& k)
+	{
+		iterator it = this->begin();
+		while (it != this->end() && !_comp(k, it->first))
+		{
+			++it;
+		}
+		return it;
+	}
+
+	const_iterator upper_bound (const key_type& k) const
+	{
+		const_iterator it = this->begin();
+		while (it != this->end() && !_comp(k, it->first))
+		{
+			++it;
+		}
+		return it;
+	}
+
+	std::pair<iterator,iterator>				equal_range (const key_type& k)
+	{
+		return std::make_pair(this->lower_bound(k), this->upper_bound(k));
+	}
+
+	std::pair<const_iterator,const_iterator>	equal_range (const key_type& k) const
+	{
+		return std::make_pair(this->lower_bound(k), this->upper_bound(k));
+	}
+
+
+
+
+
+// DISPLAY FUNCTION FOR DEBUG
+/////////////////////////////	
 	void displayMap()
 	{
-		printInorder (this->_root);
+		this->printInorder (this->_root);
 	}
 
 	void printInorder(node_type *node)
 	{
-		if (node == NULL || node == &this->_head)
+		if (node == NULL || node == this->_sentinel)
 			return ;
 		printInorder(node->left);
 		// std::cout << "this->root: " << this->_root->value.first << std::endl;
-		if (node->side == 'h')
-			std::cout << "map[" << node->value.first << "] = " << node->value.second << " (HEAD)" << std::endl;
+		// if (node->side == 'h')
+		// 	std::cout << "map[" << node->value.first << "] = " << node->value.second << " (HEAD)" << std::endl;
+		// else
+		// 	std::cout << "map[" << node->value.first << "] = " << node->value.second << " (" << node->side << ")" << std::endl;
+		// std::cout << "map[" << node->value.first << "] = " << node->value.second << std::endl;
+		if (node->left == this->_sentinel && node->right == this->_sentinel)
+			std::cout << node->value.first << ": L= sentinel, R= sentinel" << std::endl;
+		else if (node->left == this->_sentinel)
+			std::cout << node->value.first << ": L= sentinel, R= " << node->right->value.first << std::endl;
+		else if (node->right == this->_sentinel)
+			std::cout << node->value.first << ": L= " << node->left->value.first << ", R= sentinel" << std::endl;
 		else
-			std::cout << "map[" << node->value.first << "] = " << node->value.second << " (" << node->side << ")" << std::endl;
+			std::cout << node->value.first << ": L= " << node->left->value.first << ", R= " << node->right->value.first << std::endl;
 		printInorder(node->right);
 	}
+//////////////////////////////////////// DISPLAY FUNCTION FOR DEBUG
+	
+private:
+	node_type	*_sentinel;
+	node_type	*_root;
+	size_type	_size;
+	key_compare	_comp;
 
-	void insert (const value_type& val)
+	node_type* new_node(const value_type& val)
 	{
 		node_type *n = new node_type(val); // for typename Pair
-		n->left = &this->_head;
-		n->right = &this->_head;
-		n->parent = &this->_head;
-		this->_head.left = this->_root;
-		this->_head.right = LeftMost(this->_root);
 
-		// node_type *n = new node_type(val.first, val.second);
-
-		if (this->_root == NULL)
-		{
-			n->parent = &this->_head;
-			this->_root = n;
-			++this->_size;
-			return ;
-		}
-		insertRecurse(this->_root, n);
-		++this->_size;
+		n->left = this->_sentinel;
+		n->right = this->_sentinel;
+		n->parent = this->_sentinel;
+		this->_sentinel->left = this->_root;
+		this->_sentinel->right = RightMost(this->_root);
+		return n;
 	}
 
-	void insertRecurse(node_type *node, node_type *n)
-	{	
-  		// Descente récursive dans l'arbre jusqu'à atteindre une feuille
-		if (node != NULL && this->_comp(n->value.first, node->value.first)) {
-			if (node->left != NULL && node->left != &this->_head) {
-				insertRecurse(node->left, n);
-				return;
-			}
-			else
-			{
-				n->side = 'L';
-				n->parent = node;
-				n->left = node->left;
-				node->left = n;
-			}
-		} 
-		else if (node != NULL) {
-			if (node->right != NULL && node->right != &this->_head) {
-				insertRecurse(node->right, n);
-				return;
-			}
-			else
-			{
-				n->side = 'R';
-				n->parent = node;
-				n->right = node->right;
-				node->right = n;
-			}
-		}
-	}
-
-	void deleteRecurse(node_type *&node)
+	void delete_node(node_type*& node, node_type* substitute = NULL) // substitute is a copy of chils or min, not a ref
 	{
-		if (node != &this->_head)
-		{
-			if (node->left)
-				deleteRecurse(node->left);
-			if (node->right)
-				deleteRecurse(node->right);
-		// std::cout << "Deleting: " << node->key << std::endl;
-			delete node;
-			node = NULL;
-		}
+		if (substitute)
+			substitute->parent = node->parent;
+		delete node;
+		node = substitute;
+		--this->_size;
 	}
 
-	bool find (const key_type& k)
+	template <class Value>
+	void	swap_values(Value& a, Value& b)
 	{
-		if (this->_root == NULL)
-			return (false);
-		return findRecurse(this->_root, k);
+		Value tmp;
+
+		tmp = a;
+		a = b;
+		b = tmp;
 	}
 
-	bool findRecurse(node_type *node, const key_type& k)
-	{
-		// std::cerr << "FIND" << std::endl;
-		if (node)
-		{
-			// std::cerr << "key: " << node->key << std::endl;
-			if (this->_comp(k, node->value.first))
-				return findRecurse(node->left, k);
-			else if (this->_comp(node->value.first, k))
-				return findRecurse(node->right, k);
-			else
-				return (true);
-		}
-		return (false);
-	}
-
-	void erase (const key_type& k)
-	{
-		if (this->_root == NULL || this->_root == &this->_head)
-			return ;
-		eraseRecurse(this->_root, k);
-	}
-	
 	node_type* RightMost(node_type* node)
 	{
-		// node_type *cpy = node;
 		if (node)
 		{
-			while (node->right != &this->_head)
+			while (node->right != this->_sentinel)
 			{
 				node = node->right;
 			}
@@ -264,10 +379,9 @@ public:
 
 	node_type* LeftMost(node_type* node)
 	{
-		// node_type *cpy = node;
 		if (node)
 		{
-			while (node->left != &this->_head && node->left != NULL)
+			while (node->left != this->_sentinel)
 			{
 				node = node->left;
 				// std::cerr << "first: " << node->value.first << std::endl;
@@ -278,78 +392,102 @@ public:
 	
 	node_type* searchRightest(node_type* node, node_type* &parent = NULL)
 	{
-		// node_type *cpy = node;
-		while (node->right != &this->_head)
+		while (node->right != this->_sentinel)
 		{
-			if (parent)
+			if (parent) //&& parent != this->_sentinel
 				parent = node;
 			node = node->right;
 		}
 		return node;
 	}
 
-	node_type* searchLeftest(node_type* node, node_type* &parent = NULL)
+	node_type* findRecurse(node_type *node, const key_type& k) const
 	{
-		// node_type *cpy = node;
-		while (node->left)
+		// std::cerr << "FIND" << std::endl;
+		if (node != this->_sentinel)
 		{
-			if (parent)
-				parent = node;
-			node = node->left;
+			// std::cerr << "key: " << node->key << std::endl;
+			if (this->_comp(k, node->value.first))
+				return findRecurse(node->left, k);
+			else if (this->_comp(node->value.first, k))
+				return findRecurse(node->right, k);
 		}
-		return node;
+		return (node);
 	}
 
-	void eraseRecurse(node_type*& node, const key_type& k)
-	{
-		if (node == NULL || node == &this->_head)
-			return;
-		if (node->value.first == k)
+	std::pair<iterator,bool> insertRecurse(node_type *node, const value_type& val)
+	{	
+		if (!_comp(val.first, node->value.first) && !_comp(node->value.first, val.first))
 		{
-			if (node->left == &this->_head && node->right == &this->_head)
-			{
-				std::cerr << "--> I <--" << std::endl;
-				// delete node;
-				// node = NULL;
-				// --this->_size;
-				this->delete_node(node);
-				return ;
-			}
-			else if (node->left == NULL || node == &this->_head)
-			{
-				std::cerr << "--> II <--" << std::endl;
-				// node_type *child = node->right;
-				// child->parent = node->parent;
-				// delete node;
-				// node = child;
-				// --this->_size;
-				this->delete_node(node, node->right);
-				return ;
-			}
-			else if (node->right == NULL || node == &this->_head)
-			{
-				std::cerr << "--> III <--" << std::endl;
-				// node_type *child = node->left;
-				// child->parent = node->parent;
-				// delete node;
-				// node = child;
-				// --this->_size;
-				this->delete_node(node, node->left);
-				return ;
+			std::cerr << "EGALE" << std::endl;
+			return std::make_pair(iterator(node, this->_sentinel), false);
+		}
+
+		if (this->_comp(val.first, node->value.first)) {
+			if (node->left != this->_sentinel) {
+				return insertRecurse(node->left, val);
 			}
 			else
 			{
-				std::cerr << "ICI" << std::endl;
+				node_type *n = this->new_node(val); // for typename Pair
+				n->side = 'L'; // FOR DEBUG
+				n->parent = node;
+				node->left = n;
+				++this->_size;
+				return (std::make_pair(iterator(n, this->_sentinel), true));
+			}
+		} 
+		else {
+			if (node->right != this->_sentinel) {
+				return insertRecurse(node->right, val);
+			}
+			else
+			{
+				node_type *n = this->new_node(val); // for typename Pair
+				n->side = 'R'; // FOR DEBUG
+				n->parent = node;
+				node->right = n;
+				++this->_size;
+				return (std::make_pair(iterator(n, this->_sentinel), true));
+			}
+		}
+	}
+
+	int eraseRecurse(node_type*& node, const key_type& k)
+	{
+		if (node == NULL || node == this->_sentinel)
+			return 0;
+		if (node->value.first == k)
+		{
+			// if (node->left == this->_sentinel && node->right == this->_sentinel)
+			// {
+			// 	// std::cerr << "--> I <--" << std::endl;
+			// 	this->delete_node(node, node->left); // node->left is this->_sentinel
+			// 	return 1;
+			// }
+			if (node->right == this->_sentinel)
+			{
+				// std::cerr << "--> II <--" << std::endl;
+				this->delete_node(node, node->left);
+				return 1;
+			}
+			else if (node->left == this->_sentinel)
+			{
+				// std::cerr << "--> III <--" << std::endl;
+				this->delete_node(node, node->right);
+				this->_sentinel->right = RightMost(this->_root);
+				return 1;
+			}
+			else
+			{
+				// std::cerr << "--> IV <--" << std::endl;
 				node_type *last_parent = node;
 				node_type* min = searchRightest(node->left, last_parent);				
-				if (node == this->_root) // FOR DEBUG
-					min->side = 'h';	//
-				
-/*				if (min == last_parent->left)
-					last_parent->left = min->left;
-				else
-					last_parent->right = min->left;
-*/				
+				if (node == this->_root)
+				{
+					min->side = 'h'; // FOR DEBUG
+					this->_sentinel->left = min;
+				}
 				if (last_parent != node)
 				{
 					last_parent->right = min->right;
@@ -360,34 +498,99 @@ public:
 				node->left->parent = min;
 				
 				this->delete_node(node, min);
-				return ;
+				return 1;
 			}
 		}
-		else if (k < node->value.first)
+		else if (this->_comp(k, node->value.first))
 			eraseRecurse(node->left, k);
 		else
 			eraseRecurse(node->right, k);
+		return 0;
 	}
 
-private:
-	node_type	_head;
-	node_type	*_root;
-	size_type	_size;
-	key_compare	_comp;
-
-	void delete_node(node_type*& node, node_type* substitute = NULL) // substitute is a copy of chils or min, not a ref
+	void deleteRecurse(node_type *&node)
 	{
-		if (substitute)
-			substitute->parent = node->parent;
-		delete node;
-		node = substitute;
-		--this->_size;
+		if (node && node != this->_sentinel)
+		{
+			deleteRecurse(node->left);
+			deleteRecurse(node->right);
+
+			delete node;
+			node = NULL;
+		}
 	}
 };
 
-// std::ostream & operator<<(std::ostream & o, map const & rhs);
+template< class Key, class T, class Compare>
+bool operator==(const map<Key,T,Compare>& lhs, const map<Key,T,Compare>& rhs)
+{
+	typename map<Key, T, Compare>::const_iterator it1 = lhs.begin();
+	typename map<Key, T, Compare>::const_iterator it2 = rhs.begin();
 
-#endif // MAP_HPP
+	if (lhs.size() != rhs.size())
+		return false;
+
+	while (it1 != lhs.end())
+	{
+		if (*it1 != *it2)
+			return false;
+		++it1;
+		++it2;
+	}
+	return true;
+}
+
+template< class Key, class T, class Compare>
+bool operator!=(const map<Key,T,Compare>& lhs, const map<Key,T,Compare>& rhs)
+{
+	return !(lhs == rhs);
+}
+
+template< class Key, class T, class Compare>
+bool operator<(const map<Key,T,Compare>& lhs, const map<Key,T,Compare>& rhs)
+{
+		typename map<Key,T,Compare>::const_iterator end1 = lhs.end();
+		typename map<Key,T,Compare>::const_iterator end2 = rhs.end();
+		typename map<Key,T,Compare>::const_iterator first1 = lhs.begin();
+		typename map<Key,T,Compare>::const_iterator first2 = rhs.begin();
+
+		while (first1 != end1 && first2 != end2)
+		{
+			if (*first1 < *first2 )
+				return true;
+			++first1;
+			++first2;
+			if (first1 == end1 && first2 != end2)
+				return true;
+		}
+		return false;
+}
+
+template< class Key, class T, class Compare>
+bool operator<=(const map<Key,T,Compare>& lhs, const map<Key,T,Compare>& rhs)
+{
+	return !(rhs < lhs);
+}
+
+template< class Key, class T, class Compare>
+bool operator>(const map<Key,T,Compare>& lhs, const map<Key,T,Compare>& rhs)
+{
+	return (rhs < lhs);
+}
+
+template< class Key, class T, class Compare>
+bool operator>=(const map<Key,T,Compare>& lhs, const map<Key,T,Compare>& rhs)
+{
+	return !(lhs < rhs);
+}
+
+template< class Key, class T, class Compare>
+void swap (map<Key,T,Compare>& x, map<Key,T,Compare>& y)
+{
+	x.swap(y);
+}
 
 
 } // ft
+
+#endif // MAP_HPP

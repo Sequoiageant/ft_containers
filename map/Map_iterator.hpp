@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 10:55:32 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/15 18:12:42 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/18 12:56:33 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,27 +62,27 @@ template<typename T> //T is a pair<Key, Val>
 		
 
 
-		Map_iterator(void) : p(NULL), head(NULL) {}
-		Map_iterator(node_type* x, node_type* head) : p(x), head(head) {}
-		Map_iterator(const iterator& copy) : p(copy.p), head(copy.head) {}
+		Map_iterator(void) : p(NULL), sentinel(NULL) {}
+		Map_iterator(node_type* x, node_type* sentinel) : p(x), sentinel(sentinel) {}
+		Map_iterator(const iterator& copy) : p(copy.p), sentinel(copy.sentinel) {}
 
 		iterator& operator=(const iterator& rhs)
 		{
 			this->p = rhs.p;
-			this->head = rhs.head;
+			this->sentinel = rhs.sentinel;
 			return *this;
 		}
 
 		iterator& operator++()
 		{
-			// std::cerr << "HEAD IT: " << head << std::endl;
+			// std::cerr << "HEAD IT: " << sentinel << std::endl;
 			// std::cerr << "p->value: " << p->value.first << std::endl;
-			if (p->right != head)
+			if (p->right != sentinel)
 			{ // find the leftmost child of the right node
 				// if (p->parent)
 				// 	std::cerr << "p->parent->value: " << p->parent->value.first << std::endl;
 				p = p->right;
-				while (p->left != head)
+				while (p->left != sentinel)
 				{
 					p = p->left;
 				}
@@ -90,7 +90,7 @@ template<typename T> //T is a pair<Key, Val>
 			else
 			{ // go upwards along right branches...  stop after the first left
 				// std::cerr << "UP" << std::endl;
-				while (p->parent != head && p->parent->right == p) 
+				while (p->parent != sentinel && p->parent->right == p) 
 				{
 					p = p->parent;
 					// std::cerr << "ITERATOR" << std::endl;
@@ -124,17 +124,17 @@ template<typename T> //T is a pair<Key, Val>
 		
 		iterator& operator--()
 		{
-			if (p->left != head)
+			if (p->left != sentinel)
 			{ // find the rightmost child of the left node
 				p = p->left;
-				while (p->right != NULL && p->right != head)
+				while (p->right != sentinel)
 				{
 					p = p->right;
 				}
 			}
 			else
 			{ // go upwards along left branches...  stop after the first right
-				while (p->parent != head && p->parent->left == p) 
+				while (p->parent != sentinel && p->parent->left == p) 
 				{
 					p = p->parent;
 				}
@@ -153,11 +153,11 @@ template<typename T> //T is a pair<Key, Val>
 		value_type* operator->() const { return &(p->value); }
 		~Map_iterator(void) {}
 
-		const pointer& base() const { return p; }
+		node_type* base() const { return p; }
 
 	private:
 		node_type *p;
-		node_type *head;
+		node_type *sentinel;
 	};
 
 // Non-member function overloads
