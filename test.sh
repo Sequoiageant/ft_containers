@@ -48,8 +48,8 @@ clean () {
 test_container () {
 
 	# Compile ft sources
-	clang++ $flags $includes ./$1/*.cpp -o ./$test_dir/$1.out && ./$1.out > ./$test_dir/ft_$1 2> /dev/null
-	clang++ $flags $includes -D STD ./$1/*.cpp -o ./$test_dir/$1.out && ./$1.out > ./$test_dir/std_$1 2> /dev/null
+	clang++ $flags $includes ./$1/*.cpp -o ./$test_dir/ft_$1.out && ./$test_dir/ft_$1.out > ./$test_dir/ft_$1 2> /dev/null
+	clang++ $flags $includes -D STD ./$1/*.cpp -o ./$test_dir/std_$1.out && ./$test_dir/std_$1.out > ./$test_dir/std_$1 2> /dev/null
 	
 	# Make diff between ft and std container
 	diff ./$test_dir/ft_$1 ./$test_dir/std_$1 > ./$test_dir/$1.diff
@@ -59,7 +59,7 @@ test_container () {
 	then
 		echo -e "$1: ${GREEN}Perfect${NC}"
 	else
-		echo -e "$1: ${RED}ERRORS${NC} ==> Saved in $1.diff"
+		echo -e "$1: ${RED}ERRORS${NC} ==> Saved in ./$test_dir/$1.diff"
 			# cat $1.diff
 		fi
 	}
