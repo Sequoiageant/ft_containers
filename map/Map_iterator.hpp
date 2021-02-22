@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 10:55:32 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/18 12:56:33 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/19 16:40:22 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ template<typename T> //T is a pair<Key, Val>
 
 	public:
 		typedef T									value_type;
-		typedef T*									pointer;
-		typedef T&									reference;
+		typedef value_type*							pointer;
+		typedef value_type&							reference;
 		typedef Tree_node<value_type>				node_type;
 		typedef Map_iterator<value_type>			iterator;
 		typedef std::bidirectional_iterator_tag		iterator_category;
@@ -65,6 +65,7 @@ template<typename T> //T is a pair<Key, Val>
 		Map_iterator(void) : p(NULL), sentinel(NULL) {}
 		Map_iterator(node_type* x, node_type* sentinel) : p(x), sentinel(sentinel) {}
 		Map_iterator(const iterator& copy) : p(copy.p), sentinel(copy.sentinel) {}
+		~Map_iterator(void) {}
 
 		iterator& operator=(const iterator& rhs)
 		{
@@ -75,12 +76,8 @@ template<typename T> //T is a pair<Key, Val>
 
 		iterator& operator++()
 		{
-			// std::cerr << "HEAD IT: " << sentinel << std::endl;
-			// std::cerr << "p->value: " << p->value.first << std::endl;
 			if (p->right != sentinel)
 			{ // find the leftmost child of the right node
-				// if (p->parent)
-				// 	std::cerr << "p->parent->value: " << p->parent->value.first << std::endl;
 				p = p->right;
 				while (p->left != sentinel)
 				{
@@ -89,36 +86,15 @@ template<typename T> //T is a pair<Key, Val>
 			}
 			else
 			{ // go upwards along right branches...  stop after the first left
-				// std::cerr << "UP" << std::endl;
 				while (p->parent != sentinel && p->parent->right == p) 
 				{
 					p = p->parent;
-					// std::cerr << "ITERATOR" << std::endl;
-					// std::cerr << "p->parent->value: " << p->value.first << std::endl;
 				}
 				if (p->right != p)
 					p = p->parent;
 			}
 			return *this;
 		}
-/*		iterator& operator++()
-		{
-			if (p->right != NULL) {
-				p = p->right;
-				while (p->left != NULL)
-					p = p->left;
-			}
-			else {
-				node_type* tmp = p->parent;
-				while (tmp != NULL && p == tmp->right) {
-					p = tmp;
-					tmp = tmp->parent;
-				}
-				if (p->right != tmp)
-					p = tmp;
-			}
-			return *this;
-		}*/
 
 		iterator operator++(int) { iterator tmp(*this);	operator++(); return tmp; }
 		
@@ -142,23 +118,113 @@ template<typename T> //T is a pair<Key, Val>
 			}
 			return *this;
 		}
+
 		iterator operator--(int) {iterator tmp(*this); operator--(); return tmp;}
-		iterator operator+(difference_type n) { return iterator(p + n); }
-		iterator operator-(difference_type n) { return iterator(p - n); }
-		reference operator[](difference_type n) { return p[n]; }
+
 		bool operator==(const iterator& rhs) const { return p==rhs.p; }
 		bool operator!=(const iterator& rhs) const { return p!=rhs.p; }
-		bool operator<(const iterator& rhs) const { return p < rhs.p; }
+
 		reference operator*() const { return p->value; }
 		value_type* operator->() const { return &(p->value); }
-		~Map_iterator(void) {}
 
 		node_type* base() const { return p; }
+		node_type* get_sent() const { return sentinel; }
 
 	private:
 		node_type *p;
 		node_type *sentinel;
 	};
+
+template<typename T> //T is a pair<Key, Val>
+	class Map_const_iterator
+	{
+
+	public:
+		typedef T									value_type;
+		typedef const value_type*					pointer;
+		typedef const value_type&					reference;
+		typedef Tree_node<value_type>				node_type;
+		typedef Map_iterator<value_type>			iterator;
+		typedef Map_const_iterator<value_type>		const_iterator;
+		typedef std::bidirectional_iterator_tag		iterator_category;
+		typedef ptrdiff_t							difference_type;
+		
+
+
+		Map_const_iterator(void) : p(NULL), sentinel(NULL) {}
+		Map_const_iterator(node_type* x, node_type* sentinel) : p(x), sentinel(sentinel) {}
+		Map_const_iterator(const const_iterator& copy) : p(copy.p), sentinel(copy.sentinel) {}
+		Map_const_iterator(const iterator& copy) : p(copy.base()), sentinel(copy.get_sent()) {}
+		~Map_const_iterator(void) {}
+
+		const_iterator& operator=(const const_iterator& rhs)
+		{
+			this->p = rhs.p;
+			this->sentinel = rhs.sentinel;
+			return *this;
+		}
+
+		const_iterator& operator++()
+		{
+			if (p->right != sentinel)
+			{ // find the leftmost child of the right node
+				p = p->right;
+				while (p->left != sentinel)
+				{
+					p = p->left;
+				}
+			}
+			else
+			{ // go upwards along right branches...  stop after the first left
+				while (p->parent != sentinel && p->parent->right == p) 
+				{
+					p = p->parent;
+				}
+				if (p->right != p)
+					p = p->parent;
+			}
+			return *this;
+		}
+
+		const_iterator operator++(int) { const_iterator tmp(*this);	operator++(); return tmp; }
+		
+		const_iterator& operator--()
+		{
+			if (p->left != sentinel)
+			{ // find the rightmost child of the left node
+				p = p->left;
+				while (p->right != sentinel)
+				{
+					p = p->right;
+				}
+			}
+			else
+			{ // go upwards along left branches...  stop after the first right
+				while (p->parent != sentinel && p->parent->left == p) 
+				{
+					p = p->parent;
+				}
+				p = p->parent;
+			}
+			return *this;
+		}
+
+		const_iterator operator--(int) {const_iterator tmp(*this); operator--(); return tmp;}
+
+		bool operator==(const const_iterator& rhs) const { return p==rhs.p; }
+		bool operator!=(const const_iterator& rhs) const { return p!=rhs.p; }
+
+		reference operator*() const { return p->value; }
+		pointer operator->() const { return &(p->value); }
+
+		// node_type* base() const { return p; }
+		// node_type* sent() const { return sentinel; }
+
+	private:
+		const node_type *p;
+		const node_type *sentinel;
+	};
+
 
 // Non-member function overloads
 // ==================================	

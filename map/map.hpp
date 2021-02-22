@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 10:29:50 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/19 15:43:19 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/19 15:59:13 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,11 @@ public:
 
 	typedef Key										key_type;
 	typedef T										mapped_type;
-	// typedef Tree_node<key_type, mapped_type>		node_type;
 	typedef std::pair<const Key, T>					value_type;
 	typedef Tree_node<value_type>					node_type;
 	typedef Compare									key_compare;
 	typedef Map_iterator<value_type>				iterator;
-	typedef Map_iterator<const value_type>			const_iterator;
+	typedef Map_const_iterator<value_type>			const_iterator;
 	typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
 	typedef std::reverse_iterator<iterator>			reverse_iterator;
 	typedef	size_t									size_type;
@@ -93,6 +92,7 @@ public:
 
 		return *this;
 	}
+
 	~map ()
 	{
 		this->clear();

@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/03 11:01:52 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/19 10:50:00 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/19 16:38:33 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,6 +171,12 @@ int main(void)
 	displayMap(map3);
 	displayMap(map);
 
+	ft::map<char, int>::const_iterator itc(it);
+	while (itc != map.end())
+	{
+		std::cout << itc->first << std::endl;
+		++itc;
+	}
 	std::cout << std::endl << "===== BOUND COMPARISON =====" << std::endl;
 
 	std::cout << "lower_bound('i'): " << map.lower_bound('i')->first << std::endl;
