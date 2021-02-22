@@ -12,9 +12,9 @@ diff ft std
 
 if [ $? -eq 0 ]
 then
-	echo "${GREEN}Perfect${NC}"
+	echo -e "${GREEN}Perfect${NC}"
 else
-	echo "${RED}ERRORS${NC}"
+	echo -e "${RED}ERRORS${NC}"
 fi
 
 rm ft
