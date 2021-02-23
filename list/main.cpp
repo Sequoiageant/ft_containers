@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 14:26:07 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/28 16:55:23 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/22 18:58:25 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,11 @@
 #include <list>
 #include <vector>
 
-#define NS ft
+#ifndef STD
+# define NS ft
+#else
+# define NS std
+#endif
 
 bool single_digit (const int& value) { return (value<10); }
 
@@ -67,10 +71,21 @@ void displaylist(std::list<T>& lst)
 	std::cout << std::endl;
 }
 
+template<typename T>
+void displaylist(const std::list<T>& lst)
+{
+	typename std::list<T>::const_iterator it = lst.begin();
+	while (it != lst.end())
+	{
+		std::cout << *it << ' ';
+		++it;
+	}
+	std::cout << std::endl;
+}
+
 int main(void)
 {
 	NS::list<int> lst1;
-	std::list<int> lst;
 
 	std::vector<int> v;
 	for (int i = 41; i < 46; ++i) { v.push_back(i); }
@@ -284,8 +299,8 @@ int main(void)
 	std::cout << std::boolalpha << "lst1 empty: " << lst1.empty() << std::endl;
 
 	std::cout << "---- iterator ----" << std::endl;
-	ft::list<int> lst5(5,5);
-	ft::list<int>::iterator it5 = lst5.begin();
+	NS::list<int> lst5(5,5);
+	// NS::list<int>::iterator it5 = lst5.begin();
 	std::cout << "lst5: "; displaylist(lst5);
 
 	std::cout << "---- splice ----" << std::endl;
