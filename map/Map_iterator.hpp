@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 10:55:32 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/19 16:40:22 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/23 16:49:21 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,13 @@ template<typename T> //T is a pair<Key, Val>
 		struct Tree_node* 	parent;
 		struct Tree_node* 	left;
 		struct Tree_node* 	right;
-		char				side; // left 'l', right 'r', root : 'h' ==> FOR DEBUG
 
 		Tree_node()
-		: value(T()), parent(NULL), left(NULL), right(NULL), side('h')
+		: value(T()), parent(NULL), left(NULL), right(NULL)
 		{}
 
 		Tree_node(const T& val)
-		: value(val), parent(NULL), left(NULL), right(NULL), side('h')
+		: value(val), parent(NULL), left(NULL), right(NULL)
 		{}
 	};
 
@@ -125,7 +124,7 @@ template<typename T> //T is a pair<Key, Val>
 		bool operator!=(const iterator& rhs) const { return p!=rhs.p; }
 
 		reference operator*() const { return p->value; }
-		value_type* operator->() const { return &(p->value); }
+		value_type* operator->() const { if (p) return &(p->value); else return &(sentinel->value); }
 
 		node_type* base() const { return p; }
 		node_type* get_sent() const { return sentinel; }

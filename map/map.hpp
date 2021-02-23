@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 10:29:50 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/19 15:59:13 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/02/23 17:49:17 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,9 @@ public:
 		this->insert(first, last);
 	}
 
-	map (const map& x)
+	map (const map& x) : _root(NULL), _size(0), _comp(x._comp)
 	{
-		this->_comp = x._comp;
+		this->_sentinel = new node_type();
 		this->insert(x.begin(), x.end());
 	}
 
@@ -151,7 +151,7 @@ public:
 
 		if (this->_comp(val.first, node->value.first) && node->left == this->_sentinel)
 		{
-			std::cerr << "- Insert It I -" << std::endl;
+			// std::cerr << "- Insert It I -" << std::endl;
 			node_type *n = this->new_node(val);
 			n->parent = node;
 			node->left = n;
@@ -160,14 +160,14 @@ public:
 		}
 		else if (this->_comp(node->value.first, val.first) && node->right == this->_sentinel)
 		{
-			std::cerr << "- Insert It II -" << std::endl;
+			// std::cerr << "- Insert It II -" << std::endl;
 			node_type *n = this->new_node(val);
 			n->parent = node;
 			node->right = n;
 			++this->_size;			
 			return iterator(n, this->_sentinel);
 		}
-		std::cerr << "- Insert It III -" << std::endl;
+		// std::cerr << "- Insert It III -" << std::endl;
 		return this->insert(val).first;
 	}
 
@@ -310,20 +310,16 @@ public:
 		if (node == NULL || node == this->_sentinel)
 			return ;
 		printInorder(node->left);
-		// std::cout << "this->root: " << this->_root->value.first << std::endl;
-		// if (node->side == 'h')
-		// 	std::cout << "map[" << node->value.first << "] = " << node->value.second << " (HEAD)" << std::endl;
-		// else
-		// 	std::cout << "map[" << node->value.first << "] = " << node->value.second << " (" << node->side << ")" << std::endl;
-		// std::cout << "map[" << node->value.first << "] = " << node->value.second << std::endl;
+
 		if (node->left == this->_sentinel && node->right == this->_sentinel)
-			std::cout << node->value.first << ": L= sentinel, R= sentinel" << std::endl;
+			std::cout << node->value.first << ": L(sentinel), R(sentinel)" << std::endl;
 		else if (node->left == this->_sentinel)
-			std::cout << node->value.first << ": L= sentinel, R= " << node->right->value.first << std::endl;
+			std::cout << node->value.first << ": L(sentinel), R(" << node->right->value.first << ")" << std::endl;
 		else if (node->right == this->_sentinel)
-			std::cout << node->value.first << ": L= " << node->left->value.first << ", R= sentinel" << std::endl;
+			std::cout << node->value.first << ": L(" << node->left->value.first << "), R(sentinel)" << std::endl;
 		else
-			std::cout << node->value.first << ": L= " << node->left->value.first << ", R= " << node->right->value.first << std::endl;
+			std::cout << node->value.first << ": L(" << node->left->value.first << "), R(" << node->right->value.first << ")" << std::endl;
+	
 		printInorder(node->right);
 	}
 //////////////////////////////////////// DISPLAY FUNCTION FOR DEBUG
@@ -367,7 +363,7 @@ private:
 
 	node_type* RightMost(node_type* node)
 	{
-		if (node)
+		if (node && node != this->_sentinel)
 		{
 			while (node->right != this->_sentinel)
 			{
@@ -377,9 +373,9 @@ private:
 		return node;
 	}
 
-	node_type* LeftMost(node_type* node)
+	node_type* LeftMost(node_type* node) const
 	{
-		if (node)
+		if (node && node != this->_sentinel)
 		{
 			while (node->left != this->_sentinel)
 			{
@@ -418,10 +414,7 @@ private:
 	std::pair<iterator,bool> insertRecurse(node_type *node, const value_type& val)
 	{	
 		if (!_comp(val.first, node->value.first) && !_comp(node->value.first, val.first))
-		{
-			std::cerr << "EGALE" << std::endl;
 			return std::make_pair(iterator(node, this->_sentinel), false);
-		}
 
 		if (this->_comp(val.first, node->value.first)) {
 			if (node->left != this->_sentinel) {
@@ -430,7 +423,6 @@ private:
 			else
 			{
 				node_type *n = this->new_node(val); // for typename Pair
-				n->side = 'L'; // FOR DEBUG
 				n->parent = node;
 				node->left = n;
 				++this->_size;
@@ -444,7 +436,6 @@ private:
 			else
 			{
 				node_type *n = this->new_node(val); // for typename Pair
-				n->side = 'R'; // FOR DEBUG
 				n->parent = node;
 				node->right = n;
 				++this->_size;
@@ -453,7 +444,7 @@ private:
 		}
 	}
 
-	int eraseRecurse(node_type*& node, const key_type& k)
+	size_type eraseRecurse(node_type*& node, const key_type& k)
 	{
 		if (node == NULL || node == this->_sentinel)
 			return 0;
@@ -485,7 +476,6 @@ private:
 				node_type* min = searchRightest(node->left, last_parent);				
 				if (node == this->_root)
 				{
-					min->side = 'h'; // FOR DEBUG
 					this->_sentinel->left = min;
 				}
 				if (last_parent != node)
@@ -558,6 +548,8 @@ bool operator<(const map<Key,T,Compare>& lhs, const map<Key,T,Compare>& rhs)
 		{
 			if (*first1 < *first2 )
 				return true;
+			if (*first1 > *first2 )
+				return false;
 			++first1;
 			++first2;
 			if (first1 == end1 && first2 != end2)
