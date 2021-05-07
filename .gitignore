@@ -40,8 +40,6 @@ test.cpp
 *.replace
 *.log
 
-*.pdf
-
 ft
 std
 

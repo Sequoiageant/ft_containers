@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 11:07:21 by julnolle          #+#    #+#             */
-/*   Updated: 2021/01/28 17:04:40 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/05/07 10:31:25 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,8 @@
 namespace ft
 {
 
-/*struct			List_node_base
-	{
-		struct	List_node_base	*prev;
-		struct	List_node_base	*next;
-	};
-
-struct			List_node_header //: public List_node_base
-	{
-		List_node_header();
-		size_t 	*size;
-	};*/
-
 template<typename T>
-	struct		List_node //: public List_node_base
+	struct		List_node
 	{
 		List_node(){
 			this->value = T();
@@ -146,70 +134,69 @@ private:
 };
 
 template<typename T>
-	class list
-	{
-
-	public:
-		typedef	List_node<T>							List_node;
-		typedef	T										value_type;
-		typedef iterator<T>								iterator;
-		typedef const_iterator<T>						const_iterator;
-		typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
-		typedef std::reverse_iterator<iterator>			reverse_iterator;
-		typedef	size_t									size_type;
-
-		
-list(void) : _list(new List_node)
+class list
 {
-	return;
-}
 
-list(size_type size, const T &val) : _list(new List_node)
-{
-	for (size_type i = 0; i < size; ++i)
+public:
+	typedef	List_node<T>							List_node;
+	typedef	T										value_type;
+	typedef iterator<T>								iterator;
+	typedef const_iterator<T>						const_iterator;
+	typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
+	typedef std::reverse_iterator<iterator>			reverse_iterator;
+	typedef	size_t									size_type;
+
+	
+	list(void) : _list(new List_node)
 	{
-		this->push_back(val);
+		return;
 	}
-}
 
-template<typename InputIterator>
-list(InputIterator first, typename ft::enable_if< !ft::is_integral< InputIterator >::value, InputIterator >::type last) : _list(new List_node)
-{
-	this->insert (this->begin(), first, last);
-}
+	list(size_type size, const T &val) : _list(new List_node)
+	{
+		for (size_type i = 0; i < size; ++i)
+		{
+			this->push_back(val);
+		}
+	}
 
-list(list<T> const & copy) : _list(new List_node)
-{
-	this->insert (this->begin(), copy.begin(), copy.end());
-}
+	template<typename InputIterator>
+	list(InputIterator first, typename ft::enable_if< !ft::is_integral< InputIterator >::value, InputIterator >::type last) : _list(new List_node)
+	{
+		this->insert (this->begin(), first, last);
+	}
 
-~list(void)
-{
-	this->clear();
-	delete this->_list;
-}
+	list(list<T> const & copy) : _list(new List_node)
+	{
+		this->insert (this->begin(), copy.begin(), copy.end());
+	}
 
-list& operator=(list<T> const & rhs)
-{
-	this->clear();
-	this->insert (this->begin(), rhs.begin(), rhs.end());
+	~list(void)
+	{
+		this->clear();
+		delete this->_list;
+	}
 
-	return (*this);
-}
+	list& operator=(list<T> const & rhs)
+	{
+		this->clear();
+		this->insert (this->begin(), rhs.begin(), rhs.end());
+
+		return (*this);
+	}
 
 
-
-		iterator begin(void) { return iterator(this->_list->next); }
-		const_iterator begin() const { return const_iterator(this->_list->next); }
-		
-		iterator end(void) { return iterator(this->_list); }
-		const_iterator end() const { return const_iterator(this->_list); }
-		
-		reverse_iterator rbegin(void) { return reverse_iterator(this->end()); }
-		const_reverse_iterator rbegin(void) const { return const_reverse_iterator(this->end()); } //this->_list->prev
-		
-		reverse_iterator rend(void) { return reverse_iterator(this->begin()); }
-		const_reverse_iterator rend(void) const { return const_reverse_iterator(this->begin()); } //this->_list
+	iterator begin(void) { return iterator(this->_list->next); }
+	const_iterator begin() const { return const_iterator(this->_list->next); }
+	
+	iterator end(void) { return iterator(this->_list); }
+	const_iterator end() const { return const_iterator(this->_list); }
+	
+	reverse_iterator rbegin(void) { return reverse_iterator(this->end()); }
+	const_reverse_iterator rbegin(void) const { return const_reverse_iterator(this->end()); } //this->_list->prev
+	
+	reverse_iterator rend(void) { return reverse_iterator(this->begin()); }
+	const_reverse_iterator rend(void) const { return const_reverse_iterator(this->begin()); } //this->_list
 
 		
 bool empty() const
@@ -660,26 +647,6 @@ void reverse()
 			node->unhook();
 			delete node;
 		}
-
-	/*		void	unlink_node(List_node *node)
-			{
-				node->prev->next = node->next;
-				node->next->prev = node->prev;
-			}*/
-
-	/*		List_node	*find_node(iterator position)
-			{
-				List_node *node = this->_list;
-				iterator it(this->begin());
-
-				while (it != position)
-				{
-					node = node->next;
-					++it;
-				}
-				return (node);
-			}
-	*/
 
 	};
 

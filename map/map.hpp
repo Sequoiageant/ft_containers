@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/02 10:29:50 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/23 17:49:17 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/05/07 10:37:02 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,6 @@
 # include "integral_traits.hpp"
 # include "functional.hpp"
 # include "Map_iterator.hpp"
-
-// # define LEFT	-1
-// # define RIGHT	1
-// # define THIS	0
 
 namespace ft {
 
@@ -66,9 +62,6 @@ public:
 	: _root(NULL), _size(0), _comp(comp)
 	{
 		this->_sentinel = new node_type();
-		// this->_sentinel->parent = NULL;
-		// this->_sentinel->left = this->_sentinel;
-		// this->_sentinel->right = this->_sentinel;
 	}
 
 	template <class InputIterator>
@@ -151,7 +144,6 @@ public:
 
 		if (this->_comp(val.first, node->value.first) && node->left == this->_sentinel)
 		{
-			// std::cerr << "- Insert It I -" << std::endl;
 			node_type *n = this->new_node(val);
 			n->parent = node;
 			node->left = n;
@@ -160,14 +152,12 @@ public:
 		}
 		else if (this->_comp(node->value.first, val.first) && node->right == this->_sentinel)
 		{
-			// std::cerr << "- Insert It II -" << std::endl;
 			node_type *n = this->new_node(val);
 			n->parent = node;
 			node->right = n;
 			++this->_size;			
 			return iterator(n, this->_sentinel);
 		}
-		// std::cerr << "- Insert It III -" << std::endl;
 		return this->insert(val).first;
 	}
 
@@ -380,7 +370,6 @@ private:
 			while (node->left != this->_sentinel)
 			{
 				node = node->left;
-				// std::cerr << "first: " << node->value.first << std::endl;
 			}
 		}
 		return node;
@@ -399,10 +388,8 @@ private:
 
 	node_type* findRecurse(node_type *node, const key_type& k) const
 	{
-		// std::cerr << "FIND" << std::endl;
 		if (node != this->_sentinel)
 		{
-			// std::cerr << "key: " << node->key << std::endl;
 			if (this->_comp(k, node->value.first))
 				return findRecurse(node->left, k);
 			else if (this->_comp(node->value.first, k))
@@ -450,28 +437,19 @@ private:
 			return 0;
 		if (node->value.first == k)
 		{
-			// if (node->left == this->_sentinel && node->right == this->_sentinel)
-			// {
-			// 	// std::cerr << "--> I <--" << std::endl;
-			// 	this->delete_node(node, node->left); // node->left is this->_sentinel
-			// 	return 1;
-			// }
 			if (node->right == this->_sentinel)
 			{
-				// std::cerr << "--> II <--" << std::endl;
 				this->delete_node(node, node->left);
 				return 1;
 			}
 			else if (node->left == this->_sentinel)
 			{
-				// std::cerr << "--> III <--" << std::endl;
 				this->delete_node(node, node->right);
 				this->_sentinel->right = RightMost(this->_root);
 				return 1;
 			}
 			else
 			{
-				// std::cerr << "--> IV <--" << std::endl;
 				node_type *last_parent = node;
 				node_type* min = searchRightest(node->left, last_parent);				
 				if (node == this->_root)

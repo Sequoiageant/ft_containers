@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/22 15:35:39 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/22 16:55:16 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/05/07 10:43:15 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,19 +33,7 @@ template <class T, class Container = std::deque<T> >
 			// std::cout << "CONSTRUCTOR" << std::endl;
 		}
 
-/*		queue (const queue& copy) : _container(copy._container) {
-			std::cout << " CPY CONSTRUCTOR" << std::endl;
-
-		}
-
-		queue& operator=(queue const & rhs)
-		{
-			std::cout << "ASSI" << std::endl;
-			this->_container = rhs._container;
-			return *this;
-		}
 		~queue(void) {}
-*/
 
 		bool empty() const
 		{

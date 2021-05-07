@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/22 11:58:57 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/22 15:24:59 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/05/07 10:45:11 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,19 +33,7 @@ template <class T, class Container = std::deque<T> >
 			// std::cout << "CONSTRUCTOR" << std::endl;
 		}
 
-/*		stack (const stack& copy) : _container(copy._container) {
-			std::cout << " CPY CONSTRUCTOR" << std::endl;
-
-		}
-
-		stack& operator=(stack const & rhs)
-		{
-			std::cout << "ASSI" << std::endl;
-			this->_container = rhs._container;
-			return *this;
-		}
 		~stack(void) {}
-*/
 
 		bool empty() const
 		{

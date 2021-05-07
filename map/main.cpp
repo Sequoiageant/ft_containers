@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/03 11:01:52 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/23 18:24:38 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/05/07 10:24:44 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,6 @@ int main(void)
 	
 	std::cout << "===== EMPTY MAP =====" << std::endl;
 	NS::map<char, int> map;
-	// NS::map<char, int>::iterator itf = map.begin();
-	// std::cout << "begin(): " << itf->first << std::endl;
 
 	std::cout << std::boolalpha << "empty: " << map.empty() << std::endl;
 	std::cout << "size: " << map.size() << std::endl;
@@ -94,9 +92,6 @@ int main(void)
 	map.insert(pair('Z', 6));
 	map.insert(pair('D', 7));
 	insert_pair = map.insert(pair('E', 8));
-	// map.insert(pair('h', 4));
-	// map['H'] = 21;
-	// map['H'] = 28;
 	displayMap(map);
 	std::cout << "size: " << map.size() << std::endl;
 	std::cout << "last insert it: " << insert_pair.first->first << std::endl;
@@ -240,6 +235,9 @@ int main(void)
 	std::cout << "map4" << std::endl; displayMap(map4);
 
 	std::cout << std::endl << "===== MAX SIZE =====" << std::endl;
+	// max size() not the same as std, our structure is different than std one:
+    // --> our: 4 var: value + parent + left + right
+    // --> std: (rb_tree) has 1 additional var: color
 	NS::map<char,int> map5;
 	std::cout << "max size: " << map5.max_size() << std::endl;
 

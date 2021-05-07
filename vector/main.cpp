@@ -6,7 +6,7 @@
 /*   By: julnolle <julnolle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 16:07:36 by julnolle          #+#    #+#             */
-/*   Updated: 2021/02/01 17:50:06 by julnolle         ###   ########.fr       */
+/*   Updated: 2021/05/07 10:59:08 by julnolle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -368,11 +368,7 @@ int main(void)
 	std::cout << "v4: "; displayVec(v4);
 	std::cout << "v5: "; displayVec(v5);
 	NS::vector<int> v6(v2.begin(), v2.end());
-// try {
-// }
-// catch(const std::exception& e) {
-// 	std::cerr << e.what() << '\n';
-// }
+
 	std::cout << "v6: "; displayVec(v6);
 
 
@@ -381,29 +377,29 @@ int main(void)
 	
 	Fixed a(1);
 
-	NS::vector<Fixed> v6(5, 42);
+	NS::vector<Fixed> v8(5, 42);
 	// NS::vector<Fixed> v7(3, 21);
 
 
-	v6.resize(4);
-	std::cout << "v6: "; displayVec(v6);
-	std::cout << "v6 size: " << v6.size() << std::endl;
-	std::cout << "v6 capacity: " << v6.capacity() << std::endl;
+	v8.resize(4);
+	std::cout << "v8: "; displayVec(v8);
+	std::cout << "v8 size: " << v8.size() << std::endl;
+	std::cout << "v8 capacity: " << v8.capacity() << std::endl;
 	
 
 	// std::cout << "v7: "; displayVec(v7);
 	// std::cout << "v7 size: " << v7.size() << std::endl;
 	// std::cout << "v7 capacity: " << v7.capacity() << std::endl;
 
-	// v7.assign(v6.begin(), v6.end());
+	// v7.assign(v8.begin(), v8.end());
 
-	v6.insert(v6.begin(), a);
-	std::cout << "v6: "; displayVec(v6);
-	std::cout << "v6 size: " << v6.size() << std::endl;
-	std::cout << "v6 capacity: " << v6.capacity() << std::endl;
+	v8.insert(v8.begin(), a);
+	std::cout << "v8: "; displayVec(v8);
+	std::cout << "v8 size: " << v8.size() << std::endl;
+	std::cout << "v8 capacity: " << v8.capacity() << std::endl;*/
 
 	// std::cout << "v7: "; displayVec(v7);
-	// std::cout << "v7 size: " << v7.size() << std::endl;*/
+	// std::cout << "v7 size: " << v7.size() << std::endl;
 	// std::cout << "v7 capacity: " << v7.capacity() << std::endl;
 /*	NS::vector<int> test(3, 3);
 	NS::vector<NS::vector<int> > self_assign;
